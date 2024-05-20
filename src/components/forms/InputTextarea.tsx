@@ -1,0 +1,56 @@
+import { InputHTMLAttributes } from "react";
+import FormErrorMessage from "./FormErrorMessage";
+import { OtherInputProps } from "../../model/components/other-input-props";
+import { classJoin, getErrorValue } from "../../lib/functions";
+
+export type InputTextareaProps = InputHTMLAttributes<HTMLTextAreaElement> &
+  OtherInputProps;
+
+const InputTextarea = (props: InputTextareaProps) => {
+  const {
+    labelClassName,
+    inputContainerClassName,
+    inputClassName,
+    descriptionClassName,
+    id,
+    name,
+    label,
+    description,
+    setValue,
+    errors,
+    register,
+    onChange,
+    component,
+    prefix,
+    ...rest
+  } = props;
+  return (
+    <label className="form-control w-full">
+      {label && (
+        <div className="label">
+          <span className="label-text">{label}</span>
+        </div>
+      )}
+      <textarea
+        name={name}
+        {...register}
+        {...(id && { id: id })}
+        placeholder="Cth: example@gmail.com"
+        className="textarea textarea-bordered h-36 w-full"
+        {...rest}
+      ></textarea>
+      {description && (
+        <div className="label">
+          <span className="label-text">{description}</span>
+          {errors &&
+            (getErrorValue(name ?? "", errors) ||
+              (errors as any)[name ?? ""]) && (
+              <FormErrorMessage name={name ?? ""} errors={errors as any} />
+            )}
+        </div>
+      )}
+    </label>
+  );
+};
+
+export default InputTextarea;

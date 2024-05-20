@@ -1,35 +1,106 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { ClockIcon } from "@heroicons/react/outline";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import axios from "axios";
+import { useAtomValue } from "jotai";
+import { Suspense, useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import LoadingFallback from "./components/layout/LoadingFallback";
+import { authAtom } from "./lib/state/auth-state";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import RoomIndex from "./pages/admin/room";
+import LoginPage from "./pages/auth/login";
+import RegisterPage from "./pages/auth/register";
+import ScheduleIndexPage from "./pages/schedule";
+import UserIndex from "./pages/admin/user";
+import UserShow from "./pages/admin/user/show";
 
-function App() {
-  const [count, setCount] = useState(0)
+const queryClient = new QueryClient();
+
+const App = () => {
+  const auth = useAtomValue(authAtom);
+  const [headersSet, setHeadersSet] = useState(false);
+
+  useEffect(() => {
+    const setHeaders = async () => {
+      if (auth && auth.token) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${auth.token}`;
+      } else {
+        delete axios.defaults.headers.common["Authorization"];
+      }
+      setHeadersSet(true);
+    };
+
+    setHeaders();
+  }, [auth]);
+
+  if (!headersSet) {
+    return (
+      <div className="flex items-center justify-center w-screen h-screen">
+        <ClockIcon className="w-10 h-10 text-gray-500 animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Suspense fallback={<LoadingFallback />}>
+      <QueryClientProvider client={queryClient}>
+        {auth ? <AuthenticatedRoutes /> : <UnauthenticatedRoutes />}
+        <ToastContainer />
+      </QueryClientProvider>
+    </Suspense>
+  );
+};
 
-export default App
+const AuthenticatedRoutes = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/auth')) {
+      navigate('/schedule');
+    }
+  }, [location.pathname])
+
+  return (
+    <Layout>
+      <Routes>
+        <Route path="/schedule" element={<ScheduleIndexPage />} />
+        <Route path="/admin">
+          <Route path="room" element={<RoomIndex />} />
+          <Route path="user">
+            <Route path="" element={<UserIndex />}></Route>
+            <Route path=":id" element={<UserShow />}></Route>
+          </Route>
+        </Route>
+      </Routes>
+    </Layout>
+  );
+};
+
+const UnauthenticatedRoutes = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!location.pathname.startsWith('/auth')) {
+      navigate('/auth/login');
+    }
+  }, [location.pathname])
+
+  return (
+    <Layout>
+      <Routes>
+        {/* <Route path="/employee/register" element={<EmployeeRegisterPage />} /> */}
+        <Route path="/auth">
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+        </Route>
+        {/*<Route path="*" element={<Navigate replace to="/employee/register" />} /> */}
+      </Routes>
+    </Layout>
+  );
+};
+
+export default App;
