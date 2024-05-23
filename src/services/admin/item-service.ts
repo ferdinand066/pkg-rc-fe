@@ -1,10 +1,10 @@
-import { RoomModel } from "../../model/entities/room";
+import { ItemModel } from "../../model/entities/item";
 import { BaseService } from "../base-service";
 
-const URL = `${__API_URL__}/admin/room`;
+const URL = `${__API_URL__}/admin/item`;
 
-export class RoomService extends BaseService {
-  static async createRoom(params: object): Promise<RoomModel | null> {
+export class ItemService extends BaseService {
+  static async createItem(params: object): Promise<ItemModel | null> {
     try {
       const data = await this._post(`${URL}`, params);
       return data;
@@ -13,10 +13,10 @@ export class RoomService extends BaseService {
     }
   }
 
-  static async updateRoom(
+  static async updateItem(
     id: string,
     params: object
-  ): Promise<RoomModel | null> {
+  ): Promise<ItemModel | null> {
     if (!id) return null;
     try {
       const data = await this._patch(`${URL}/${id}`, params);
@@ -26,7 +26,7 @@ export class RoomService extends BaseService {
     }
   }
 
-  static async deleteRoom(
+  static async deleteItem(
     id: string,
   ): Promise<void> {
     if (!id) return;

@@ -5,25 +5,24 @@ import Pagination from "../../../components/utils/Pagination";
 import Table from "../../../components/utils/Table";
 import { useFetchUser } from "../../../hooks/admin/use-user";
 import { UserModel } from "../../../model/entities/user";
-import { useFetchRoom } from "../../../hooks/admin/use-room";
+import { useFetchRoom } from "../../../hooks/general/use-room";
+import { RoomModel } from "../../../model/entities/room";
 
-const header = ['name', 'email', 'email_verified_at', 'account_accepted_at', 'account_accepted_by'];
+const header = ['name', 'floor_name', 'items'];
 
 const RoomIndex = () => {
-  const navigate = useNavigate();
-
   const [param, setParam] = useState({
     page: 1,
   });
 
   const { data, status } = useFetchRoom(param);
 
-  const users = data?.data.map((user: UserModel) => ({
-    ...user,
-    email_verified_at: user.email_verified_at ?? '-',
-    account_accepted_at: user.account_accepted_at ?? '-',
-    account_accepted_by: user.account_accepted_by ?? '-',
-    redirect: '/admin/room/' + user.id,
+  console.log(data);
+
+  const rooms = data?.data.map((room: RoomModel) => ({
+    ...room,
+    floor_name: room.floor.name,
+    items: room?.room_items?.map((item) => item.item.name).join(",")
   }));
 
   return (
@@ -36,7 +35,7 @@ const RoomIndex = () => {
       />
       <Table 
         header={header}
-        data={users ?? []}
+        data={rooms ?? []}
       />
       <Pagination status={status} data={data} page={param.page} setPage={setParam}/>
       

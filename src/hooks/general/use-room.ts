@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { RoomService } from "../../services/admin/room-service";
-import { UserService } from "../../services/admin/user-service";
+import { RoomService } from "../../services/general/room-service";
 
 const useFetchRoom = (params: object) => {
   const { data, status } = useQuery({
-    queryKey: ["admin/room", params],
+    queryKey: ["general/room", params],
     queryFn: () => RoomService.getRooms(params),
   });
 
@@ -16,8 +15,8 @@ const useFetchRoom = (params: object) => {
 
 const useGetOneRoom = (id: string) => {
   const { data, status } = useQuery({
-    queryKey: ["admin/user", id],
-    queryFn: () => UserService.getOneUser(id),
+    queryKey: ["general/room", id],
+    queryFn: () => RoomService.getOneRoom(id),
     enabled: !!id,
   });
 
