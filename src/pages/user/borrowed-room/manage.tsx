@@ -11,6 +11,7 @@ import useManageBorrowedRoom from "../../../hooks/general/use-manage-borrowed-ro
 import InputTextarea from "../../../components/forms/InputTextarea";
 import { isAfter, isSameDay, parseISO } from "date-fns";
 import { useGetOneBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
+import useAuth from "../../../hooks/general/use-auth-user";
 
 const ManageBorrowedRoomPage = () => {
   const navigate = useNavigate();
@@ -32,7 +33,11 @@ const ManageBorrowedRoomPage = () => {
   } = useManageBorrowedRoom(borrowedRoom);
 
   const [initialize, setInitialize] = useState(false);
+  const [ableToUpdate, setAbleToUpdate] = useState(false);
 
+  const { user } = useAuth();
+  
+  
   useEffect(() => {
     if (roomStatus !== "success") return;
     if (initialize) return;
@@ -40,6 +45,20 @@ const ManageBorrowedRoomPage = () => {
     const roomData = rooms as RoomModel[];
     setValue("room_id", roomData[0].id as string);
   }, [initialize, roomStatus]);
+
+  useEffect(() => {
+    if (!id){
+      setAbleToUpdate(true);
+      return;
+    }
+
+    if (!borrowedRoom) return;
+    if (!user) return;
+    if (borrowedRoom.borrowed_by_user_id === user.id){
+      setAbleToUpdate(true);
+    }
+
+  }, [user, borrowedRoom])
 
   const watchRoomId = watch("room_id");
 
@@ -51,7 +70,7 @@ const ManageBorrowedRoomPage = () => {
   return (
     <section className="flex flex-col h-full flex-1 gap-4 mb-8">
       <PageHeader
-        pageName={`${borrowedRoom ? "Ubah" : "Buat"} Proposal Pinjam Ruang`}
+        pageName={`${borrowedRoom ? "" : "Buat "}Proposal Pinjam Ruang`}
       />
       <form
         onSubmit={handleSubmit(handleManageBorrowedRoom)}
@@ -62,6 +81,7 @@ const ManageBorrowedRoomPage = () => {
             label="Tanggal Pinjam Ruangan"
             type="date"
             name="borrowed_date"
+            disabled={!ableToUpdate}
             register={register("borrowed_date", {
               required: "Tanggal peminjaman harus diisi",
               validate: (date) => {
@@ -83,6 +103,7 @@ const ManageBorrowedRoomPage = () => {
         </div>
         <div className="col-span-3">
           <InputText
+            disabled={!ableToUpdate}
             label="Jam Mulai Pinjam"
             type="time"
             name="start_time"
@@ -95,6 +116,7 @@ const ManageBorrowedRoomPage = () => {
         </div>
         <div className="col-span-3">
           <InputText
+            disabled={!ableToUpdate}
             label="Jam Selesai Pinjam"
             type="time"
             name="end_time"
@@ -118,6 +140,7 @@ const ManageBorrowedRoomPage = () => {
         <div className="col-span-4">
           {roomStatus === "success" ? (
             <InputSelect
+              disabled={!ableToUpdate}
               label="Ruangan"
               name="room_id"
               register={register("room_id", {
@@ -135,6 +158,7 @@ const ManageBorrowedRoomPage = () => {
         <div className="col-span-6">
           {roomStatus === "success" && selectedRoom ? (
             <InputCheckbox
+              disabled={!ableToUpdate}
               label="Barang"
               name="item_id"
               id="item_id"
@@ -154,6 +178,7 @@ const ManageBorrowedRoomPage = () => {
         </div>
         <div className="col-span-6">
           <InputTextarea
+            disabled={!ableToUpdate}
             label="Alasan"
             name="reason"
             id="reason"
@@ -163,7 +188,8 @@ const ManageBorrowedRoomPage = () => {
             errors={errors}
           />
         </div>
-        <div className="col-span-6 modal-action flex-row-reverse justify-between">
+        {
+          ableToUpdate && <div className="col-span-6 modal-action flex-row-reverse justify-between">
           <div className="flex flex-row gap-4">
             <button className="btn btn-neutral" type="button">
               Tutup
@@ -185,6 +211,7 @@ const ManageBorrowedRoomPage = () => {
             </button>
           )}
         </div>
+        }
       </form>
     </section>
   );

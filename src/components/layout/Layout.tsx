@@ -36,10 +36,13 @@ const Navbar = () => {
         setNavigation([
           { name: "Jadwal", href: "/schedule" },
           {
+            name: "Proposal",
+            href: "/room-request",
+          },
+          {
             name: "Admin",
             href: "/admin",
             child: [
-              { name: "Proposal", href: "/room-request" },
               { name: "Ruangan", href: "/room" },
               { name: "Barang", href: "/item" },
               { name: "User", href: "/user" },
@@ -52,7 +55,7 @@ const Navbar = () => {
           { name: "Jadwal", href: "/schedule" },
           {
             name: "Proposal",
-            href: "/user/room-request",
+            href: "/room-request",
           },
         ]);
         break;
@@ -216,7 +219,7 @@ const ThemeToggle = () => {
         type="checkbox"
         className="theme-controller hidden"
         value="dark"
-        onChange={(e) => setTheme((_) => (e.target.checked ? "dark" : "light"))}
+        onChange={(e) => setTheme((_) => (e.target.checked ? "drakula" : "cupcake"))}
       />
       <svg
         className="swap-off fill-current w-6 h-6"

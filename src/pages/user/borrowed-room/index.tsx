@@ -6,8 +6,9 @@ import Table from "../../../components/utils/Table";
 import { useFetchBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { UserModel } from "../../../model/entities/user";
+import { BORROWED_STATUS } from "../../../lib/constants";
 
-const header = ["room_name", "borrowed_date", "start_time", "end_time", "borrowed_by"];
+const header = ["room_name", "borrowed_date", "start_time", "end_time", "borrowed_by", "status"];
 
 const UserBorrowedRoomIndex = () => {
   const [param, setParam] = useState({
@@ -22,11 +23,12 @@ const UserBorrowedRoomIndex = () => {
       ...borrowedRoom,
       room_name: borrowedRoom.room.name,
       borrowed_by: (borrowedRoom.borrowed_by as UserModel).name,
+      status: BORROWED_STATUS[borrowedRoom.borrowed_status]
     }
 
     return {
       ...d,
-      redirect: "/user/room-request/" + borrowedRoom.id,
+      redirect: "/room-request/" + borrowedRoom.id,
     };
   });
 
@@ -35,7 +37,7 @@ const UserBorrowedRoomIndex = () => {
       <PageHeader
         pageName="Proposal Pinjam Ruang"
         action={
-          <button type="button" onClick={() => navigate('/user/room-request/create')} className="btn btn-primary h-10 max-h-10 text-sm">Buat Proposal</button>
+          <button type="button" onClick={() => navigate('/room-request/create')} className="btn btn-primary h-10 max-h-10 text-sm">Buat Proposal</button>
         }
       />
       <Table header={header} data={borrowedRooms ?? []} />
