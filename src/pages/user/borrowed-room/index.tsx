@@ -1,0 +1,52 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import PageHeader from "../../../components/layout/PageHeader";
+import Pagination from "../../../components/utils/Pagination";
+import Table from "../../../components/utils/Table";
+import { useFetchBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
+import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
+import { UserModel } from "../../../model/entities/user";
+
+const header = ["room_name", "borrowed_date", "start_time", "end_time", "borrowed_by"];
+
+const UserBorrowedRoomIndex = () => {
+  const [param, setParam] = useState({
+    page: 1,
+  });
+
+  const { data, status } = useFetchBorrowedRoom(param);
+  const navigate = useNavigate();
+
+  const borrowedRooms = data?.data.map((borrowedRoom: BorrowedRoomModel) => {
+    const d = {
+      ...borrowedRoom,
+      room_name: borrowedRoom.room.name,
+      borrowed_by: (borrowedRoom.borrowed_by as UserModel).name,
+    }
+
+    return {
+      ...d,
+      redirect: "/user/room-request/" + borrowedRoom.id,
+    };
+  });
+
+  return (
+    <section className="flex flex-col h-full flex-1 gap-4">
+      <PageHeader
+        pageName="Proposal Pinjam Ruang"
+        action={
+          <button type="button" onClick={() => navigate('/user/room-request/create')} className="btn btn-primary h-10 max-h-10 text-sm">Buat Proposal</button>
+        }
+      />
+      <Table header={header} data={borrowedRooms ?? []} />
+      <Pagination
+        status={status}
+        data={data}
+        page={param.page}
+        setPage={setParam}
+      />
+    </section>
+  );
+};
+
+export default UserBorrowedRoomIndex;

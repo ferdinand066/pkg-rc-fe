@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useLogout from "../../hooks/form/use-logout";
 import useAuth from "../../hooks/general/use-auth-user";
-import { ADMIN_ROLE_INT } from "../../lib/constants";
+import { ADMIN_ROLE_INT, USER_ROLE_INT } from "../../lib/constants";
 import { authAtom } from "../../lib/state/auth-state";
 import { appThemeAtom, navbarInitialLoadAtom } from "../../lib/state/state";
 
@@ -44,6 +44,15 @@ const Navbar = () => {
               { name: "Barang", href: "/item" },
               { name: "User", href: "/user" },
             ],
+          },
+        ]);
+        break;
+      case USER_ROLE_INT:
+        setNavigation([
+          { name: "Jadwal", href: "/schedule" },
+          {
+            name: "Proposal",
+            href: "/user/room-request",
           },
         ]);
         break;

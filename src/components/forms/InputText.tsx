@@ -44,16 +44,14 @@ const InputText = (props: InputTextProps) => {
           setValue(name!, e.target.value);
         }}
       />
-      {description && (
-        <div className="label">
-          <span className="label-text">{description}</span>
-          {errors &&
-            (getErrorValue(name ?? "", errors) ||
-              (errors as any)[name ?? ""]) && (
-              <FormErrorMessage name={name ?? ""} errors={errors as any} />
-            )}
-        </div>
-      )}
+      <div className="label">
+        {description && <span className="label-text">{description}</span>}
+        {errors &&
+          (getErrorValue(name ?? "", errors) ||
+            (errors as any)[name ?? ""]) && (
+            <FormErrorMessage name={name ?? ""} errors={errors as any} />
+          )}
+      </div>
     </label>
   );
 };

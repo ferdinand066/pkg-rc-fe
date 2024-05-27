@@ -9,6 +9,7 @@ export type FloorModel = GeneralData;
 export type RoomModel = GeneralData & {
   floor: FloorModel,
   room_items?: RoomItem[],
+  item_id?: string[],
 }
 
 export type RoomItem = {

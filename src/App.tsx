@@ -15,6 +15,10 @@ import RegisterPage from "./pages/auth/register";
 import ScheduleIndexPage from "./pages/schedule";
 import UserIndex from "./pages/admin/user";
 import UserShow from "./pages/admin/user/show";
+import ItemIndex from "./pages/admin/item";
+import BorrowedRoomIndex from "./pages/admin/borrowed-room";
+import UserBorrowedRoomIndex from "./pages/user/borrowed-room";
+import ManageBorrowedRoomPage from "./pages/user/borrowed-room/manage";
 
 const queryClient = new QueryClient();
 
@@ -69,9 +73,18 @@ const AuthenticatedRoutes = () => {
         <Route path="/schedule" element={<ScheduleIndexPage />} />
         <Route path="/admin">
           <Route path="room" element={<RoomIndex />} />
+          <Route path="item" element={<ItemIndex />} />
+          <Route path="room-request" element={<BorrowedRoomIndex />} />
           <Route path="user">
             <Route path="" element={<UserIndex />}></Route>
             <Route path=":id" element={<UserShow />}></Route>
+          </Route>
+        </Route>
+        <Route path="/user">
+          <Route path="room-request">
+            <Route path="" element={<UserBorrowedRoomIndex />}></Route>
+            <Route path="create" element={<ManageBorrowedRoomPage />}></Route>
+            <Route path=":id" element={<ManageBorrowedRoomPage />}></Route>
           </Route>
         </Route>
       </Routes>

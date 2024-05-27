@@ -1,24 +1,24 @@
 
-import { ItemModel } from "../../model/entities/item";
+import { FloorModel } from "../../model/entities/room";
 import { BaseService } from "../base-service";
 
-const URL = `${__API_URL__}/general/item`;
+const URL = `${__API_URL__}/general/floor`;
 
-export class ItemService extends BaseService {
-  static async getItems(params: object): Promise<ItemModel[]> {
+export class FloorService extends BaseService {
+  static async getFloors(params: object): Promise<FloorModel[]> {
     try {
       const { data } = await this._get(`${URL}`, params);
-      return data.items;
+      return data.floors;
     } catch (e: any) {
       throw new Error(e.message);
     }
   }
 
-  static async getOneItem(id: string): Promise<ItemModel | null> {
+  static async getOneFloor(id: string): Promise<FloorModel | null> {
     if (!id) return null;
     try {
       const { data } = await this._get(`${URL}/${id}`);
-      return data.item;
+      return data.floor;
     } catch (e: any) {
       throw new Error(e.message);
     }

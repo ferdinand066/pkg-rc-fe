@@ -12,12 +12,12 @@ const FormErrorMessage = ({
   errors,
 }: FormErrorMessageData) => {
   return (
-    <div className="flex flex-row gap-0.5 mt-1 text-sm text-red-500 items-center">
+    <div className="flex flex-row gap-0.5 text-sm text-error items-center">
       <ExclamationCircleIcon className="w-4 h-4" />
       <ErrorMessage
         errors={errors}
         name={name}
-        as={<div className="mt-1 text-sm"></div>}
+        as={<div className="label-text text-error"></div>}
       />
     </div>
   );

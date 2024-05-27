@@ -9,9 +9,10 @@ export type UserModel = GeneralData & {
   email: string,
   address: string,
   suspended_at?: Date,
-  email_verified_at?: Date,
-  account_accepted_at?: Date,
+  email_verified_at?: string,
+  account_accepted_at?: string,
   account_accepted_by?: string,
+  accepted_by?: UserModel,
 }
 
 export type UserEmployeeModel = {

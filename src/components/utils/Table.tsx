@@ -59,6 +59,8 @@ const Table = ({
                 {tableHeader.map((h, i) => {
                   if (i===0 && (d as any)['redirect']){
                     return <td className="hover:text-primary font-bold" key={i}><Link to={(d as any)['redirect']}>{(d as any)[h]}</Link></td>
+                  } else if ( i === 0 && (d as any)['onClick']) {
+                    return <td className="hover:text-primary font-bold cursor-pointer" onClick={() => (d as any)['onClick']()} key={i}>{(d as any)[h]}</td>
                   }
                   return <td key={i}>{(d as any)[h]}</td>
                 })}

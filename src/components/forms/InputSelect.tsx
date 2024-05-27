@@ -1,12 +1,15 @@
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, SelectHTMLAttributes } from "react";
 import FormErrorMessage from "./FormErrorMessage";
 import { OtherInputProps } from "../../model/components/other-input-props";
 import { classJoin, getErrorValue } from "../../lib/functions";
+import { GeneralData } from "../../model/components/general-data";
 
-export type InputTextareaProps = InputHTMLAttributes<HTMLTextAreaElement> &
-  OtherInputProps;
+export type InputSelectProps = SelectHTMLAttributes<HTMLSelectElement> &
+  OtherInputProps & {
+    model: GeneralData[]
+  };
 
-const InputTextarea = (props: InputTextareaProps) => {
+const InputSelect = (props: InputSelectProps) => {
   const {
     labelClassName,
     inputContainerClassName,
@@ -22,6 +25,7 @@ const InputTextarea = (props: InputTextareaProps) => {
     onChange,
     component,
     prefix,
+    model,
     ...rest
   } = props;
   return (
@@ -31,13 +35,22 @@ const InputTextarea = (props: InputTextareaProps) => {
           <span className="label-text">{label}</span>
         </div>
       )}
-      <textarea
+      <select
         name={name}
         {...register}
         {...(id && { id: id })}
-        className="textarea textarea-bordered h-36 w-full"
+        className="select select-bordered w-full"
         {...rest}
-      ></textarea>
+        onChange={(e) => {
+          if (onChange) onChange(e);
+          if (!setValue) return;
+          setValue(name!, e.target.value);
+        }}
+      >
+        {
+          model.map((m: GeneralData, index: number) => <option key={index} value={m.id}>{m.name}</option>)
+        }
+      </select>
       <div className="label">
         {description && <span className="label-text">{description}</span>}
         {errors &&
@@ -50,4 +63,4 @@ const InputTextarea = (props: InputTextareaProps) => {
   );
 };
 
-export default InputTextarea;
+export default InputSelect;

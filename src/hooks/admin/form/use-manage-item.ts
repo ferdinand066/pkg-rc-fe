@@ -5,16 +5,14 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { handleToastError, handleToastSuccess } from "../../../lib/functions";
 import { formLoadingStateAtom } from "../../../lib/state/state";
-import { RoomModel } from "../../../model/entities/room";
-import { RoomService } from "../../../services/admin/room-service";
+import { ItemModel } from "../../../model/entities/item";
+import { ItemService } from "../../../services/admin/item-service";
 
-type ManageRoomProps = {
+type ManageItemProps = {
   name: string;
-  floor_id: string;
-  item_id: (string | null)[];
 };
 
-const useManageRoom = (entity: RoomModel | null = null) => {
+const useManageItem = (entity: ItemModel | null = null) => {
   const {
     register,
     setValue,
@@ -23,7 +21,7 @@ const useManageRoom = (entity: RoomModel | null = null) => {
     handleSubmit,
     watch,
     reset,
-  } = useForm<ManageRoomProps>();
+  } = useForm<ManageItemProps>();
   const [formLoading, setFormLoading] = useAtom(formLoadingStateAtom);
   const queryClient = useQueryClient();
   // const { role } = useUser();
@@ -31,53 +29,41 @@ const useManageRoom = (entity: RoomModel | null = null) => {
   useEffect(() => {
     reset();
     if (entity) {
-      console.log(entity);
-      Object.keys(entity).filter((fieldName) => fieldName !== 'item_id').forEach((fieldName) => {
+      Object.keys(entity).forEach((fieldName) => {
         setValue(
-          fieldName as keyof ManageRoomProps,
+          fieldName as keyof ManageItemProps,
           (entity as any)[fieldName]!
         );
       });
-
-      entity.item_id?.map((item, idx) => {
-        console.log(idx);
-        console.log(item);
-        return setValue(`item_id.${idx}`, item)
-      });
-      console.log(getValues('item_id'));
     }
   }, [entity, setValue]);
 
-  async function handleManageRoom(data: ManageRoomProps) {
+  async function handleManageItem(data: ManageItemProps) {
     console.log(data);
     // if (!role) return;
     if (formLoading) return;
-    data = {
-      ...data,
-      item_id: data.item_id.filter((d) => !!d)
-    }
 
     setFormLoading(true);
     try {
       if (entity) {
-        await toast.promise(RoomService.updateRoom(entity.id as string, data), {
-          pending: "Waiting for update room!",
+        await toast.promise(ItemService.updateItem(entity.id as string, data), {
+          pending: "Waiting for update item!",
           error: handleToastError(),
           success: handleToastSuccess(),
         });
       } else {
-        await toast.promise(RoomService.createRoom(data), {
-          pending: "Waiting for create room!",
+        await toast.promise(ItemService.createItem(data), {
+          pending: "Waiting for create item!",
           error: handleToastError(),
           success: handleToastSuccess(),
         });
       }
     } catch (e) {}
 
-    queryClient.invalidateQueries({ queryKey: ["general/room"] });
+    queryClient.invalidateQueries({ queryKey: ["general/item"] });
 
     if (entity !== null) {
-      queryClient.invalidateQueries({ queryKey: ["general/room", entity.id] });
+      queryClient.invalidateQueries({ queryKey: ["general/item", entity.id] });
     }
 
     reset();
@@ -85,15 +71,15 @@ const useManageRoom = (entity: RoomModel | null = null) => {
     setFormLoading(false);
   }
 
-  async function handleDeleteRoom() {
+  async function handleDeleteItem() {
     // if (!role) return;
     if (!entity) return;
     if (formLoading) return;
 
     setFormLoading(true);
     try {
-      await toast.promise(RoomService.deleteRoom(entity.id as string), {
-        pending: "Waiting for delete room!",
+      await toast.promise(ItemService.deleteItem(entity.id as string), {
+        pending: "Waiting for delete item!",
         error: handleToastError(),
         success: handleToastSuccess(),
       });
@@ -101,18 +87,18 @@ const useManageRoom = (entity: RoomModel | null = null) => {
 
     setFormLoading(false);
     reset();
-    queryClient.invalidateQueries({ queryKey: ["general/room"] });
+    queryClient.invalidateQueries({ queryKey: ["general/item"] });
   }
 
   return {
     register,
     setValue,
     errors,
-    handleManageRoom,
-    handleDeleteRoom,
+    handleManageItem,
+    handleDeleteItem,
     handleSubmit,
     watch,
   };
 };
 
-export default useManageRoom;
+export default useManageItem;

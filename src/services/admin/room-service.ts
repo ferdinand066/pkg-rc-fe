@@ -18,6 +18,8 @@ export class RoomService extends BaseService {
     params: object
   ): Promise<RoomModel | null> {
     if (!id) return null;
+    console.log(id);
+    console.log(params);
     try {
       const data = await this._patch(`${URL}/${id}`, params);
       return data;
