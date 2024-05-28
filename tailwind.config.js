@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   daisyui: {
-    themes: ["dracula", "cupcake"]
+    themes: ["light", "dark"]
   },
   content: [
     "./index.html",

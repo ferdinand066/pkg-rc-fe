@@ -219,7 +219,7 @@ const ThemeToggle = () => {
         type="checkbox"
         className="theme-controller hidden"
         value="dark"
-        onChange={(e) => setTheme((_) => (e.target.checked ? "drakula" : "cupcake"))}
+        onChange={(e) => setTheme((_) => (e.target.checked ? "dark" : "light"))}
       />
       <svg
         className="swap-off fill-current w-6 h-6"

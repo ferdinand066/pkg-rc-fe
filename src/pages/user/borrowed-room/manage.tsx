@@ -36,8 +36,7 @@ const ManageBorrowedRoomPage = () => {
   const [ableToUpdate, setAbleToUpdate] = useState(false);
 
   const { user } = useAuth();
-  
-  
+
   useEffect(() => {
     if (roomStatus !== "success") return;
     if (initialize) return;
@@ -47,18 +46,17 @@ const ManageBorrowedRoomPage = () => {
   }, [initialize, roomStatus]);
 
   useEffect(() => {
-    if (!id){
+    if (!id) {
       setAbleToUpdate(true);
       return;
     }
 
     if (!borrowedRoom) return;
     if (!user) return;
-    if (borrowedRoom.borrowed_by_user_id === user.id){
+    if (borrowedRoom.borrowed_by_user_id === user.id) {
       setAbleToUpdate(true);
     }
-
-  }, [user, borrowedRoom])
+  }, [user, borrowedRoom]);
 
   const watchRoomId = watch("room_id");
 
@@ -68,151 +66,156 @@ const ManageBorrowedRoomPage = () => {
     )[0] ?? null;
 
   return (
-    <section className="flex flex-col h-full flex-1 gap-4 mb-8">
-      <PageHeader
-        pageName={`${borrowedRoom ? "" : "Buat "}Proposal Pinjam Ruang`}
-      />
-      <form
-        onSubmit={handleSubmit(handleManageBorrowedRoom)}
-        className="grid grid-cols-6 mx-6 gap-x-4"
-      >
-        <div className="col-span-6">
-          <InputText
-            label="Tanggal Pinjam Ruangan"
-            type="date"
-            name="borrowed_date"
-            disabled={!ableToUpdate}
-            register={register("borrowed_date", {
-              required: "Tanggal peminjaman harus diisi",
-              validate: (date) => {
-                const selectedDate = parseISO(date);
-                const today = new Date();
-
-                if (
-                  !isAfter(selectedDate, today) &&
-                  !isSameDay(selectedDate, today)
-                ) {
-                  return "Tanggal peminjaman harus setelah hari ini";
-                }
-                return true;
-              },
-            })}
-            setValue={setValue}
-            errors={errors}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputText
-            disabled={!ableToUpdate}
-            label="Jam Mulai Pinjam"
-            type="time"
-            name="start_time"
-            register={register("start_time", {
-              required: "Jam mulai pinjam harus diisi",
-            })}
-            setValue={setValue}
-            errors={errors}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputText
-            disabled={!ableToUpdate}
-            label="Jam Selesai Pinjam"
-            type="time"
-            name="end_time"
-            register={register("end_time", {
-              required: "Jam akhir harus diisi",
-              validate: (endTime) => {
-                const startTime = getValues("start_time");
-                const startDateTime = new Date(`2000-01-01T${startTime}`);
-                const endDateTime = new Date(`2000-01-01T${endTime}`);
-
-                // Compare the end time with the start time
-                if (!isAfter(endDateTime, startDateTime)) {
-                  return "Jam akhir harus setelah jam mulai";
-                }
-              },
-            })}
-            setValue={setValue}
-            errors={errors}
-          />
-        </div>
-        <div className="col-span-4">
-          {roomStatus === "success" ? (
-            <InputSelect
+    <section className="flex flex-col h-full flex-1 gap-4 mb-8 divide-y">
+      <div className="flex flex-col">
+        <PageHeader
+          pageName={`${borrowedRoom ? "" : "Buat "}Proposal Pinjam Ruang`}
+        />
+        <form
+          onSubmit={handleSubmit(handleManageBorrowedRoom)}
+          className="grid grid-cols-6 mx-6 gap-x-4"
+        >
+          <div className="col-span-6">
+            <InputText
+              label="Tanggal Pinjam Ruangan"
+              type="date"
+              name="borrowed_date"
               disabled={!ableToUpdate}
-              label="Ruangan"
-              name="room_id"
-              register={register("room_id", {
-                required: "Ruangan harus diisi",
+              register={register("borrowed_date", {
+                required: "Tanggal peminjaman harus diisi",
+                validate: (date) => {
+                  const selectedDate = parseISO(date);
+                  const today = new Date();
+
+                  if (
+                    !isAfter(selectedDate, today) &&
+                    !isSameDay(selectedDate, today)
+                  ) {
+                    return "Tanggal peminjaman harus setelah hari ini";
+                  }
+                  return true;
+                },
               })}
               setValue={setValue}
-              model={(rooms as RoomModel[]) ?? []}
-              // onChange={(e) => setSelectedId(e.target.value)}
               errors={errors}
             />
-          ) : (
-            <></>
-          )}
-        </div>
-        <div className="col-span-6">
-          {roomStatus === "success" && selectedRoom ? (
-            <InputCheckbox
-              disabled={!ableToUpdate}
-              label="Barang"
-              name="item_id"
-              id="item_id"
-              checkboxOptions={(selectedRoom.room_items ?? [])
-                .map((item) => item.item)
-                .map((i: GeneralData, idx: number) => ({
-                  id: "" + i.id,
-                  label: i.name,
-                  name: `item_id.${idx}`,
-                  register: register(`item_id.${idx}`),
-                }))}
-              errors={errors}
-            />
-          ) : (
-            <></>
-          )}
-        </div>
-        <div className="col-span-6">
-          <InputTextarea
-            disabled={!ableToUpdate}
-            label="Alasan"
-            name="reason"
-            id="reason"
-            register={register("reason", { required: "Alasan harus diisi" })}
-            setValue={setValue}
-            placeholder="Alasan harus diisi"
-            errors={errors}
-          />
-        </div>
-        {
-          ableToUpdate && <div className="col-span-6 modal-action flex-row-reverse justify-between">
-          <div className="flex flex-row gap-4">
-            <button className="btn btn-neutral" type="button">
-              Tutup
-            </button>
-            <button className="btn btn-primary" type="submit">
-              {borrowedRoom ? "Ubah" : "Buat"}
-            </button>
           </div>
-          {borrowedRoom && (
-            <button
-              className="btn !ml-0 btn-error"
-              type="button"
-              onClick={async () => {
-                await handleDeleteBorrowedRoom();
-                navigate('/user/room-request');
-              }}
-            >
-              Hapus
-            </button>
+          <div className="col-span-3">
+            <InputText
+              disabled={!ableToUpdate}
+              label="Jam Mulai Pinjam"
+              type="time"
+              name="start_time"
+              register={register("start_time", {
+                required: "Jam mulai pinjam harus diisi",
+              })}
+              setValue={setValue}
+              errors={errors}
+            />
+          </div>
+          <div className="col-span-3">
+            <InputText
+              disabled={!ableToUpdate}
+              label="Jam Selesai Pinjam"
+              type="time"
+              name="end_time"
+              register={register("end_time", {
+                required: "Jam akhir harus diisi",
+                validate: (endTime) => {
+                  const startTime = getValues("start_time");
+                  const startDateTime = new Date(`2000-01-01T${startTime}`);
+                  const endDateTime = new Date(`2000-01-01T${endTime}`);
+
+                  // Compare the end time with the start time
+                  if (!isAfter(endDateTime, startDateTime)) {
+                    return "Jam akhir harus setelah jam mulai";
+                  }
+                },
+              })}
+              setValue={setValue}
+              errors={errors}
+            />
+          </div>
+          <div className="col-span-4">
+            {roomStatus === "success" ? (
+              <InputSelect
+                disabled={!ableToUpdate}
+                label="Ruangan"
+                name="room_id"
+                register={register("room_id", {
+                  required: "Ruangan harus diisi",
+                })}
+                setValue={setValue}
+                model={(rooms as RoomModel[]) ?? []}
+                // onChange={(e) => setSelectedId(e.target.value)}
+                errors={errors}
+              />
+            ) : (
+              <></>
+            )}
+          </div>
+          <div className="col-span-6">
+            {roomStatus === "success" && selectedRoom ? (
+              <InputCheckbox
+                disabled={!ableToUpdate}
+                label="Barang"
+                name="item_id"
+                id="item_id"
+                checkboxOptions={(selectedRoom.room_items ?? [])
+                  .map((item) => item.item)
+                  .map((i: GeneralData, idx: number) => ({
+                    id: "" + i.id,
+                    label: i.name,
+                    name: `item_id.${idx}`,
+                    register: register(`item_id.${idx}`),
+                  }))}
+                errors={errors}
+              />
+            ) : (
+              <></>
+            )}
+          </div>
+          <div className="col-span-6">
+            <InputTextarea
+              disabled={!ableToUpdate}
+              label="Alasan"
+              name="reason"
+              id="reason"
+              register={register("reason", { required: "Alasan harus diisi" })}
+              setValue={setValue}
+              placeholder="Alasan harus diisi"
+              errors={errors}
+            />
+          </div>
+          {ableToUpdate && (
+            <div className="col-span-6 modal-action flex-row-reverse justify-between">
+              <div className="flex flex-row gap-4">
+                <button className="btn btn-neutral" type="button">
+                  Tutup
+                </button>
+                <button className="btn btn-primary" type="submit">
+                  {borrowedRoom ? "Ubah" : "Buat"}
+                </button>
+              </div>
+              {borrowedRoom && (
+                <button
+                  className="btn !ml-0 btn-error"
+                  type="button"
+                  onClick={async () => {
+                    await handleDeleteBorrowedRoom();
+                    navigate("/user/room-request");
+                  }}
+                >
+                  Hapus
+                </button>
+              )}
+            </div>
           )}
-        </div>
-        }
-      </form>
+        </form>
+      </div>
+      <div className="flex flex-col">
+        <PageHeader pageName={`Persetujuan Pinjam Ruang`} />
+      </div>
     </section>
   );
 };
