@@ -36,7 +36,7 @@ const InputText = (props: InputTextProps) => {
         {...register}
         {...(id && { id: id })}
         placeholder="Cth: example@gmail.com"
-        className="input input-bordered w-full"
+        className="input input-bordered w-full shadow"
         {...rest}
         onChange={(e) => {
           if (onChange) onChange(e);

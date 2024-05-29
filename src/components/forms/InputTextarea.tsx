@@ -35,7 +35,7 @@ const InputTextarea = (props: InputTextareaProps) => {
         name={name}
         {...register}
         {...(id && { id: id })}
-        className="textarea textarea-bordered h-36 w-full"
+        className="textarea textarea-bordered h-36 w-full shadow"
         {...rest}
       ></textarea>
       <div className="label">

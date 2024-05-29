@@ -12,13 +12,26 @@ import InputTextarea from "../../../components/forms/InputTextarea";
 import { isAfter, isSameDay, parseISO } from "date-fns";
 import { useGetOneBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
 import useAuth from "../../../hooks/general/use-auth-user";
+import { ADMIN_ROLE_INT } from "../../../lib/constants";
+import AlertContainer from "../../../components/layout/AlertContainer";
+
+const agreementMap = [
+  {
+    text: 'menolak',
+    style: 'text-error',
+  },
+  {
+    text: 'menyetujui',
+    style: 'text-success'
+  }
+]
 
 const ManageBorrowedRoomPage = () => {
-  const navigate = useNavigate();
-
   const { id } = useParams();
   const { data: borrowedRoom, status: borrowedRoomStatus } =
     useGetOneBorrowedRoom(id ?? "");
+
+  console.log(borrowedRoom);
 
   const { data: rooms, status: roomStatus } = useFetchRoom({});
   const {
@@ -27,6 +40,8 @@ const ManageBorrowedRoomPage = () => {
     errors,
     handleManageBorrowedRoom,
     handleDeleteBorrowedRoom,
+    handleAcceptBorrowedRoom,
+    handleDeclineBorrowedRoom,
     handleSubmit,
     watch,
     getValues,
@@ -71,6 +86,9 @@ const ManageBorrowedRoomPage = () => {
         <PageHeader
           pageName={`${borrowedRoom ? "" : "Buat "}Proposal Pinjam Ruang`}
         />
+        <AlertContainer notification={(borrowedRoom?.borrowed_room_agreements ?? []).map((agreement) => ({
+          message: <span>{agreement.created_by.name} telah <span className={agreementMap[agreement.agreement_status].style}>{ agreementMap[agreement.agreement_status].text }</span> permintaan ini.</span>
+        }))}/>
         <form
           onSubmit={handleSubmit(handleManageBorrowedRoom)}
           className="grid grid-cols-6 mx-6 gap-x-4"
@@ -201,21 +219,37 @@ const ManageBorrowedRoomPage = () => {
                 <button
                   className="btn !ml-0 btn-error"
                   type="button"
-                  onClick={async () => {
-                    await handleDeleteBorrowedRoom();
-                    navigate("/user/room-request");
-                  }}
+                  onClick={() => handleDeleteBorrowedRoom()}
                 >
                   Hapus
                 </button>
               )}
             </div>
           )}
+          {user && user.role === ADMIN_ROLE_INT && !ableToUpdate && (borrowedRoom?.borrowed_room_agreements ?? []).filter((agreement) => agreement.created_by_user_id === (user.id as string)).length === 0 && (
+            <div className="col-span-6 modal-action flex-row-reverse justify-between">
+              <button className="btn btn-primary" onClick={async () => {
+                await handleAcceptBorrowedRoom();
+              }}>Setujui</button>
+              <button
+                className="btn !ml-0 btn-error"
+                type="button"
+                onClick={async () => {
+                  await handleDeclineBorrowedRoom();
+                }}
+              >
+                Tolak
+              </button>
+            </div>
+          )}
         </form>
       </div>
-      <div className="flex flex-col">
-        <PageHeader pageName={`Persetujuan Pinjam Ruang`} />
-      </div>
+      {/* {user && user.role === ADMIN_ROLE_INT && (
+        <div className="flex flex-col">
+          <PageHeader pageName={`Persetujuan Pinjam Ruang`} />
+          <form action="" className="grid grid-cols-6 mx-6 gap-x-4"></form>
+        </div>
+      )} */}
     </section>
   );
 };

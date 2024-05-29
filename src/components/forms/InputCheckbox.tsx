@@ -66,7 +66,7 @@ const InputCheckbox = (props: InputCheckboxProps) => {
                 name={checkboxOption.name}
                 type="checkbox"
                 value={checkboxOption.id}
-                className="checkbox checkbox-primary bg-base-200"
+                className="checkbox checkbox-primary bg-base-200 shadow"
                 {...rest}
               />
               <span className="label-text">{checkboxOption.label}</span>

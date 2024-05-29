@@ -39,7 +39,7 @@ const InputSelect = (props: InputSelectProps) => {
         name={name}
         {...register}
         {...(id && { id: id })}
-        className="select select-bordered w-full"
+        className="select select-bordered w-full shadow"
         {...rest}
         onChange={(e) => {
           if (onChange) onChange(e);

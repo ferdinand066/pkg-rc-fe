@@ -7,6 +7,8 @@ import { BorrowedRoomModel } from "../../model/entities/borrowed-room";
 import { formLoadingStateAtom } from "../../lib/state/state";
 import { handleToastError, handleToastSuccess } from "../../lib/functions";
 import { BorrowedRoomService } from "../../services/general/borrowed-room-service";
+import { BorrowedRoomService as AdminBorrowedRoomService } from "../../services/admin/borrowed-room-service";
+import { useNavigate } from "react-router-dom";
 
 type ManageBorrowedRoomProps = {
   room_id: string;
@@ -29,6 +31,7 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
   } = useForm<ManageBorrowedRoomProps>();
   const [formLoading, setFormLoading] = useAtom(formLoadingStateAtom);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   // const { role } = useUser();
 
   useEffect(() => {
@@ -108,6 +111,39 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     setFormLoading(false);
     reset();
     queryClient.invalidateQueries({ queryKey: ["general/borrowed-room"] });
+    navigate('/room-request')
+  }
+
+  async function handleAcceptBorrowedRoom(){
+    if (!entity) return;
+    if (formLoading) return;
+
+    setFormLoading(true);
+    try {
+      await toast.promise(AdminBorrowedRoomService.acceptBorrowedRoom(entity.id as string), {
+        pending: "Waiting for accept borrowed room!",
+        error: handleToastError(),
+        success: handleToastSuccess(),
+      });
+    } catch (e) {}
+
+    setFormLoading(false);
+  }
+
+  async function handleDeclineBorrowedRoom(){
+    if (!entity) return;
+    if (formLoading) return;
+
+    setFormLoading(true);
+    try {
+      await toast.promise(AdminBorrowedRoomService.declineBorrowedRoom(entity.id as string), {
+        pending: "Waiting for decline borrowed room!",
+        error: handleToastError(),
+        success: handleToastSuccess(),
+      });
+    } catch (e) {}
+
+    setFormLoading(false);
   }
 
   return {
@@ -116,6 +152,8 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     errors,
     handleManageBorrowedRoom,
     handleDeleteBorrowedRoom,
+    handleAcceptBorrowedRoom,
+    handleDeclineBorrowedRoom,
     handleSubmit,
     watch,
     getValues,
