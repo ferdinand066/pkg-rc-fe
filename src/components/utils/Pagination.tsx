@@ -2,6 +2,7 @@ import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronLeftIcon, Chevron
 import { PaginationProps } from "../../model/components/pagination";
 import LoadingSkeleton from "./LoadingSkeleton";
 import { classJoin } from "../../lib/functions";
+import { Fragment } from "react/jsx-runtime";
 
 type PaginationComponentProps<T> = {
   status: "error" | "pending" | "success";
@@ -20,7 +21,8 @@ export default function Pagination<T>({
   page,
   setPage,
 }: PaginationComponentProps<T>) {
-  const handlePageChange = (str: string) => {
+  const handlePageChange = (str: string | null) => {
+    if (!str) return;
     const url = new URL(str);
     const queryParams = new URLSearchParams(url.search);
 
@@ -97,11 +99,12 @@ export default function Pagination<T>({
                 data?.links
                   .map((link, index) => {
                     let child: string | JSX.Element = link.label;
+                    if (!link.url) return <Fragment key={index}/>
                     if (child.includes("&laquo")) {
                       return (
                         <button
                           key={index}
-                          onClick={() => handlePageChange(link.url!)}
+                          onClick={() => handlePageChange(link.url)}
                           className="shadow join-item btn h-10 min-h-10 text-neutral-500 hover:text-neutral-700"
                         >
                           <span className="sr-only">Next</span>

@@ -19,6 +19,7 @@ export type BorrowedRoomModel = GeneralData & {
   borrowed_status: number,
   borrowed_room_items: BorrowedRoomItemModel[],
   borrowed_room_agreements: BorrowedRoomAgreement[],
+  reason: string,
   item_id?: string[],
 }
 

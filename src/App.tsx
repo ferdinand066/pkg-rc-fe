@@ -2,22 +2,23 @@ import { ClockIcon } from "@heroicons/react/outline";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import axios from "axios";
 import { useAtomValue } from "jotai";
-import { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import LoadingFallback from "./components/layout/LoadingFallback";
 import { authAtom } from "./lib/state/auth-state";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import Layout from "./components/layout/Layout";
-import RoomIndex from "./pages/admin/room";
-import LoginPage from "./pages/auth/login";
-import RegisterPage from "./pages/auth/register";
-import ScheduleIndexPage from "./pages/schedule";
-import UserIndex from "./pages/admin/user";
-import UserShow from "./pages/admin/user/show";
-import ItemIndex from "./pages/admin/item";
-import UserBorrowedRoomIndex from "./pages/user/borrowed-room";
-import ManageBorrowedRoomPage from "./pages/user/borrowed-room/manage";
+
+const LoadingFallback = React.lazy(() => import("./components/layout/LoadingFallback"));
+const Layout = React.lazy(() => import("./components/layout/Layout"));
+const RoomIndex = React.lazy(() => import("./pages/admin/room"));
+const LoginPage = React.lazy(() => import("./pages/auth/login"));
+const RegisterPage = React.lazy(() => import("./pages/auth/register"));
+const ScheduleIndexPage = React.lazy(() => import("./pages/schedule"));
+const UserIndex = React.lazy(() => import("./pages/admin/user"));
+const UserShow = React.lazy(() => import("./pages/admin/user/show"));
+const ItemIndex = React.lazy(() => import("./pages/admin/item"));
+const UserBorrowedRoomIndex = React.lazy(() => import("./pages/user/borrowed-room"));
+const ManageBorrowedRoomPage = React.lazy(() => import("./pages/user/borrowed-room/manage"));
 
 const queryClient = new QueryClient();
 

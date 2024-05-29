@@ -9,7 +9,7 @@ import ItemManageModal from "./components/ManageModal";
 const header = ["name", "room_at"];
 
 const ItemIndex = () => {
-  const { data, status } = useFetchItem({});
+  const { data } = useFetchItem({});
 
   console.log(data);
 

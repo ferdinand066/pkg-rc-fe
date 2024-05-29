@@ -31,7 +31,7 @@ export default function useRegisterForm() {
     setFormLoading(true);
     try {
       localStorage.clear();
-      const { data: res } = await toast.promise(UserService.register(data), {
+      await toast.promise(UserService.register(data), {
         pending: "Dalam proses pendaftaran!",
         error: handleToastError(),
         success: handleToastSuccess(),

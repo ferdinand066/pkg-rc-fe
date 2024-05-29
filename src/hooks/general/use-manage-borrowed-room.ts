@@ -37,7 +37,6 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
   useEffect(() => {
     reset();
     if (entity) {
-      console.log(entity);
       Object.keys(entity).filter((fieldName) => fieldName !== 'item_id').forEach((fieldName) => {
         setValue(
           fieldName as keyof ManageBorrowedRoomProps,
@@ -45,12 +44,10 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
         );
       });
 
-      entity.item_id?.map((item, idx) => {
-        console.log(idx);
-        console.log(item);
-        return setValue(`item_id.${idx}`, item)
+      entity.borrowed_room_items?.map((item, idx) => {
+        return setValue(`item_id.${idx}`, item.item_id)
       });
-      console.log(getValues('item_id'));
+      
     }
   }, [entity, setValue]);
 
@@ -63,8 +60,6 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
       ...data,
       item_id: (data.item_id ?? []).filter((d) => !!d)
     }
-
-    console.log(data);
 
     setFormLoading(true);
     try {
@@ -87,10 +82,8 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
 
     if (entity !== null) {
       queryClient.invalidateQueries({ queryKey: ["general/borrowed-room", entity.id] });
-    }
-
-    reset();
-
+    } 
+    
     setFormLoading(false);
   }
 
@@ -110,7 +103,12 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
 
     setFormLoading(false);
     reset();
+    
     queryClient.invalidateQueries({ queryKey: ["general/borrowed-room"] });
+
+    if (entity !== null) {
+      queryClient.invalidateQueries({ queryKey: ["general/borrowed-room", entity.id] });
+    }
     navigate('/room-request')
   }
 
@@ -128,6 +126,14 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     } catch (e) {}
 
     setFormLoading(false);
+
+    queryClient.invalidateQueries({ queryKey: ["general/borrowed-room"] });
+
+    if (entity !== null) {
+      queryClient.invalidateQueries({ queryKey: ["general/borrowed-room", entity.id] });
+    } else {
+      navigate('/room-request');
+    }
   }
 
   async function handleDeclineBorrowedRoom(){
@@ -144,6 +150,12 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     } catch (e) {}
 
     setFormLoading(false);
+
+    queryClient.invalidateQueries({ queryKey: ["general/borrowed-room"] });
+
+    if (entity !== null) {
+      queryClient.invalidateQueries({ queryKey: ["general/borrowed-room", entity.id] });
+    }
   }
 
   return {

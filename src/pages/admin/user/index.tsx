@@ -1,17 +1,14 @@
+import { format } from "date-fns";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import PageHeader from "../../../components/layout/PageHeader";
 import Pagination from "../../../components/utils/Pagination";
 import Table from "../../../components/utils/Table";
 import { useFetchUser } from "../../../hooks/admin/use-user";
 import { UserModel } from "../../../model/entities/user";
-import { format, parseISO } from "date-fns";
 
 const header = ['name', 'email', 'email_verified_at', 'account_accepted_at', 'accepted_by'];
 
 const UserIndex = () => {
-  const navigate = useNavigate();
-
   const [param, setParam] = useState({
     page: 1,
   });
@@ -25,8 +22,6 @@ const UserIndex = () => {
     accepted_by: user.accepted_by?.name ?? '-',
     redirect: '/admin/user/' + user.id,
   }));
-
-  console.log(users);
 
   return (
     <section className="flex flex-col h-full flex-1 gap-4">

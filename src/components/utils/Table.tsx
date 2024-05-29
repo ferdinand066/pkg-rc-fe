@@ -1,8 +1,8 @@
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/outline";
 import { startCase } from "lodash";
+import { Link } from "react-router-dom";
 import { classJoin } from "../../lib/functions";
 import { TableOrderType } from "../../model/components/table-order";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/outline";
-import { Link } from "react-router-dom";
 
 type TableProps = {
   header: string[];
@@ -19,7 +19,7 @@ const Table = ({
   numbering = false,
   enableSort = false,
   sortData,
-  setSortData,
+  // setSortData,
 }: TableProps) => {
   const tableHeader = header.filter((h) => h !== "action");
   return (

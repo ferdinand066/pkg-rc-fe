@@ -1,19 +1,20 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { isAfter, isSameDay, parseISO } from "date-fns";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import InputCheckbox from "../../../components/forms/InputCheckbox";
 import InputSelect from "../../../components/forms/InputSelect";
 import InputText from "../../../components/forms/InputText";
-import PageHeader from "../../../components/layout/PageHeader";
-import { useFetchRoom } from "../../../hooks/general/use-room";
-import { RoomModel } from "../../../model/entities/room";
-import { useEffect, useState } from "react";
-import InputCheckbox from "../../../components/forms/InputCheckbox";
-import { GeneralData } from "../../../model/components/general-data";
-import useManageBorrowedRoom from "../../../hooks/general/use-manage-borrowed-room";
 import InputTextarea from "../../../components/forms/InputTextarea";
-import { isAfter, isSameDay, parseISO } from "date-fns";
-import { useGetOneBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
-import useAuth from "../../../hooks/general/use-auth-user";
-import { ADMIN_ROLE_INT } from "../../../lib/constants";
 import AlertContainer from "../../../components/layout/AlertContainer";
+import PageHeader from "../../../components/layout/PageHeader";
+import useAuth from "../../../hooks/general/use-auth-user";
+import { useGetOneBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
+import useManageBorrowedRoom from "../../../hooks/general/use-manage-borrowed-room";
+import { useFetchRoom } from "../../../hooks/general/use-room";
+import { ADMIN_ROLE_INT, BORROWED_STATUS } from "../../../lib/constants";
+import { classJoin } from "../../../lib/functions";
+import { GeneralData } from "../../../model/components/general-data";
+import { RoomModel } from "../../../model/entities/room";
 
 const agreementMap = [
   {
@@ -26,12 +27,12 @@ const agreementMap = [
   }
 ]
 
+const AGREEMENT_BORROW_COLOR = ['badge-error', 'badge-warning', 'badge-success']
+
 const ManageBorrowedRoomPage = () => {
   const { id } = useParams();
-  const { data: borrowedRoom, status: borrowedRoomStatus } =
+  const { data: borrowedRoom } =
     useGetOneBorrowedRoom(id ?? "");
-
-  console.log(borrowedRoom);
 
   const { data: rooms, status: roomStatus } = useFetchRoom({});
   const {
@@ -47,7 +48,7 @@ const ManageBorrowedRoomPage = () => {
     getValues,
   } = useManageBorrowedRoom(borrowedRoom);
 
-  const [initialize, setInitialize] = useState(false);
+  const [initialize, _] = useState(false);
   const [ableToUpdate, setAbleToUpdate] = useState(false);
 
   const { user } = useAuth();
@@ -85,6 +86,9 @@ const ManageBorrowedRoomPage = () => {
       <div className="flex flex-col">
         <PageHeader
           pageName={`${borrowedRoom ? "" : "Buat "}Proposal Pinjam Ruang`}
+          action={borrowedRoom && borrowedRoom?.borrowed_status !== null ?
+            <div className={classJoin("badge badge-outline px-4 py-3", AGREEMENT_BORROW_COLOR[borrowedRoom?.borrowed_status])}>{BORROWED_STATUS[borrowedRoom?.borrowed_status]}</div> : <></>
+          }
         />
         <AlertContainer notification={(borrowedRoom?.borrowed_room_agreements ?? []).map((agreement) => ({
           message: <span>{agreement.created_by.name} telah <span className={agreementMap[agreement.agreement_status].style}>{ agreementMap[agreement.agreement_status].text }</span> permintaan ini.</span>
@@ -226,7 +230,7 @@ const ManageBorrowedRoomPage = () => {
               )}
             </div>
           )}
-          {user && user.role === ADMIN_ROLE_INT && !ableToUpdate && (borrowedRoom?.borrowed_room_agreements ?? []).filter((agreement) => agreement.created_by_user_id === (user.id as string)).length === 0 && (
+          {user && user.role === ADMIN_ROLE_INT && !ableToUpdate && borrowedRoom && (borrowedRoom?.borrowed_room_agreements ?? []).filter((agreement) => agreement.created_by_user_id === (user.id as string)).length === 0 && (
             <div className="col-span-6 modal-action flex-row-reverse justify-between">
               <button className="btn btn-primary" onClick={async () => {
                 await handleAcceptBorrowedRoom();

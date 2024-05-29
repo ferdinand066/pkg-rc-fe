@@ -16,7 +16,6 @@ const useManageItem = (entity: ItemModel | null = null) => {
   const {
     register,
     setValue,
-    getValues,
     formState: { errors },
     handleSubmit,
     watch,
