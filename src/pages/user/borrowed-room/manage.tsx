@@ -15,6 +15,7 @@ import { ADMIN_ROLE_INT, BORROWED_STATUS } from "../../../lib/constants";
 import { classJoin } from "../../../lib/functions";
 import { GeneralData } from "../../../model/components/general-data";
 import { RoomModel } from "../../../model/entities/room";
+import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 
 const agreementMap = [
   {
@@ -28,6 +29,19 @@ const agreementMap = [
 ]
 
 const AGREEMENT_BORROW_COLOR = ['badge-error', 'badge-warning', 'badge-success']
+
+const fetchNotification = (borrowedRoom: BorrowedRoomModel | null | undefined) => {
+  if (!borrowedRoom) return [];
+  const processedAgreements = (borrowedRoom?.borrowed_room_agreements ?? []).map((agreement) => ({
+    message: <span>{agreement.created_by.name} telah <span className={agreementMap[agreement.agreement_status].style}>{ agreementMap[agreement.agreement_status].text }</span> permintaan ini.</span>
+  }))
+
+  const pendingAgreements = {
+    message: <span><span className="text-warning">Menunggu konfirmasi</span> dari {borrowedRoom.pending_users?.map((user) => user.name).join(', ')}</span>
+  }
+
+  return [...processedAgreements, pendingAgreements]
+}
 
 const ManageBorrowedRoomPage = () => {
   const { id } = useParams();
@@ -90,9 +104,7 @@ const ManageBorrowedRoomPage = () => {
             <div className={classJoin("badge badge-outline px-4 py-3", AGREEMENT_BORROW_COLOR[borrowedRoom?.borrowed_status])}>{BORROWED_STATUS[borrowedRoom?.borrowed_status]}</div> : <></>
           }
         />
-        <AlertContainer notification={(borrowedRoom?.borrowed_room_agreements ?? []).map((agreement) => ({
-          message: <span>{agreement.created_by.name} telah <span className={agreementMap[agreement.agreement_status].style}>{ agreementMap[agreement.agreement_status].text }</span> permintaan ini.</span>
-        }))}/>
+        <AlertContainer notification={fetchNotification(borrowedRoom)}/>
         <form
           onSubmit={handleSubmit(handleManageBorrowedRoom)}
           className="grid grid-cols-6 mx-6 gap-x-4"
@@ -168,7 +180,10 @@ const ManageBorrowedRoomPage = () => {
                   required: "Ruangan harus diisi",
                 })}
                 setValue={setValue}
-                model={(rooms as RoomModel[]) ?? []}
+                model={(rooms as RoomModel[]).map((room) => ({
+                  id: room.id,
+                  name: room.name + ' (' + room.floor.name + ')'
+                })) ?? []}
                 // onChange={(e) => setSelectedId(e.target.value)}
                 errors={errors}
               />

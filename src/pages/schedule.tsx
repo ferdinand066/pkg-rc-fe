@@ -3,6 +3,7 @@ import PageHeader from "../components/layout/PageHeader";
 import useSchedule from "../hooks/general/use-schedule";
 import useWindowDimensions from "../hooks/general/use-window-dimension";
 import { RoomModel } from "../model/entities/room";
+import { useState } from "react";
 
 const theme = {
   primary: {
@@ -53,7 +54,7 @@ interface ChannelItemProps {
 const ChannelItem = ({ channel }: ChannelItemProps) => {
   const { position } = channel;
   return (
-    <ChannelBox {...position} n>
+    <ChannelBox {...position}>
       <div className="p-4 flex flex-col h-24 text-xs w-full justify-center">
         <span>{channel.name}</span>
         <span>{channel.floor.name}</span>
@@ -65,6 +66,7 @@ const ChannelItem = ({ channel }: ChannelItemProps) => {
 
 const ScheduleIndexPage = () => {
   const { width } = useWindowDimensions();
+  const [date, setDate] = useState(new Date());
 
   // const navigate = useNavigate();
 
@@ -77,7 +79,7 @@ const ScheduleIndexPage = () => {
   const { getEpgProps, getLayoutProps } = useEpg({
     epg: data?.epgs ?? [],
     channels: data?.channels ?? [],
-    startDate: new Date(),
+    startDate: date,
     sidebarWidth: 200,
     width: width - 72 > 1280 ? 1280 : width - 72, //set to current screen width
     theme: theme,
@@ -90,7 +92,7 @@ const ScheduleIndexPage = () => {
       <div className="mx-6 h-[75vh] shadow transition-none">
         <Epg {...getEpgProps()}>
           <Layout {...getLayoutProps()} 
-            renderChannel={({channel}) => <ChannelItem channel={channel} />}
+            renderChannel={({channel}) => <ChannelItem key={channel.uuid} channel={channel} />}
           />
         </Epg>
       </div>

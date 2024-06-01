@@ -15,6 +15,7 @@ export type BorrowedRoomModel = GeneralData & {
   start_time: Date,
   end_time: Date,
   borrowed_by: UserModel,
+  pending_users?: UserModel[],
   borrowed_by_user_id: string,
   borrowed_status: number,
   borrowed_room_items: BorrowedRoomItemModel[],

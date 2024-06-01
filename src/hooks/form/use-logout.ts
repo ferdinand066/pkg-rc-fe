@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { handleToastError, handleToastSuccess } from "../../lib/functions";
 import { authAtom } from "../../lib/state/auth-state";
 import { removeCookie } from "../../lib/state/cookie-encrypt";
-import { formLoadingStateAtom, navbarInitialLoadAtom } from "../../lib/state/state";
+import { appThemeAtom, formLoadingStateAtom, navbarInitialLoadAtom } from "../../lib/state/state";
 import { UserService } from "../../services/general/user-service";
 import useAuth from "../general/use-auth-user";
 
@@ -17,6 +17,8 @@ export default function useLogout() {
   const navigate = useNavigate();
   const { mutation }= useAuth();
   const queryClient = useQueryClient();
+
+  const [theme, setTheme] = useAtom(appThemeAtom);
 
   async function handleLogoutEvent() {
     if (formLoading) return;
@@ -36,7 +38,11 @@ export default function useLogout() {
       delete axios.defaults.headers.common["Authorization"];
 
       setNavbarInitialLoadAtom(false);
+
+      const currentTheme = theme;
       localStorage.clear();
+
+      setTheme(currentTheme);
       queryClient.clear();
       navigate("/login");
     } catch (e) {}

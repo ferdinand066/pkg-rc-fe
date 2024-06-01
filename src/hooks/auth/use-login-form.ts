@@ -1,7 +1,7 @@
 import { useAtom, useSetAtom } from "jotai";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { formLoadingStateAtom } from "../../lib/state/state";
+import { appThemeAtom, formLoadingStateAtom } from "../../lib/state/state";
 import { TokenData, authAtom } from "../../lib/state/auth-state";
 import { useNavigate } from "react-router-dom";
 import { UserService } from "../../services/general/user-service";
@@ -22,6 +22,8 @@ export default function useLoginForm() {
     handleSubmit,
   } = useForm<LoginProps>();
   const [formLoading, setFormLoading] = useAtom(formLoadingStateAtom);
+  const [theme, setTheme] = useAtom(appThemeAtom);
+
   const setAuth = useSetAtom(authAtom);
   const navigate = useNavigate();
 
@@ -30,7 +32,10 @@ export default function useLoginForm() {
 
     setFormLoading(true);
     try {
+      const currentTheem = theme;
       localStorage.clear();
+
+      setTheme(currentTheem);
       const { data: res } = await toast.promise(UserService.login(data), {
         pending: "Dalam proses login!",
         error: handleToastError(),

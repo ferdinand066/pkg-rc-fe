@@ -1,5 +1,5 @@
 import { PhoneIcon } from "@heroicons/react/outline";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useLogout from "../../hooks/form/use-logout";
@@ -211,14 +211,15 @@ const Navbar = () => {
 };
 
 const ThemeToggle = () => {
-  const setTheme = useSetAtom(appThemeAtom);
+  const [theme, setTheme] = useAtom(appThemeAtom);
 
   return (
     <label className="swap swap-rotate">
       <input
         type="checkbox"
         className="theme-controller hidden"
-        value="dark"
+        checked={theme === "dark"}
+        value={theme}
         onChange={(e) => setTheme((_) => (e.target.checked ? "dark" : "light"))}
       />
       <svg
