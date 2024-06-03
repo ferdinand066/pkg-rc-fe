@@ -9,17 +9,26 @@ import { handleToastError, handleToastSuccess } from "../../lib/functions";
 import { BorrowedRoomService } from "../../services/general/borrowed-room-service";
 import { BorrowedRoomService as AdminBorrowedRoomService } from "../../services/admin/borrowed-room-service";
 import { useNavigate } from "react-router-dom";
+import { RoomModel } from "../../model/entities/room";
 
 type ManageBorrowedRoomProps = {
   room_id: string;
+  pic_name: string;
+  pic_phone_number: string;
+  event_name: string;
   borrowed_date: string,
-  start_time: string,
-  end_time: string,
-  item_id: string[];
-  reason: string,
+  start_borrowing_time: string,
+  start_event_time: string,
+  end_event_time: string,
+  capacity: number,
+  description: string,
+  items: {
+    item_id: string;
+    quantity: number;
+  }[],
 };
 
-const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
+const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null, selectedRoom: RoomModel | null | undefined) => {
   const {
     register,
     setValue,
@@ -37,19 +46,28 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
   useEffect(() => {
     reset();
     if (entity) {
-      Object.keys(entity).filter((fieldName) => fieldName !== 'item_id').forEach((fieldName) => {
+      Object.keys(entity).filter((fieldName) => !['room_items', 'item_id'].includes(fieldName)).forEach((fieldName) => {
         setValue(
           fieldName as keyof ManageBorrowedRoomProps,
           (entity as any)[fieldName]!
         );
       });
 
-      entity.borrowed_room_items?.map((item, idx) => {
-        return setValue(`item_id.${idx}`, item.item_id)
+      entity.borrowed_room_items?.map((item) => {
+        const items = selectedRoom?.room_items?.map((item) => item.item_id);
+
+        const idx = (items ?? []).indexOf(item.item_id);
+        if (idx === undefined) return;
+        if (idx < 0) return;
+
+        setValue(`items.${idx}.item_id`, item.item_id)
+        setValue(`items.${idx}.quantity`, item.quantity)
+
+        return;
       });
       
     }
-  }, [entity, setValue]);
+  }, [entity, setValue, selectedRoom]);
 
   async function handleManageBorrowedRoom(data: ManageBorrowedRoomProps) {
     // if (!role) return;
@@ -58,7 +76,7 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     // if data.start_time format is H:i:s, change it into H:I
     data = {
       ...data,
-      item_id: (data.item_id ?? []).filter((d) => !!d)
+      items: data.items.filter((d) => !!d.item_id)
     }
 
     setFormLoading(true);
@@ -116,9 +134,13 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     if (!entity) return;
     if (formLoading) return;
 
+    const value = getValues('start_borrowing_time');
+
     setFormLoading(true);
     try {
-      await toast.promise(AdminBorrowedRoomService.acceptBorrowedRoom(entity.id as string), {
+      await toast.promise(AdminBorrowedRoomService.acceptBorrowedRoom(entity.id as string, {
+        start_borrowing_time: value,
+      }), {
         pending: "Waiting for accept borrowed room!",
         error: handleToastError(),
         success: handleToastSuccess(),

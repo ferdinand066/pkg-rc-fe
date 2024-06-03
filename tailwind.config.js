@@ -1,5 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  // purge: {
+  //   preserveHtmlElements: true,
+  //   // content: ['./src/**/*.html'],
+  // },
   daisyui: {
     themes: ["light", "dark"]
   },
@@ -25,8 +29,8 @@ export default {
       },
     },
   },
-  plugins: [
-    require("@tailwindcss/forms"),
+  plugins: [  
+    // require("@tailwindcss/forms"),
     require("@tailwindcss/aspect-ratio"),
     require("daisyui"),
   ],

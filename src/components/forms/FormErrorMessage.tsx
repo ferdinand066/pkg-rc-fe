@@ -17,7 +17,7 @@ const FormErrorMessage = ({
       <ErrorMessage
         errors={errors}
         name={name}
-        as={<div className="label-text text-error"></div>}
+        as={<div className="label-text text-error text-xs"></div>}
       />
     </div>
   );

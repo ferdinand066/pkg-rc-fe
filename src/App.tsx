@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { authAtom } from "./lib/state/auth-state";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { appThemeAtom } from "./lib/state/state";
 
 const LoadingFallback = React.lazy(() => import("./components/layout/LoadingFallback"));
 const Layout = React.lazy(() => import("./components/layout/Layout"));
@@ -24,6 +25,8 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const auth = useAtomValue(authAtom);
+  const theme = useAtomValue(appThemeAtom);
+
   const [headersSet, setHeadersSet] = useState(false);
 
   useEffect(() => {
@@ -51,7 +54,7 @@ const App = () => {
     <Suspense fallback={<LoadingFallback />}>
       <QueryClientProvider client={queryClient}>
         {auth ? <AuthenticatedRoutes /> : <UnauthenticatedRoutes />}
-        <ToastContainer />
+        <ToastContainer theme={theme}/>
       </QueryClientProvider>
     </Suspense>
   );

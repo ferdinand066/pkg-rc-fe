@@ -6,7 +6,7 @@ const AlertContainer = ({ notification }: { notification: AlertData[] }) => {
   return notification.length > 0 ? (
     <div className="flex flex-col gap-4 mx-6 mb-6">
       {notification.map((notification, index) => (
-        <div key={index} role="alert" className="alert shadow">
+        <div key={index} role="alert" className="alert shadow flex flex-row text-start">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

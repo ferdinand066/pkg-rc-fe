@@ -1,12 +1,11 @@
 import { forwardRef, useEffect, useState } from "react";
 import InputSelect from "../../../../components/forms/InputSelect";
 import InputText from "../../../../components/forms/InputText";
+import InputToggle from "../../../../components/forms/InputToggle";
 import useManageRoom from "../../../../hooks/admin/form/use-manage-room";
 import { useFetchFloor } from "../../../../hooks/general/use-floor";
-import { RoomModel } from "../../../../model/entities/room";
-import InputCheckbox from "../../../../components/forms/InputCheckbox";
 import { useFetchItem } from "../../../../hooks/general/use-item";
-import { GeneralData } from "../../../../model/components/general-data";
+import { RoomModel } from "../../../../model/entities/room";
 
 type RoomManageModalProps = {
   selectedRoom: RoomModel | undefined;
@@ -14,23 +13,26 @@ type RoomManageModalProps = {
 
 const RoomManageModal = forwardRef<HTMLDialogElement, RoomManageModalProps>(
   ({ selectedRoom }, ref) => {
-    const { data: floors, status: floorStatus } = useFetchFloor({});
+    const { data: floors, status: floorStatus } = useFetchFloor({
+      orderBy: 'created_at',
+      dataOrder: 'asc',
+    });
     const { data: items, status: itemStatus } = useFetchItem({});
     const [selectedData, setSelectedData] = useState(selectedRoom);
 
     useEffect(() => {
-      if (itemStatus !== 'success') return;
-      if (!selectedRoom){
+      if (itemStatus !== "success") return;
+      if (!selectedRoom) {
         setSelectedData(undefined);
         return;
       }
 
       const map = new Map<string, number>();
-      items?.forEach((item, index) => map.set(item.id as string, index))
+      items?.forEach((item, index) => map.set(item.id as string, index));
 
       const newArray = new Array<string>(items?.length ?? 0);
-      
-      for (const key of (selectedRoom?.item_id ?? [])) {
+
+      for (const key of selectedRoom?.item_id ?? []) {
         const index = map.get(key);
         if (index !== undefined) {
           newArray[index] = key;
@@ -39,11 +41,10 @@ const RoomManageModal = forwardRef<HTMLDialogElement, RoomManageModalProps>(
 
       const newData = {
         ...selectedRoom,
-        item_id: newArray
-      }
+        item_id: newArray,
+      };
 
       setSelectedData(newData);
-
     }, [itemStatus, selectedRoom]);
 
     const {
@@ -53,6 +54,7 @@ const RoomManageModal = forwardRef<HTMLDialogElement, RoomManageModalProps>(
       handleManageRoom,
       handleDeleteRoom,
       handleSubmit,
+      watch,
     } = useManageRoom(selectedData);
 
     return (
@@ -61,7 +63,10 @@ const RoomManageModal = forwardRef<HTMLDialogElement, RoomManageModalProps>(
           {!selectedRoom ? "Buat Ruangan" : "Ubah Ruangan"}
         </h3>
         <form
-          onSubmit={handleSubmit(handleManageRoom)}
+          onSubmit={handleSubmit(async (data) => {
+            await handleManageRoom(data);
+            (ref as React.RefObject<HTMLDialogElement>).current?.close();
+          })}
           className="flex flex-col gap-2"
         >
           <InputText
@@ -89,19 +94,46 @@ const RoomManageModal = forwardRef<HTMLDialogElement, RoomManageModalProps>(
           ) : (
             <></>
           )}
+          <InputText
+            label="Kapasitas"
+            type="number"
+            name="capacity"
+            register={register("capacity", {
+              required: "Kapasitas harus diisi",
+            })}
+            min={1}
+            setValue={setValue}
+            errors={errors}
+          />
           {itemStatus === "success" ? (
-            <InputCheckbox
-              label="Barang"
-              name="item_id"
-              id="item_id"
-              checkboxOptions={(items ?? []).map((i: GeneralData, idx: number) => ({
-                id: "" + i.id,
-                label: i.name,
-                name: `item_id.${idx}`,
-                register: register(`item_id.${idx}`),
-              }))}
-              errors={errors}
-            />
+            items?.map((item, index) => {
+              const itemValue = watch(`items.${index}.item_id`);
+              return (
+                <div className="grid grid-cols-3 items-center" key={item.id}>
+                  <InputToggle
+                    label={item.name}
+                    name={`items.${index}.item_id`}
+                    id={`items.${index}.item_id`}
+                    value={item.id}
+                    register={register(`items.${index}.item_id`)}
+                    inputContainerClassName="col-span-2"
+                    errors={errors}
+                  />
+                  {!!itemValue && <InputText
+                    type="number"
+                    inputClassName="input-sm"
+                    placeholder="Jumlah barang"
+                    min={1}
+                    name={`items.${index}.quantity`}
+                    id={`items.${index}.quantity`}
+                    register={register(`items.${index}.quantity`, {
+                      required: "Harus diisi",
+                    })}
+                    errors={errors}
+                  />}
+                </div>
+              );
+            })
           ) : (
             <></>
           )}
@@ -119,9 +151,6 @@ const RoomManageModal = forwardRef<HTMLDialogElement, RoomManageModalProps>(
               <button
                 className="btn btn-primary"
                 type="submit"
-                onClick={() =>
-                  (ref as React.RefObject<HTMLDialogElement>).current?.close()
-                }
               >
                 {selectedRoom ? "Ubah" : "Buat"}
               </button>

@@ -1,9 +1,19 @@
-import { ChannelBox, Epg, Layout, useEpg } from "planby";
+import { ChannelBox, Epg, Layout, useEpg,
+  ProgramBox,
+  ProgramContent,
+  ProgramFlex,
+  ProgramStack,
+  ProgramTitle,
+  ProgramText,
+  ProgramImage,
+  useProgram,
+  ProgramItem } from "planby";
 import PageHeader from "../components/layout/PageHeader";
 import useSchedule from "../hooks/general/use-schedule";
 import useWindowDimensions from "../hooks/general/use-window-dimension";
 import { RoomModel } from "../model/entities/room";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const theme = {
   primary: {
@@ -54,9 +64,9 @@ interface ChannelItemProps {
 const ChannelItem = ({ channel }: ChannelItemProps) => {
   const { position } = channel;
   return (
-    <ChannelBox {...position}>
+    <ChannelBox {...position} >
       <div className="p-4 flex flex-col h-24 text-xs w-full justify-center">
-        <span>{channel.name}</span>
+        <span onClick={() => console.log(channel)}>{channel.name}</span>
         <span>{channel.floor.name}</span>
       </div>
     </ChannelBox>
@@ -64,9 +74,40 @@ const ChannelItem = ({ channel }: ChannelItemProps) => {
 };
 
 
+
+const Item = ({ program,...rest }: ProgramItem) => {
+  const { styles, formatTime, isLive, isMinWidth } = useProgram({ program,...rest });
+
+  const { data } = program;
+  const { image, title, since, till } = data;
+
+  const sinceTime = formatTime(since);
+  const tillTime = formatTime(till);
+
+  const navigate = useNavigate();
+
+  return (
+    <ProgramBox width={styles.width} style={styles.position} onClick={() => navigate('/room-request/' + program.data.id)}>
+      <ProgramContent
+        width={styles.width}
+        isLive={isLive}
+      >
+        <ProgramFlex>
+          <ProgramStack>
+            <ProgramTitle>{title}</ProgramTitle>
+            <ProgramText>
+              {sinceTime} - {tillTime}
+            </ProgramText>
+          </ProgramStack>
+        </ProgramFlex>
+      </ProgramContent>
+    </ProgramBox>
+  );
+};
+
 const ScheduleIndexPage = () => {
   const { width } = useWindowDimensions();
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState("2024-06-03");
 
   // const navigate = useNavigate();
 
@@ -93,6 +134,9 @@ const ScheduleIndexPage = () => {
         <Epg {...getEpgProps()}>
           <Layout {...getLayoutProps()} 
             renderChannel={({channel}) => <ChannelItem key={channel.uuid} channel={channel} />}
+            renderProgram={({ program,...rest }) => (
+              <Item key={program.data.id} program={program} {...rest} />
+            )}
           />
         </Epg>
       </div>

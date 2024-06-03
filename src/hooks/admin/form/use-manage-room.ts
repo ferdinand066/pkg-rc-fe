@@ -11,7 +11,11 @@ import { RoomService } from "../../../services/admin/room-service";
 type ManageRoomProps = {
   name: string;
   floor_id: string;
-  item_id: (string | null)[];
+  capacity: number;
+  items: {
+    item_id: string;
+    quantity: number;
+  }[],
 };
 
 const useManageRoom = (entity: RoomModel | null = null) => {
@@ -31,20 +35,23 @@ const useManageRoom = (entity: RoomModel | null = null) => {
   useEffect(() => {
     reset();
     if (entity) {
-      console.log(entity);
-      Object.keys(entity).filter((fieldName) => fieldName !== 'item_id').forEach((fieldName) => {
+      Object.keys(entity).filter((fieldName) => !['room_items', 'item_id'].includes(fieldName)).forEach((fieldName) => {
         setValue(
           fieldName as keyof ManageRoomProps,
           (entity as any)[fieldName]!
         );
       });
 
-      entity.item_id?.map((item, idx) => {
-        console.log(idx);
-        console.log(item);
-        return setValue(`item_id.${idx}`, item)
+      entity.room_items?.map((item) => {
+        const idx = entity.item_id?.indexOf(item.item_id);
+        if (idx === undefined) return;
+        if (idx < 0) return;
+
+        setValue(`items.${idx}.item_id`, item.item_id)
+        setValue(`items.${idx}.quantity`, item.quantity)
+
+        return;
       });
-      console.log(getValues('item_id'));
     }
   }, [entity, setValue]);
 
@@ -54,12 +61,13 @@ const useManageRoom = (entity: RoomModel | null = null) => {
     if (formLoading) return;
     data = {
       ...data,
-      item_id: data.item_id.filter((d) => !!d)
+      items: data.items.filter((d) => !!d.item_id)
     }
 
     setFormLoading(true);
     try {
       if (entity) {
+        console.log(data);
         await toast.promise(RoomService.updateRoom(entity.id as string, data), {
           pending: "Waiting for update room!",
           error: handleToastError(),
@@ -107,6 +115,7 @@ const useManageRoom = (entity: RoomModel | null = null) => {
   return {
     register,
     setValue,
+    getValues,
     errors,
     handleManageRoom,
     handleDeleteRoom,

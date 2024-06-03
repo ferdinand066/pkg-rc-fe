@@ -18,4 +18,5 @@ export type RoomItem = {
   item_id: string,
   room: RoomModel,
   item: ItemModel,
+  quantity: number,
 }

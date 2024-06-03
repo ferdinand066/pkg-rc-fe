@@ -5,7 +5,6 @@
 .input:has(> input[disabled]), .input-disabled, .input:disabled, .input[disabled], .select:disabled, .textarea:disabled {
     cursor: not-allowed;
     --tw-border-opacity: 1;
-    /* border-color: var(--fallback-b2, oklch(var(--b2) / var(--tw-border-opacity))); */
     --tw-bg-opacity: 1;
     background-color: var(--fallback-b2, oklch(var(--b1) / var(--tw-bg-opacity)));
     color: inherit;

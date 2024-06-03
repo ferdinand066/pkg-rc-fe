@@ -1,5 +1,5 @@
 import { InputHTMLAttributes } from "react";
-import { getErrorValue } from "../../lib/functions";
+import { classJoin, getErrorValue } from "../../lib/functions";
 import { OtherInputProps } from "../../model/components/other-input-props";
 import FormErrorMessage from "./FormErrorMessage";
 
@@ -24,6 +24,7 @@ const InputText = (props: InputTextProps) => {
     prefix,
     ...rest
   } = props;
+
   return (
     <label className="form-control w-full">
       {label && (
@@ -35,8 +36,10 @@ const InputText = (props: InputTextProps) => {
         name={name}
         {...register}
         {...(id && { id: id })}
-        placeholder="Cth: example@gmail.com"
-        className="input input-bordered w-full shadow"
+        className={classJoin(
+          "input input-bordered w-full shadow",
+          inputClassName ?? ""
+        )}
         {...rest}
         onChange={(e) => {
           if (onChange) onChange(e);
@@ -44,14 +47,17 @@ const InputText = (props: InputTextProps) => {
           setValue(name!, e.target.value);
         }}
       />
-      <div className="label">
-        {description && <span className="label-text">{description}</span>}
-        {errors &&
-          (getErrorValue(name ?? "", errors) ||
-            (errors as any)[name ?? ""]) && (
-            <FormErrorMessage name={name ?? ""} errors={errors as any} />
-          )}
-      </div>
+      {description ||
+        (errors && getErrorValue(name ?? "", errors) && (
+          <div className="label">
+            {description && <span className="label-text">{description}</span>}
+            {errors &&
+              (getErrorValue(name ?? "", errors) ||
+                (errors as any)[name ?? ""]) && (
+                <FormErrorMessage name={name ?? ""} errors={errors as any} />
+              )}
+          </div>
+        ))}
     </label>
   );
 };

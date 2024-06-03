@@ -8,7 +8,7 @@ import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { UserModel } from "../../../model/entities/user";
 import { BORROWED_STATUS } from "../../../lib/constants";
 
-const header = ["room_name", "borrowed_date", "start_time", "end_time", "borrowed_by", "status"];
+const header = ["room_name", "borrowed_date", "start_borrowing_time", "end_event_time", "borrowed_by", "status"];
 
 const UserBorrowedRoomIndex = () => {
   const [param, setParam] = useState({
