@@ -28,6 +28,7 @@ const InputSelect = (props: InputSelectProps) => {
     model,
     ...rest
   } = props;
+
   return (
     <label className="form-control w-full">
       {label && (

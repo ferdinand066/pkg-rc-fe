@@ -28,7 +28,7 @@ type ManageBorrowedRoomProps = {
   }[],
 };
 
-const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null, selectedRoom: RoomModel | null | undefined) => {
+const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null, rooms: RoomModel[]) => {
   const {
     register,
     setValue,
@@ -54,7 +54,12 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null, selected
       });
 
       entity.borrowed_room_items?.map((item) => {
-        const items = selectedRoom?.room_items?.map((item) => item.item_id);
+        const watchRoomId = watch('room_id');
+
+        const selectedRoom = rooms.find((room) => room.id === watchRoomId);
+        const items = selectedRoom?.room_items?.map((room) => room.item_id);
+
+        console.log(items);
 
         const idx = (items ?? []).indexOf(item.item_id);
         if (idx === undefined) return;
@@ -67,7 +72,7 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null, selected
       });
       
     }
-  }, [entity, setValue, selectedRoom]);
+  }, [entity, setValue, rooms]);
 
   async function handleManageBorrowedRoom(data: ManageBorrowedRoomProps) {
     // if (!role) return;

@@ -7,6 +7,7 @@ import { useFetchBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { UserModel } from "../../../model/entities/user";
 import { BORROWED_STATUS } from "../../../lib/constants";
+import useAuth from "../../../hooks/general/use-auth-user";
 
 const header = ["room_name", "borrowed_date", "start_borrowing_time", "end_event_time", "borrowed_by", "status"];
 
@@ -14,6 +15,8 @@ const UserBorrowedRoomIndex = () => {
   const [param, setParam] = useState({
     page: 1,
   });
+
+  const { user } = useAuth();
 
   const { data, status } = useFetchBorrowedRoom(param);
   const navigate = useNavigate();
@@ -36,8 +39,8 @@ const UserBorrowedRoomIndex = () => {
     <section className="flex flex-col h-full flex-1 gap-4">
       <PageHeader
         pageName="Proposal Pinjam Ruang"
-        action={
-          <button type="button" onClick={() => navigate('/room-request/create')} className="btn btn-primary h-10 max-h-10 text-sm">Buat Proposal</button>
+        action={ user?.role === 1 ?
+          <button type="button" onClick={() => navigate('/room-request/create')} className="btn btn-primary h-10 max-h-10 text-sm">Buat Proposal</button> : <></>
         }
       />
       <Table header={header} data={borrowedRooms ?? []} />

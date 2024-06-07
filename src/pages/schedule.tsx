@@ -1,19 +1,21 @@
-import { ChannelBox, Epg, Layout, useEpg,
+import {
+  ChannelBox, Epg, Layout,
   ProgramBox,
   ProgramContent,
   ProgramFlex,
+  ProgramItem,
   ProgramStack,
-  ProgramTitle,
   ProgramText,
-  ProgramImage,
-  useProgram,
-  ProgramItem } from "planby";
+  ProgramTitle,
+  useEpg,
+  useProgram
+} from "planby";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PageHeader from "../components/layout/PageHeader";
 import useSchedule from "../hooks/general/use-schedule";
 import useWindowDimensions from "../hooks/general/use-window-dimension";
 import { RoomModel } from "../model/entities/room";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const theme = {
   primary: {
@@ -76,10 +78,10 @@ const ChannelItem = ({ channel }: ChannelItemProps) => {
 
 
 const Item = ({ program,...rest }: ProgramItem) => {
-  const { styles, formatTime, isLive, isMinWidth } = useProgram({ program,...rest });
+  const { styles, formatTime, isLive } = useProgram({ program,...rest });
 
   const { data } = program;
-  const { image, title, since, till } = data;
+  const { title, since, till } = data;
 
   const sinceTime = formatTime(since);
   const tillTime = formatTime(till);
@@ -107,7 +109,7 @@ const Item = ({ program,...rest }: ProgramItem) => {
 
 const ScheduleIndexPage = () => {
   const { width } = useWindowDimensions();
-  const [date, setDate] = useState("2024-06-03");
+  const [date, _] = useState(new Date());
 
   // const navigate = useNavigate();
 

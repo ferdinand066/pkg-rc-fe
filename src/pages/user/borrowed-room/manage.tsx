@@ -10,7 +10,7 @@ import PageHeader from "../../../components/layout/PageHeader";
 import useAuth from "../../../hooks/general/use-auth-user";
 import { useGetOneBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
 import useManageBorrowedRoom from "../../../hooks/general/use-manage-borrowed-room";
-import { useFetchRoom } from "../../../hooks/general/use-room";
+import { useFetchRoom, useGetRoomAvailability } from "../../../hooks/general/use-room";
 import { ADMIN_ROLE_INT, BORROWED_STATUS } from "../../../lib/constants";
 import { classJoin } from "../../../lib/functions";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
@@ -71,7 +71,6 @@ const ManageBorrowedRoomPage = () => {
   const { data: borrowedRoom } = useGetOneBorrowedRoom(id ?? "");
 
   const { data: rooms, status: roomStatus } = useFetchRoom({});
-  const [selectedRoom, setSelectedRoom] = useState<RoomModel | null | undefined>();
 
   const {
     register,
@@ -84,9 +83,12 @@ const ManageBorrowedRoomPage = () => {
     handleSubmit,
     watch,
     getValues,
-  } = useManageBorrowedRoom(borrowedRoom, selectedRoom);
+  } = useManageBorrowedRoom(borrowedRoom, rooms as RoomModel[] ?? []);
 
-  const [initialize, _] = useState(false);
+  const watchRoomId = watch('room_id');
+  const watchBorrowedDate = watch('borrowed_date');
+
+  const [initialize, setInitialized] = useState(false);
   const [ableToUpdate, setAbleToUpdate] = useState(false);
 
   const { user } = useAuth();
@@ -95,6 +97,8 @@ const ManageBorrowedRoomPage = () => {
     if (roomStatus !== "success") return;
     if (initialize) return;
     if (borrowedRoom) return;
+    setInitialized(true);
+
     const roomData = rooms as RoomModel[];
     setValue("room_id", roomData[0].id as string);
   }, [initialize, roomStatus]);
@@ -113,14 +117,10 @@ const ManageBorrowedRoomPage = () => {
     }
   }, [user, borrowedRoom]);
 
-  const watchRoomId = watch("room_id");
-
-  useEffect(() => {
-    console.log(watchRoomId);
-    setSelectedRoom(((rooms as RoomModel[]) ?? []).filter(
-      (room) => room.id === watchRoomId
-    )[0] ?? null);
-  }, [watchRoomId, borrowedRoom, rooms]);
+  const { data: slots, status: slotStatus } = useGetRoomAvailability(watchRoomId, {
+    borrowing_date: watchBorrowedDate,
+    borrowed_room_id: id
+  }); 
 
   return (
     <section className="flex flex-col h-full flex-1 gap-4 mb-8 divide-y">
@@ -243,8 +243,15 @@ const ManageBorrowedRoomPage = () => {
                     name: room.name + " (" + room.floor.name + ")",
                   })) ?? []
                 }
-                // onChange={(e) => setSelectedId(e.target.value)}
                 errors={errors}
+                description={slotStatus === "success" ? <div className="flex flex-col text-sm">
+                  <span>Tersedia pada</span>
+                  <ul>
+                  {
+                    (slots ?? []).map((slot, index) => <li className="ml-2" key={index}>{slot}</li>)
+                  }
+                  </ul>
+                </div> : <></>}
               />
             ) : (
               <></>
@@ -329,13 +336,13 @@ const ManageBorrowedRoomPage = () => {
             ) : (
               <></>
             )} */}
-            {selectedRoom &&
-              selectedRoom.room_items?.map((item, index) => {
+            {watchRoomId && rooms &&
+              (rooms as RoomModel[]).find((room) => room.id === watchRoomId)?.room_items?.map((item, index) => {
                 const itemValue = watch(`items.${index}.item_id`);
                 return (
                   <div className="grid grid-cols-3 items-center" key={item.id}>
                     <InputToggle
-                    disabled={!ableToUpdate}
+                      disabled={!ableToUpdate}
                       label={item.item.name}
                       name={`items.${index}.item_id`}
                       id={`items.${index}.item_id`}
@@ -366,7 +373,7 @@ const ManageBorrowedRoomPage = () => {
           <div className="col-span-6">
             <InputTextarea
               disabled={!ableToUpdate}
-              label="Alasan"
+              label="Keterangan"
               name="description"
               id="description"
               register={register("description", {

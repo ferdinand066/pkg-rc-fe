@@ -24,4 +24,13 @@ export class RoomService extends BaseService {
       throw new Error(e.message);
     }
   }
+
+  static async getRoomAvailability(id: string, param: object): Promise<string[]> {
+    try {
+      const { data } = await this._get(`${URL}/availability/${id}`, param);
+      return data.slots;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
 }

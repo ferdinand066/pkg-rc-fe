@@ -44,7 +44,7 @@ const ftpConfig = {
 };
 
 const localBuildPath = process.env.LOCAL_BUILD_PATH || 'dist/';
-const remoteFTPPath = process.env.REMOTE_FTP_PATH || '/public_html/pkg-rc';
+const remoteFTPPath = process.env.REMOTE_FTP_PATH || '/pkg-rc';
 
 // TODO: before run upload to ftp, i want to copy .htaccess that located same in this file to /dist
 
