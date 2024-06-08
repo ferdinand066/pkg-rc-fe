@@ -271,10 +271,38 @@ const Footer = () => {
 
 const Layout = ({ children }: any) => {
   const theme = useAtomValue(appThemeAtom);
+  
+  const [currentDateTime, setCurrentDateTime] = useState('');
+
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-TH', {
+        timeZone: 'Asia/Bangkok',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: false,
+      });
+      setCurrentDateTime(formatter.format(now));
+    };
+
+    updateDateTime();
+    const intervalId = setInterval(updateDateTime, 1000); // Update every second
+
+    return () => clearInterval(intervalId); // Clean up on component unmount
+  }, []);
+
   return (
     <div data-theme={theme} className="flex flex-col min-h-screen bg-base-200">
       <Navbar />
-      <PageContainer>{children}</PageContainer>
+      <PageContainer>
+        <div className="flex flex-row justify-end px-6 sm:py-6 py-4 text-sm">{ currentDateTime }</div>
+        {children}
+      </PageContainer>
       <Footer />
     </div>
   );

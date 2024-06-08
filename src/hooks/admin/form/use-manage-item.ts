@@ -38,7 +38,6 @@ const useManageItem = (entity: ItemModel | null = null) => {
   }, [entity, setValue]);
 
   async function handleManageItem(data: ManageItemProps) {
-    console.log(data);
     // if (!role) return;
     if (formLoading) return;
 

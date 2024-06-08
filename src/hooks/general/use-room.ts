@@ -4,7 +4,8 @@ import { isValid } from "date-fns";
 
 type AvailibilityParam = {
   borrowing_date: string | undefined;
-  borrowed_room_id?: string
+  borrowed_room_id?: string;
+  check_schedule?: boolean;
 }
 
 const useFetchRoom = (params: object) => {
@@ -33,11 +34,12 @@ const useGetOneRoom = (id: string) => {
 };
 
 const useGetRoomAvailability = (id: string, param: AvailibilityParam) => {
-  console.log(param);
+  const enabled = !!id && !!param.borrowing_date && isValid(new Date(param.borrowing_date));
+
   const { data, status } = useQuery({
     queryKey: ["genera/room/availibility", id, param],
     queryFn: () => RoomService.getRoomAvailability(id, param),
-    enabled: !!id && !!param.borrowing_date && isValid(new Date(param.borrowing_date)),
+    enabled: enabled && (param?.check_schedule ?? false),
   });
 
   return {

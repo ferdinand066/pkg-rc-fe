@@ -56,7 +56,6 @@ const useManageRoom = (entity: RoomModel | null = null) => {
   }, [entity, setValue]);
 
   async function handleManageRoom(data: ManageRoomProps) {
-    console.log(data);
     // if (!role) return;
     if (formLoading) return;
     data = {
@@ -67,7 +66,6 @@ const useManageRoom = (entity: RoomModel | null = null) => {
     setFormLoading(true);
     try {
       if (entity) {
-        console.log(data);
         await toast.promise(RoomService.updateRoom(entity.id as string, data), {
           pending: "Waiting for update room!",
           error: handleToastError(),

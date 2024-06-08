@@ -10,6 +10,7 @@ import { BorrowedRoomService } from "../../services/general/borrowed-room-servic
 import { BorrowedRoomService as AdminBorrowedRoomService } from "../../services/admin/borrowed-room-service";
 import { useNavigate } from "react-router-dom";
 import { RoomModel } from "../../model/entities/room";
+import { useFetchRoom } from "./use-room";
 
 type ManageBorrowedRoomProps = {
   room_id: string;
@@ -28,7 +29,7 @@ type ManageBorrowedRoomProps = {
   }[],
 };
 
-const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null, rooms: RoomModel[]) => {
+const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
   const {
     register,
     setValue,
@@ -41,6 +42,8 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null, rooms: R
   const [formLoading, setFormLoading] = useAtom(formLoadingStateAtom);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const { data: rooms } = useFetchRoom({});
   // const { role } = useUser();
 
   useEffect(() => {
@@ -53,13 +56,13 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null, rooms: R
         );
       });
 
+      if (!rooms) return;
+
       entity.borrowed_room_items?.map((item) => {
         const watchRoomId = watch('room_id');
 
-        const selectedRoom = rooms.find((room) => room.id === watchRoomId);
+        const selectedRoom = (rooms as RoomModel[]).find((room) => room.id === watchRoomId);
         const items = selectedRoom?.room_items?.map((room) => room.item_id);
-
-        console.log(items);
 
         const idx = (items ?? []).indexOf(item.item_id);
         if (idx === undefined) return;

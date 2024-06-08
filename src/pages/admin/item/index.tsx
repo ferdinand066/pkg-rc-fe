@@ -11,15 +11,11 @@ const header = ["name", "room_at"];
 const ItemIndex = () => {
   const { data } = useFetchItem({});
 
-  console.log(data);
-
   const items = data?.map((item: ItemModel) => {
     const d = {
       ...item,
       room_at: item.room_items.map((item) => item.room.name).join(', '),
     }
-
-    console.log(d);
 
     return {
       ...d,
@@ -30,8 +26,6 @@ const ItemIndex = () => {
       }
     };
   });
-
-  console.log(items);
 
   const [selectedItem, setSelectedItem] = useState<ItemModel>();
   const ref = useRef<HTMLDialogElement>(null);

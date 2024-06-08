@@ -5,7 +5,6 @@ const URL = `${__API_URL__}/general/schedule`;
 
 export class ScheduleService extends BaseService {
   static async getSchedules(params: object): Promise<ScheduleData> {
-    console.log(params);
     try {
       const { data } = await this._get(`${URL}`, params);
       const rawData = data as ScheduleRawData;
@@ -15,18 +14,25 @@ export class ScheduleService extends BaseService {
           logo: '',
           ...room,
         })),
-        epgs: rawData.borrowedRooms.map((borrowedRoom) => ({
-          channelUuid: borrowedRoom.room_id,
-          id: borrowedRoom.id as string,
-          since: borrowedRoom.borrowed_date + 'T' + borrowedRoom.start_borrowing_time + ":00",
-          till: borrowedRoom.borrowed_date + 'T' + borrowedRoom.end_event_time + ":00",
-          title: borrowedRoom.event_name,
-          description: borrowedRoom.description,
-          image: '',
-        }))
-      });
+        epgs: rawData.borrowedRooms.map((borrowedRoom) => {
+          const sinceDate = new Date(`${borrowedRoom.borrowed_date}T${borrowedRoom.start_borrowing_time}:00`);
+          const tillDate = new Date(`${borrowedRoom.borrowed_date}T${borrowedRoom.end_event_time}:00`);
 
-      console.log(res);
+          // sinceDate.setMinutes(sinceDate.getMinutes() + 18);
+          // tillDate.setMinutes(tillDate.getMinutes() + 20);
+
+          return {
+            channelUuid: borrowedRoom.room_id,
+            id: borrowedRoom.id as string,
+            since: sinceDate.toString(),
+            till: tillDate.toString(),
+            title: borrowedRoom.event_name,
+            description: borrowedRoom.description,
+            borrowed_by_user_id: borrowedRoom.borrowed_by_user_id,
+            image: '',
+          }
+        })
+      });
 
       return res;
 

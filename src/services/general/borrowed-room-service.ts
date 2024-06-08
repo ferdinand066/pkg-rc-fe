@@ -39,8 +39,6 @@ export class BorrowedRoomService extends BaseService {
     params: object
   ): Promise<BorrowedRoomModel | null> {
     if (!id) return null;
-    console.log(id);
-    console.log(params);
     try {
       const data = await this._patch(`${URL}/${id}`, params);
       return data;

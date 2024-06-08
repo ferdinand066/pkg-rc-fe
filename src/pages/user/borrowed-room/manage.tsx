@@ -83,7 +83,7 @@ const ManageBorrowedRoomPage = () => {
     handleSubmit,
     watch,
     getValues,
-  } = useManageBorrowedRoom(borrowedRoom, rooms as RoomModel[] ?? []);
+  } = useManageBorrowedRoom(borrowedRoom);
 
   const watchRoomId = watch('room_id');
   const watchBorrowedDate = watch('borrowed_date');
@@ -119,7 +119,8 @@ const ManageBorrowedRoomPage = () => {
 
   const { data: slots, status: slotStatus } = useGetRoomAvailability(watchRoomId, {
     borrowing_date: watchBorrowedDate,
-    borrowed_room_id: id
+    borrowed_room_id: id,
+    check_schedule: (borrowedRoom?.borrowed_status ?? 1) === 1,
   }); 
 
   return (
