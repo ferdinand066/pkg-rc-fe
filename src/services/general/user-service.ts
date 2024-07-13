@@ -4,6 +4,7 @@ import { UserModel } from "../../model/entities/user";
 import { BaseService } from "../base-service";
 
 const URL = `${__API_URL__}/auth`;
+const EMAIL_URL = `${__API_URL__}/email`;
 
 export class UserService extends BaseService {
   static async login(body: object): Promise<any> {
@@ -47,5 +48,10 @@ export class UserService extends BaseService {
       const data = await this._get(`${URL}/logout`);
       return data;
     } catch (e: any) {}
+  }
+
+  static async resendVerificationEmail() {
+    const data = await this._post(`${EMAIL_URL}/resend`, {});
+    return data;
   }
 }

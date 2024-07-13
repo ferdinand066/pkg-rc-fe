@@ -1,7 +1,7 @@
 import { PhoneIcon } from "@heroicons/react/outline";
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useLogout from "../../hooks/form/use-logout";
 import useAuth from "../../hooks/general/use-auth-user";
 import { ADMIN_ROLE_INT, USER_ROLE_INT } from "../../lib/constants";
@@ -14,9 +14,13 @@ type NavigationModel = {
   child?: NavigationModel[];
 };
 
+const verifyEmailPath = '/verify-email';
+
 const Navbar = () => {
   const { user } = useAuth();
   const auth = useAtomValue(authAtom);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [navbarInitialLoad, setNavbarInitialLoad] = useAtom(
     navbarInitialLoadAtom
@@ -64,6 +68,19 @@ const Navbar = () => {
     }
     setNavbarInitialLoad(true);
   }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    console.log(user.email_verified_at);
+
+    if (!user.email_verified_at){
+      if (!location.pathname.startsWith(verifyEmailPath)) {
+        navigate(verifyEmailPath);
+      }
+
+      return;
+    }
+  }, [location.pathname])
 
   return (
     <div className="bg-base-100 w-full flex items-center justify-center shadow-sm z-[100]">

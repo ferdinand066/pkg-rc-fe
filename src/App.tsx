@@ -8,6 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { authAtom } from "./lib/state/auth-state";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { appThemeAtom } from "./lib/state/state";
+import VerifyEmailIndex from "./pages/verify-email";
+import EmailVerifierPage from "./pages/verify-email/token";
 
 const LoadingFallback = React.lazy(() => import("./components/layout/LoadingFallback"));
 const Layout = React.lazy(() => import("./components/layout/Layout"));
@@ -87,6 +89,11 @@ const AuthenticatedRoutes = () => {
             <Route path="" element={<UserIndex />}></Route>
             <Route path=":id" element={<UserShow />}></Route>
           </Route>
+        </Route>
+        <Route path="verify-email">
+          <Route path="" element={<VerifyEmailIndex />}></Route>
+          <Route path=":token" element={<EmailVerifierPage />}></Route>
+          {/* <Route path=":id" element={<ManageBorrowedRoomPage />}></Route> */}
         </Route>
         {/* <Route path="/user">
           <Route path="room-request">
