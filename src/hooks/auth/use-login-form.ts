@@ -1,13 +1,13 @@
+import axios from "axios";
 import { useAtom, useSetAtom } from "jotai";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { appThemeAtom, formLoadingStateAtom } from "../../lib/state/state";
-import { TokenData, authAtom } from "../../lib/state/auth-state";
 import { useNavigate } from "react-router-dom";
-import { UserService } from "../../services/general/user-service";
+import { toast } from "react-toastify";
 import { handleToastError, handleToastSuccess } from "../../lib/functions";
+import { TokenData, authAtom } from "../../lib/state/auth-state";
 import { setEncryptedCookie } from "../../lib/state/cookie-encrypt";
-import axios from "axios";
+import { appThemeAtom, formLoadingStateAtom } from "../../lib/state/state";
+import { AuthService } from "../../services/general/auth-service";
 
 type LoginProps = {
   email: string;
@@ -36,7 +36,7 @@ export default function useLoginForm() {
       localStorage.clear();
 
       setTheme(currentTheem);
-      const { data: res } = await toast.promise(UserService.login(data), {
+      const { data: res } = await toast.promise(AuthService.login(data), {
         pending: "Dalam proses login!",
         error: handleToastError(),
         success: handleToastSuccess(),

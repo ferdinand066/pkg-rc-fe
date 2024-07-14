@@ -18,6 +18,7 @@ const useGetOneUser = (id: string) => {
     queryKey: ["admin/user", id],
     queryFn: () => UserService.getOneUser(id),
     enabled: !!id,
+    retry: false,
   });
 
   return {

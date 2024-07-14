@@ -1,12 +1,13 @@
 import { PhoneIcon } from "@heroicons/react/outline";
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useLogout from "../../hooks/form/use-logout";
 import useAuth from "../../hooks/general/use-auth-user";
 import { ADMIN_ROLE_INT, USER_ROLE_INT } from "../../lib/constants";
 import { authAtom } from "../../lib/state/auth-state";
 import { appThemeAtom, navbarInitialLoadAtom } from "../../lib/state/state";
+import { getInitials } from "../../lib/functions";
 
 type NavigationModel = {
   name: string;
@@ -14,13 +15,9 @@ type NavigationModel = {
   child?: NavigationModel[];
 };
 
-const verifyEmailPath = '/verify-email';
-
 const Navbar = () => {
   const { user } = useAuth();
   const auth = useAtomValue(authAtom);
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const [navbarInitialLoad, setNavbarInitialLoad] = useAtom(
     navbarInitialLoadAtom
@@ -68,19 +65,6 @@ const Navbar = () => {
     }
     setNavbarInitialLoad(true);
   }, [user]);
-
-  useEffect(() => {
-    if (!user) return;
-    console.log(user.email_verified_at);
-
-    if (!user.email_verified_at){
-      if (!location.pathname.startsWith(verifyEmailPath)) {
-        navigate(verifyEmailPath);
-      }
-
-      return;
-    }
-  }, [location.pathname])
 
   return (
     <div className="bg-base-100 w-full flex items-center justify-center shadow-sm z-[100]">
@@ -181,14 +165,9 @@ const Navbar = () => {
               <div
                 tabIndex={0}
                 role="button"
-                className="btn btn-ghost btn-circle avatar"
+                className="bg-primary w-10 h-10 flex items-center justify-center text-white rounded-full"
               >
-                <div className="w-10 rounded-full">
-                  <img
-                    alt="Tailwind CSS Navbar component"
-                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-                  />
-                </div>
+                <span>{getInitials(user?.name ?? '')}</span>
               </div>
               <ul
                 tabIndex={0}
@@ -288,20 +267,20 @@ const Footer = () => {
 
 const Layout = ({ children }: any) => {
   const theme = useAtomValue(appThemeAtom);
-  
-  const [currentDateTime, setCurrentDateTime] = useState('');
+
+  const [currentDateTime, setCurrentDateTime] = useState("");
 
   useEffect(() => {
     const updateDateTime = () => {
       const now = new Date();
-      const formatter = new Intl.DateTimeFormat('en-TH', {
-        timeZone: 'Asia/Bangkok',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
+      const formatter = new Intl.DateTimeFormat("en-TH", {
+        timeZone: "Asia/Bangkok",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
         hour12: false,
       });
       setCurrentDateTime(formatter.format(now));
@@ -317,7 +296,9 @@ const Layout = ({ children }: any) => {
     <div data-theme={theme} className="flex flex-col min-h-screen bg-base-200">
       <Navbar />
       <PageContainer>
-        <div className="flex flex-row justify-end px-6 sm:py-6 py-4 text-sm">{ currentDateTime }</div>
+        <div className="flex flex-row justify-end px-6 sm:py-6 py-4 text-sm">
+          {currentDateTime}
+        </div>
         {children}
       </PageContainer>
       <Footer />

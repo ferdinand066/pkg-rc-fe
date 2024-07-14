@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { handleToastError, handleToastSuccess } from "../../lib/functions";
 import { formLoadingStateAtom } from "../../lib/state/state";
-import { UserService } from "../../services/general/user-service";
+import { AuthService } from "../../services/general/auth-service";
 
 type RegisterProps = {
   email: string;
@@ -31,7 +31,7 @@ export default function useRegisterForm() {
     setFormLoading(true);
     try {
       localStorage.clear();
-      await toast.promise(UserService.register(data), {
+      await toast.promise(AuthService.register(data), {
         pending: "Dalam proses pendaftaran!",
         error: handleToastError(),
         success: handleToastSuccess(),

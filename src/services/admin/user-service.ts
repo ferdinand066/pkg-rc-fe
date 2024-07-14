@@ -15,7 +15,7 @@ export class UserService extends BaseService {
     }
   }
 
-  static async getOneUser(id: string): Promise<UserModel[] | null> {
+  static async getOneUser(id: string): Promise<UserModel | null> {
     if (!id) return null;
     try {
       const { data } = await this._get(`${URL}/${id}`);
@@ -24,4 +24,26 @@ export class UserService extends BaseService {
       throw new Error(e.message);
     }
   }
+
+  static async updateUserRole(id: string, body: object): Promise<UserModel | null> {
+    if (!id) return null;
+    try {
+      const data = await this._patch(`${URL}/${id}`, body);
+      return data;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  static async activateUser(id: string): Promise<UserModel | null> {
+    if (!id) return null;
+    try {
+      const data = await this._post(`${URL}/${id}/activate`, {});
+      return data;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+
 }

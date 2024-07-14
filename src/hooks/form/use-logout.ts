@@ -7,7 +7,7 @@ import { handleToastError, handleToastSuccess } from "../../lib/functions";
 import { authAtom } from "../../lib/state/auth-state";
 import { removeCookie } from "../../lib/state/cookie-encrypt";
 import { appThemeAtom, formLoadingStateAtom, navbarInitialLoadAtom } from "../../lib/state/state";
-import { UserService } from "../../services/general/user-service";
+import { AuthService } from "../../services/general/auth-service";
 import useAuth from "../general/use-auth-user";
 
 export default function useLogout() {
@@ -25,7 +25,7 @@ export default function useLogout() {
 
     setFormLoading(true);
     try {
-      await toast.promise(UserService.logout(), {
+      await toast.promise(AuthService.logout(), {
         pending: "Dalam proses untuk keluar!",
         error: handleToastError(),
         success: handleToastSuccess("Berhasil keluar!"),

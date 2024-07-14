@@ -1,5 +1,5 @@
 import currency from "currency.js";
-import { capitalize, lowerCase, startCase } from "lodash";
+import { capitalize, startCase } from "lodash";
 import moment from "moment";
 import { UseFormSetValue } from "react-hook-form";
 
@@ -107,10 +107,17 @@ const stringCurrencyToNumber = (str: string | undefined) => {
   return (str).split(".").join("").replace(",", '.');
 }
 
-const normalizeSpecialValue = (str: string) => {
-  if (lowerCase(str) === "asst manager") return 'Asst. Manager';
-  if (lowerCase(str) === "spg spb") return 'SPG / SPB';
-  return startCase(str);
+function getInitials(fullName: string): string {
+  if (!fullName) return "";
+
+  const nameParts = fullName.trim().split(/\s+/); // Split the name by spaces
+  if (nameParts.length === 0) return '';
+
+  const firstInitial = nameParts[0].charAt(0).toUpperCase();
+  const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
+
+  return `${firstInitial}${lastInitial}`;
 }
 
-export { normalizeSpecialValue, classJoin, enableOnlyNumbers, getErrorValue, handleToastError, handleToastErrorList, handleToastSuccess, extractTypeFromModel, formatDateRange, getJSONParseableSubstring, numberToStringCurrency, stringCurrencyToNumber };
+export { getInitials, classJoin, enableOnlyNumbers, extractTypeFromModel, formatDateRange, getErrorValue, getJSONParseableSubstring, handleToastError, handleToastErrorList, handleToastSuccess, numberToStringCurrency, stringCurrencyToNumber };
+

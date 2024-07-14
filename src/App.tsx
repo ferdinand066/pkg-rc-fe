@@ -3,13 +3,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import axios from "axios";
 import { useAtomValue } from "jotai";
 import React, { Suspense, useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { authAtom } from "./lib/state/auth-state";
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { appThemeAtom } from "./lib/state/state";
 import VerifyEmailIndex from "./pages/verify-email";
 import EmailVerifierPage from "./pages/verify-email/token";
+import useAuth from "./hooks/general/use-auth-user";
+import useLogout from "./hooks/form/use-logout";
 
 const LoadingFallback = React.lazy(() => import("./components/layout/LoadingFallback"));
 const Layout = React.lazy(() => import("./components/layout/Layout"));
@@ -18,7 +20,7 @@ const LoginPage = React.lazy(() => import("./pages/auth/login"));
 const RegisterPage = React.lazy(() => import("./pages/auth/register"));
 const ScheduleIndexPage = React.lazy(() => import("./pages/schedule"));
 const UserIndex = React.lazy(() => import("./pages/admin/user"));
-const UserShow = React.lazy(() => import("./pages/admin/user/show"));
+const ShowUserPage = React.lazy(() => import("./pages/admin/user/show"));
 const ItemIndex = React.lazy(() => import("./pages/admin/item"));
 const UserBorrowedRoomIndex = React.lazy(() => import("./pages/user/borrowed-room"));
 const ManageBorrowedRoomPage = React.lazy(() => import("./pages/user/borrowed-room/manage"));
@@ -62,32 +64,60 @@ const App = () => {
   );
 };
 
+const verifyEmailPath = '/verify-email';
+
 const AuthenticatedRoutes = () => {
+  const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const { handleLogoutEvent } = useLogout();
 
   useEffect(() => {
     if (location.pathname.startsWith('/auth')) {
-      navigate('/schedule');
+      return navigate('/schedule');
     }
-  }, [location.pathname])
+
+    if (!user) return;
+
+    if (!!user.suspended_at){
+      toast.error('Your account has been suspended!');
+      handleLogoutEvent();
+      return;
+    }
+
+    if (!user.email_verified_at){
+      if (!location.pathname.startsWith(verifyEmailPath)) {
+        navigate(verifyEmailPath);
+      }
+
+      return;
+    }
+
+    if (user.email_verified_at){
+      if (location.pathname.startsWith(verifyEmailPath)) {
+        navigate('/schedule');
+      }
+
+      return;
+    }
+  }, [location.pathname, user])
 
   return (
     <Layout>
       <Routes>
-        <Route path="/schedule" element={<ScheduleIndexPage />} />
+        <Route path="schedule" element={<ScheduleIndexPage />} />
         <Route path="room-request">
           <Route path="" element={<UserBorrowedRoomIndex />}></Route>
           <Route path="create" element={<ManageBorrowedRoomPage />}></Route>
           <Route path=":id" element={<ManageBorrowedRoomPage />}></Route>
         </Route>
-        <Route path="/admin">
+        <Route path="admin">
           <Route path="room" element={<RoomIndex />} />
           <Route path="item" element={<ItemIndex />} />
           {/* <Route path="room-request" element={<BorrowedRoomIndex />} /> */}
           <Route path="user">
             <Route path="" element={<UserIndex />}></Route>
-            <Route path=":id" element={<UserShow />}></Route>
+            <Route path=":id" element={<ShowUserPage />}></Route>
           </Route>
         </Route>
         <Route path="verify-email">
@@ -95,6 +125,7 @@ const AuthenticatedRoutes = () => {
           <Route path=":token" element={<EmailVerifierPage />}></Route>
           {/* <Route path=":id" element={<ManageBorrowedRoomPage />}></Route> */}
         </Route>
+        <Route path="*" element={<Navigate to={"schedule"}/>}/>
         {/* <Route path="/user">
           <Route path="room-request">
             <Route path="" element={<UserBorrowedRoomIndex />}></Route>

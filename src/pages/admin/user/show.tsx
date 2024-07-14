@@ -1,196 +1,175 @@
-const UserShow = () => {
-    return <form>
-    <div className="shadow sm:rounded-md sm:overflow-hidden">
-      <div className="px-4 py-6 space-y-6 bg-white sm:p-6">
-        <div className="flex flex-row items-center justify-between gap-2">
-          <div>
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
-              {'User'}
-            </h3>
-            {/* <p className="mt-1 text-sm text-gray-500">{header.description}</p> */}
-          </div>
+import { useNavigate, useParams } from "react-router-dom";
+import { useGetOneUser } from "../../../hooks/admin/use-user";
+import { useEffect, useState } from "react";
+import useAuth from "../../../hooks/general/use-auth-user";
+import PageHeader from "../../../components/layout/PageHeader";
+import InputText from "../../../components/forms/InputText";
+import { toast } from "react-toastify";
+import InputSelect from "../../../components/forms/InputSelect";
+import { ADMIN_ROLE_INT, USER_ROLE_MAPPING } from "../../../lib/constants";
+import InputTextarea from "../../../components/forms/InputTextarea";
+import useUpdateUser from "../../../hooks/general/use-manage-user";
+
+const ShowUserPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const { data: selectedUser, status: selectedUserStatus } = useGetOneUser(
+    id ?? ""
+  );
+
+  const {
+    register,
+    setValue,
+    errors,
+    handleActivateUser,
+    handleUpdateRole,
+    handleSubmit,
+  } = useUpdateUser(selectedUser);
+
+  const [ableToUpdate, setAbleToUpdate] = useState(false);
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+    if (selectedUserStatus === "error") {
+      toast.error("Invalid request!");
+      return navigate("/admin/user");
+    }
+
+    if (!selectedUser) return;
+
+    if ((user.id as string) === selectedUser!.id) {
+      setAbleToUpdate(true);
+    }
+  }, [user, selectedUser, selectedUserStatus]);
+
+  const handleActionComponent = () => {
+    if (!user) return <></>;
+    if (user.role !== ADMIN_ROLE_INT) return <></>;
+
+    if (!selectedUser) return <></>;
+    if (!selectedUser.email_verified_at) return <></>;
+
+    if (!selectedUser.account_accepted_at && !selectedUser.suspended_at)
+      return (
+        <div className="flex flex-row gap-4">
+          {/* <button className="btn btn-error" type="button">
+            Tolak User
+          </button> */}
+          <button
+            onClick={() => handleActivateUser()}
+            className="btn btn-primary"
+            type="button"
+          >
+            Setujui User
+          </button>
         </div>
+      );
 
-        <div className="grid grid-cols-6 gap-6">
-          <div className="col-span-6 sm:col-span-4">
-            {/* <InputText
-              label="Nama lengkap"
-              id="full-name"
-              type="text"
-              name="full_name"
-              placeholder="Full name"
-              setValue={setValue}
-              register={register("full_name", {
-                required: "Full name is required",
-              })}
-              description={
-                errorLabel && <span className="text-red-500">{errorLabel}</span>
-              }
-              errors={errors}
-              disabled={!_availableToUpdateChild()}
-              onBlur={async () => {
-                try {
-                  await ChildService.checkFullName(fullNameValue);
-                  setAbleToRegister(true);
-                  setErrorLabel('')
-                } catch (e) {
-                  setAbleToRegister(false);
-                  setErrorLabel((e as Error).message)
-                  console.log(e);
-                }
-              }}
-            /> */}
-          </div>
+    if (selectedUser.account_accepted_at)
+      return <div className="badge badge-success badge-outline">Active</div>;
+    if (selectedUser.suspended_at)
+      return <div className="badge badge-error badge-outline">Suspended</div>;
+    return <></>;
+  };
 
-          {/* <div className="col-span-6 sm:col-span-2">
-            <InputText
-              label="Nama panggilan"
-              id="nickname"
-              type="text"
-              name="nickname"
-              placeholder="Nickname"
-              setValue={setValue}
-              register={register("nickname", {
-                required: "Nickname is required",
-              })}
-              errors={errors}
-              disabled={!_availableToUpdateChild()}
+  return (
+    <section className="flex flex-col h-full flex-1 gap-4 mb-8 divide-y">
+      {selectedUserStatus !== "error" && (
+        <div className="flex flex-col">
+          {selectedUserStatus === "success" ? (
+            <PageHeader
+              pageName={`Data dari ${selectedUser!.name}`}
+              action={handleActionComponent()}
             />
-          </div>
-          <div className="col-span-6 sm:col-span-3">
-            <InputText
-              label="Tanggal lahir"
-              id="dob"
-              type="date"
-              name="dob"
-              setValue={setValue}
-              register={register("dob", {
-                required: "BIrthdate is required",
-              })}
-              errors={errors}
-              disabled={!_availableToUpdateChild()}
-            />
-          </div>
-          {grades && (
-            <div className="col-span-6 sm:col-span-3">
-              <InputSelect
-                label="Kelas"
-                id="grade"
-                name="grade_id"
-                model={grades}
-                setValue={setValue}
-                register={register("grade_id", {
-                  required: "Role is required",
+          ) : (
+            <></>
+          )}
+
+          <form
+            onSubmit={handleSubmit(handleUpdateRole)}
+            className="grid grid-cols-6 gap-4 mx-6"
+          >
+            <div className="col-span-6 sm:col-span-5">
+              <InputText
+                label="Nama"
+                type="text"
+                name="name"
+                placeholder="Contoh: John Doe"
+                disabled={!ableToUpdate}
+                register={register("name", {
+                  required: "Nama harus diisi",
                 })}
+                setValue={setValue}
                 errors={errors}
-                disabled={!_availableToUpdateChild()}
               />
             </div>
-          )}
-          <div className="col-span-6 sm:col-span-2">
-            <InputText
-              label="Nama orang tua"
-              id="parent-name"
-              type="text"
-              name="parent_name"
-              placeholder="Parent name"
-              setValue={setValue}
-              register={register("parent_name", {
-                required: "Parent name is required",
-              })}
-              errors={errors}
-              description={
-                child?.user_id && currentUser.role === USER_ROLE.ADMIN ? (
-                  <Link href={getPath("ADMIN", "SHOW_USER", child.user_id)}>
-                    <span className="text-yellow-500 cursor-pointer hover:text-yellow-600">
-                      Show parent
-                    </span>
-                  </Link>
-                ) : (
-                  ""
-                )
-              }
-              disabled={!_availableToUpdateChild()}
-            />
-          </div>
-          <div className="col-span-6 sm:col-span-2">
-            <InputText
-              label="Nomor telepon"
-              id="phone-number"
-              type="text"
-              name="phone_number"
-              placeholder="Phone number"
-              setValue={setValue}
-              register={register("phone_number", {
-                required: "Phone number is required",
-              })}
-              errors={errors}
-              disabled={!_availableToUpdateChild()}
-            />
-          </div>
-          <div className="col-span-6 sm:col-span-2">
-            <InputText
-              label="Paroki"
-              id="parish"
-              type="text"
-              name="parish"
-              placeholder="Parish"
-              setValue={setValue}
-              register={register("parish", {
-                required: "Parish is required",
-              })}
-              errors={errors}
-              disabled={!_availableToUpdateChild()}
-            />
-          </div>
-          <div className="col-span-6 sm:col-span-5">
-            <InputTextarea
-              rows={3}
-              label="Address"
-              id="address"
-              name="address"
-              placeholder="Ex: Jl. Mediterania Boulevard, No.1, Pantai Indah Kapuk, Kapuk Muara, Kec. Penjaringan, Jkt Utara, Daerah Khusus Ibukota Jakarta 14460"
-              description="Write your full address"
-              errors={errors}
-              setValue={setValue}
-              register={register("address")}
-              disabled={!_availableToUpdateChild()}
-            />
-          </div>
-          <div className="col-span-6 sm:col-span-4">
-            <InputText
-              prefix="https://www.instagram.com/"
-              label="Akun instagram"
-              id="instagram-account"
-              type="text"
-              name="instagram_account"
-              placeholder="Instagram Account"
-              setValue={setValue}
-              register={register("instagram_account")}
-              errors={errors}
-              disabled={!_availableToUpdateChild()}
-            />
-          </div> */}
+            <div className="col-span-6 sm:col-span-4">
+              <InputText
+                label="Email"
+                type="email"
+                name="email"
+                placeholder="Contoh: example@gmail.com"
+                disabled={true}
+                description={
+                  selectedUser && !selectedUser?.email_verified_at ? (
+                    <div className="badge badge-error mt-2">Not verified</div>
+                  ) : (
+                    <></>
+                  )
+                }
+                register={register("email", {
+                  required: "Email harus diisi",
+                })}
+                setValue={setValue}
+                errors={errors}
+              />
+            </div>
+            <div className="col-span-6 sm:col-span-2">
+              <InputSelect
+                label="Role"
+                name="role"
+                disabled={!(user?.role === ADMIN_ROLE_INT)}
+                model={USER_ROLE_MAPPING}
+                register={register("role", {
+                  required: "Role harus diisi",
+                })}
+                setValue={setValue}
+                errors={errors}
+              />
+            </div>
+            <div className="col-span-6">
+              <InputTextarea
+                disabled={!ableToUpdate}
+                label="Alamat"
+                name="address"
+                id="address"
+                register={register("address", {
+                  required: "Alamat harus diisi",
+                })}
+                setValue={setValue}
+                errors={errors}
+              />
+            </div>
+            {selectedUser?.account_accepted_at && (
+              <div className="col-span-6 modal-action flex-row-reverse justify-between">
+                <div className="flex flex-row gap-4">
+                  <button className="btn btn-neutral" type="button">
+                    Tutup
+                  </button>
+                  <button className="btn btn-primary" type="submit">
+                    Kirim
+                  </button>
+                </div>
+              </div>
+            )}
+          </form>
         </div>
-      </div>
-      {/* {_availableToUpdateChild() && (
-        <div className="flex flex-row-reverse justify-between px-4 py-3 bg-gray-50 sm:px-6">
-          <PrimaryButton className={classJoin("w-20", !ableToRegister ? " !bg-gray-500 !hover:bg-gray-600" : "")} type="submit" disabled={!ableToRegister}>
-            {child ? "Submit" : "Register"}
-          </PrimaryButton>
-          {child && (
-            <DangerButton
-              className="w-28"
-              type="button"
-              onClick={handleDeleteChildEvent}
-            >
-              Delete child
-            </DangerButton>
-          )}
-        </div>
-      )} */}
-    </div>
-  </form>
-}
+      )}
+    </section>
+  );
+};
 
-export default UserShow;
+export default ShowUserPage;
