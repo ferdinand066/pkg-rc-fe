@@ -36,14 +36,12 @@ const Navbar = () => {
       case ADMIN_ROLE_INT:
         setNavigation([
           { name: "Jadwal", href: "/schedule" },
-          {
-            name: "Proposal",
-            href: "/room-request",
-          },
+          { name: "Proposal", href: "/room-request" },
           {
             name: "Admin",
             href: "/admin",
             child: [
+              // { name: "Report", href: "/report" },
               { name: "Ruangan", href: "/room" },
               { name: "Barang", href: "/item" },
               { name: "User", href: "/user" },
@@ -167,7 +165,7 @@ const Navbar = () => {
                 role="button"
                 className="bg-primary w-10 h-10 flex items-center justify-center text-white rounded-full"
               >
-                <span>{getInitials(user?.name ?? '')}</span>
+                <span>{getInitials(user?.name ?? "")}</span>
               </div>
               <ul
                 tabIndex={0}

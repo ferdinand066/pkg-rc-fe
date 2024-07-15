@@ -245,11 +245,11 @@ const ManageBorrowedRoomPage = () => {
                   })) ?? []
                 }
                 errors={errors}
-                description={slotStatus === "success" ? <div className="flex flex-col text-sm">
+                description={slotStatus === "success" && !id ? <div className="flex flex-col text-sm mt-2">
                   <span>Tersedia pada</span>
                   <ul>
                   {
-                    (slots ?? []).map((slot, index) => <li className="ml-2" key={index}>{slot}</li>)
+                    (slots ?? []).map((slot, index) => <li className="ml-2" key={index}>- {slot}</li>)
                   }
                   </ul>
                 </div> : <></>}

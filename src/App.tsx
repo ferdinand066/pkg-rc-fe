@@ -15,6 +15,7 @@ import useLogout from "./hooks/form/use-logout";
 
 const LoadingFallback = React.lazy(() => import("./components/layout/LoadingFallback"));
 const Layout = React.lazy(() => import("./components/layout/Layout"));
+const ReportIndex = React.lazy(() => import("./pages/admin/report"));
 const RoomIndex = React.lazy(() => import("./pages/admin/room"));
 const LoginPage = React.lazy(() => import("./pages/auth/login"));
 const RegisterPage = React.lazy(() => import("./pages/auth/register"));
@@ -112,6 +113,7 @@ const AuthenticatedRoutes = () => {
           <Route path=":id" element={<ManageBorrowedRoomPage />}></Route>
         </Route>
         <Route path="admin">
+          <Route path="report" element={<ReportIndex />} />
           <Route path="room" element={<RoomIndex />} />
           <Route path="item" element={<ItemIndex />} />
           {/* <Route path="room-request" element={<BorrowedRoomIndex />} /> */}

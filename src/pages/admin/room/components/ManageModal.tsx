@@ -105,6 +105,7 @@ const RoomManageModal = forwardRef<HTMLDialogElement, RoomManageModalProps>(
             setValue={setValue}
             errors={errors}
           />
+          <span></span>
           {itemStatus === "success" ? (
             items?.map((item, index) => {
               const itemValue = watch(`items.${index}.item_id`);
@@ -113,7 +114,7 @@ const RoomManageModal = forwardRef<HTMLDialogElement, RoomManageModalProps>(
                   <InputToggle
                     label={item.name}
                     name={`items.${index}.item_id`}
-                    id={`items.${index}.item_id`}
+                    id={`items.${index}.item_i d`}
                     value={item.id}
                     register={register(`items.${index}.item_id`)}
                     inputContainerClassName="col-span-2"

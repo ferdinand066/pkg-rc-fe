@@ -27,7 +27,7 @@ const InputToggle = (props: InputToggleProps) => {
 
   return (
     <div className={classJoin("w-full", inputContainerClassName ?? "")}>
-      <div className="grid grid-cols-2">
+      <div className="grid">
         <div className="form-control">
           <label className="label cursor-pointer justify-start gap-4 items-center">
             <input
