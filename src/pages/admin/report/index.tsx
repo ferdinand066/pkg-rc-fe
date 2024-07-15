@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import PageHeader from "../../../components/layout/PageHeader";
 import Pagination from "../../../components/utils/Pagination";
 import Table from "../../../components/utils/Table";
@@ -27,15 +27,15 @@ const ReportIndex = () => {
     return {
       ...d,
       items: d.items ? d.items : "-",
-      onClick: () => {
-        setSelectedRoom(d);
-        ref.current?.showModal();
-      },
+      // onClick: () => {
+      //   setSelectedRoom(d);
+      //   ref.current?.showModal();
+      // },
     };
   });
 
-  const [selectedRoom, setSelectedRoom] = useState<RoomModel>();
-  const ref = useRef<HTMLDialogElement>(null);
+  // const [selectedRoom, setSelectedRoom] = useState<RoomModel>();
+  // const ref = useRef<HTMLDialogElement>(null);
 
   return (
     <section className="flex flex-col h-full flex-1 gap-4">
