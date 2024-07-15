@@ -9,7 +9,7 @@ import { UserModel } from "../../../model/entities/user";
 import { BORROWED_STATUS } from "../../../lib/constants";
 import useAuth from "../../../hooks/general/use-auth-user";
 
-const header = ["room_name", "borrowed_date", "start_borrowing_time", "end_event_time", "borrowed_by", "status"];
+const header = ["room_name", "floor", "borrowed_date", "start_borrowing_time", "end_event_time", "borrowed_by", "status"];
 
 const UserBorrowedRoomIndex = () => {
   const [param, setParam] = useState({
@@ -25,6 +25,7 @@ const UserBorrowedRoomIndex = () => {
     const d = {
       ...borrowedRoom,
       room_name: borrowedRoom.room.name,
+      floor: borrowedRoom.room.floor.name,
       borrowed_by: (borrowedRoom.borrowed_by as UserModel).name,
       status: BORROWED_STATUS[borrowedRoom.borrowed_status]
     }

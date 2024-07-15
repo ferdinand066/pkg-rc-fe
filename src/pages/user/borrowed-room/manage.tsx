@@ -409,6 +409,7 @@ const ManageBorrowedRoomPage = () => {
             user.role === ADMIN_ROLE_INT &&
             !ableToUpdate &&
             borrowedRoom &&
+            borrowedRoom.borrowed_status === 1 &&
             (borrowedRoom?.borrowed_room_agreements ?? []).filter(
               (agreement) =>
                 agreement.created_by_user_id === (user.id as string)
