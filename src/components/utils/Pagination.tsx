@@ -11,6 +11,7 @@ type PaginationComponentProps<T> = {
   setPage: React.Dispatch<
     React.SetStateAction<{
       page: number;
+      paginate: boolean;
     }>
   >;
 };

@@ -14,6 +14,7 @@ const header = ["room_name", "floor", "borrowed_date", "start_borrowing_time", "
 const UserBorrowedRoomIndex = () => {
   const [param, setParam] = useState({
     page: 1,
+    paginate: true,
   });
 
   const { user } = useAuth();
@@ -34,7 +35,7 @@ const UserBorrowedRoomIndex = () => {
       ...d,
       redirect: "/room-request/" + borrowedRoom.id,
     };
-  });
+  }) ?? [];
 
   return (
     <section className="flex flex-col h-full flex-1 gap-4">
