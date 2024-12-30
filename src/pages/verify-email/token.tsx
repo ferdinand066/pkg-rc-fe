@@ -32,8 +32,6 @@ const EmailVerifierPage = () => {
         const user = data.data.user as UserModel;
         await mutation(user);
 
-        console.log('after mutation');
-
         navigate('/schedule');
       } catch (e) {
         console.log(e);

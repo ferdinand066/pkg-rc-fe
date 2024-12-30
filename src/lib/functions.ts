@@ -4,7 +4,7 @@ import moment from "moment";
 import { UseFormSetValue } from "react-hook-form";
 
 const classJoin = (...str: string[]) => {
-  return str.join(' ');
+  return str.filter(text => text !== "").join(' ');
 }
 
 const handleToastError = (str: string = "") => {

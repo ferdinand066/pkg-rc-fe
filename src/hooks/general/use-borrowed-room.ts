@@ -3,8 +3,15 @@ import { BorrowedRoomService } from "../../services/general/borrowed-room-servic
 
 const useFetchBorrowedRoom = (params: object) => {
   const { data, status } = useQuery({
-    queryKey: ["general/borrowed-room", params],
-    queryFn: () => BorrowedRoomService.getBorrowedRooms(params),
+    queryKey: ["general/borrowed-room", {
+      ...params,
+      paginate: true,
+    }],
+    queryFn: () => BorrowedRoomService.getBorrowedRooms({
+      ...params,
+      paginate: true,
+    }),
+    placeholderData: (previousData, _) => previousData || undefined,
   });
 
   return {

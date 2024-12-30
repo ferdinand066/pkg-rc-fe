@@ -1,8 +1,9 @@
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
+import { classJoin } from "../../lib/functions";
 import { PaginationProps } from "../../model/components/pagination";
 import LoadingSkeleton from "./LoadingSkeleton";
-import { classJoin } from "../../lib/functions";
-import { Fragment } from "react/jsx-runtime";
+import { useAtomValue } from "jotai";
+import { appThemeAtom } from "../../lib/state/state";
 
 type PaginationComponentProps<T> = {
   status: "error" | "pending" | "success";
@@ -21,6 +22,9 @@ export default function Pagination<T>({
   page,
   setPage,
 }: PaginationComponentProps<T>) {
+  const theme = useAtomValue(appThemeAtom);
+  const isDarkTheme = theme === "dark";
+
   const handlePageChange = (str: string | null) => {
     if (!str) return;
     const url = new URL(str);
@@ -38,7 +42,7 @@ export default function Pagination<T>({
             {data?.prev_page_url ? (
               <button
                 onClick={() => handlePageChange(data.prev_page_url!)}
-                className="flex md:hidden shadow join-item btn h-10 min-h-10 text-neutral-500"
+                className="flex md:hidden shadow join-item btn h-10 min-h-10 text-base-500"
               >
                 <ChevronDoubleLeftIcon
                   className="w-5 h-5"
@@ -52,7 +56,7 @@ export default function Pagination<T>({
             {data?.next_page_url ? (
               <button
                 onClick={() => handlePageChange(data.next_page_url!)}
-                className="flex md:hidden shadow join-item btn h-10 min-h-10 text-neutral-500"
+                className="flex md:hidden shadow join-item btn h-10 min-h-10 text-base-500"
               >
                 Next
                 <ChevronDoubleRightIcon
@@ -75,7 +79,7 @@ export default function Pagination<T>({
         <div>
           {status === "success" ? (
             data!.total > 0 ? (
-              <p className="text-sm text-gray-700 mr-2">
+              <p className="text-sm text-base-700 mr-2">
                 Menampilkan data <span className="font-medium">{data?.from}</span> sampai{" "}
                 <span className="font-medium">{data?.to}</span> dari{" "}
                 <span className="font-medium">{data?.total}</span> data
@@ -99,13 +103,13 @@ export default function Pagination<T>({
                 data?.links
                   .map((link, index) => {
                     let child: string | JSX.Element = link.label;
-                    if (!link.url) return <Fragment key={index}/>
+                    // if (!link.url) return <Fragment key={index}/>
                     if (child.includes("&laquo")) {
                       return (
                         <button
                           key={index}
                           onClick={() => handlePageChange(link.url)}
-                          className="shadow join-item btn h-10 min-h-10 text-neutral-500 hover:text-neutral-700"
+                          className="shadow join-item btn h-10 min-h-10 text-base-500 hover:text-base-700"
                         >
                           <span className="sr-only">Next</span>
                           <ChevronLeftIcon
@@ -119,7 +123,7 @@ export default function Pagination<T>({
                         <button
                           key={index}
                           onClick={() => handlePageChange(link.url!)}
-                          className="shadow join-item btn h-10 min-h-10 text-neutral-500 hover:text-neutral-700"
+                          className="shadow join-item btn h-10 min-h-10 text-base-500 hover:text-base-700"
                         >
                           <span className="sr-only">Next</span>
                           <ChevronRightIcon
@@ -131,18 +135,21 @@ export default function Pagination<T>({
                     }
                     return (
                       <button
-                        onClick={() => handlePageChange(link.url!)}
+                        onClick={() => {
+                          if (!link.url) return;
+                          return handlePageChange(link.url!);
+                        }}
                         key={index}
-                        disabled={!link.url}
+                        // disabled={!link.url}
                         className={classJoin(
-                          "shadow join-item btn h-10 min-h-10 text-neutral-500 hover:text-neutral-700",
+                          "shadow join-item btn h-10 min-h-10 text-gray-500 hover:text-gray-700",
                           index === 0 ? "rounded-l-md" : "",
                           index ===
                             data?.links.filter((link) => link.url).length - 1
                             ? "rounded-r-md"
                             : "",
                           page === parseInt(link.label!)
-                            ? "text-gray-700"
+                            ? classJoin("text-primary", isDarkTheme ? "bg-gray-800 hover:!text-primary" : "bg-neutral-300")
                             : "text-gray-400"
                         )}
                       >

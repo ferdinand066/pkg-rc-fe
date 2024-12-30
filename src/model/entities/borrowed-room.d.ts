@@ -6,8 +6,6 @@ import { UserRoleModel } from "./roles"
 import { RoomModel } from "./room";
 import { UserModel } from "./user";
 
-export type FloorModel = GeneralData;
-
 export type BorrowedRoomModel = GeneralData & {
   room_id: string,
   room: RoomModel,

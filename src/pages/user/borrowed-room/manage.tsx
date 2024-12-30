@@ -127,7 +127,7 @@ const ManageBorrowedRoomPage = () => {
     <section className="flex flex-col h-full flex-1 gap-4 mb-8 divide-y">
       <div className="flex flex-col">
         <PageHeader
-          pageName={`${borrowedRoom ? "" : "Buat "}Proposal Pinjam Ruang`}
+          pageName={`${id ? "" : "Buat "}Proposal Pinjam Ruang`}
           action={
             borrowedRoom && borrowedRoom?.borrowed_status !== null ? (
               <div
@@ -249,7 +249,7 @@ const ManageBorrowedRoomPage = () => {
                   <span>Tersedia pada</span>
                   <ul>
                   {
-                    (slots ?? []).map((slot, index) => <li className="ml-2" key={index}>- {slot}</li>)
+                    (slots ?? []).map((slot, index) => <li className="ml-2" key={index}>{slot}</li>)
                   }
                   </ul>
                 </div> : <></>}

@@ -158,6 +158,10 @@ const UnauthenticatedRoutes = () => {
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
         </Route>
+        <Route path="/verify-email">
+          <Route path="" element={<VerifyEmailIndex />} />
+          <Route path=":id" element={<EmailVerifierPage />} />
+        </Route>
         {/*<Route path="*" element={<Navigate replace to="/employee/register" />} /> */}
       </Routes>
     </Layout>

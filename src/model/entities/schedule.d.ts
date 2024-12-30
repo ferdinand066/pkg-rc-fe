@@ -7,12 +7,12 @@ import { EmployeeModel } from "./employee"
 import { UserRoleModel } from "./roles"
 import { RoomItem, RoomModel } from "./room"
 
-export type ScheduleRawData = {
-    rooms: RoomModel[],
-    borrowedRooms: BorrowedRoomModel[];
-}
+// export type ScheduleData = {
+//     rooms: RoomModel[],
+//     borrowedRooms: BorrowedRoomModel[];
+// }
 
-export type ScheduleData = {
-    channels: (Channel & RoomModel)[],
-    epgs: Program[],
-}
+// export type ScheduleData = {
+//     channels: (Channel & RoomModel)[],
+//     epgs: Program[],
+// }

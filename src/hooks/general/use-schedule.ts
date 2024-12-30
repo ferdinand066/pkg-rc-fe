@@ -5,6 +5,7 @@ const useSchedule = (params: object) => {
   const { data, status } = useQuery({
     queryKey: ["general/schedule", params],
     queryFn: () => ScheduleService.getSchedules(params),
+    placeholderData: (previousData, _) => previousData || undefined,
   });
 
   return {

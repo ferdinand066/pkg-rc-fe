@@ -4,7 +4,9 @@ import { UserCurrentBranchModel } from "./branch"
 import { EmployeeModel } from "./employee"
 import { UserRoleModel } from "./roles"
 
-export type FloorModel = GeneralData;
+export type FloorModel = GeneralData & {
+  rooms: RoomModel[];
+};
 
 export type RoomModel = GeneralData & {
   floor: FloorModel,

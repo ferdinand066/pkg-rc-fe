@@ -1,4 +1,4 @@
-type AlertData = {
+export type AlertData = {
   message: string | JSX.Element;
 };
 
