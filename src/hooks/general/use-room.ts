@@ -8,10 +8,16 @@ type AvailibilityParam = {
   check_schedule?: boolean;
 }
 
-const useFetchRoom = (params: object) => {
+const useFetchRoom = (params: object, paginate: boolean) => {
   const { data, status } = useQuery({
-    queryKey: ["general/room", params],
-    queryFn: () => RoomService.getRooms(params),
+    queryKey: ["general/room", {
+      ...params,
+      paginate: paginate
+    }],
+    queryFn: () => RoomService.getRooms({
+      ...params,
+      paginate: paginate,
+    }),
   });
 
   return {

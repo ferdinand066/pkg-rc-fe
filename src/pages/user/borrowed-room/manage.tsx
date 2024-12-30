@@ -70,7 +70,9 @@ const ManageBorrowedRoomPage = () => {
   const { id } = useParams();
   const { data: borrowedRoom } = useGetOneBorrowedRoom(id ?? "");
 
-  const { data: rooms, status: roomStatus } = useFetchRoom({});
+  const { data: rooms, status: roomStatus } = useFetchRoom({}, false);
+
+  console.log(rooms);
 
   const {
     register,

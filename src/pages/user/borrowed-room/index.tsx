@@ -17,7 +17,6 @@ const header = ["event_name", "room_name", "floor", "borrowed_date", "start_borr
 const UserBorrowedRoomIndex = () => {
   const [param, setParam] = useState({
     page: 1,
-    paginate: true,
   });
 
   const [inputValue, setInputValue] = useState("");

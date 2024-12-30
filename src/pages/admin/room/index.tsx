@@ -15,7 +15,7 @@ const RoomIndex = () => {
     page: 1,
   });
 
-  const { data: tempData, status } = useFetchRoom({ ...param, paginate: true });
+  const { data: tempData, status } = useFetchRoom(param, true);
   const data = tempData as PaginationProps<RoomModel> | undefined;
 
   const rooms = data?.data.map((room: RoomModel) => {

@@ -14,7 +14,7 @@ const ItemIndex = () => {
   const items = data?.map((item: ItemModel) => {
     const d = {
       ...item,
-      room_at: item.room_items.map((item) => item.room.name).join(', '),
+      room_at: (item.room_items ?? []).map((item) => item.room.name).join(', '),
     }
 
     return {
