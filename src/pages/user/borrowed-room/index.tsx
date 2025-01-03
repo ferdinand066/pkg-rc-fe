@@ -1,16 +1,16 @@
+import { format } from "date-fns";
+import { id } from 'date-fns/locale';
+import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import InputText from "../../../components/forms/InputText";
 import PageHeader from "../../../components/layout/PageHeader";
 import Pagination from "../../../components/utils/Pagination";
 import Table from "../../../components/utils/Table";
 import { useFetchBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
-import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
-import { UserModel } from "../../../model/entities/user";
 import { BORROWED_STATUS } from "../../../lib/constants";
-import useAuth from "../../../hooks/general/use-auth-user";
-import { format } from "date-fns";
-import { id } from 'date-fns/locale';
-import InputText from "../../../components/forms/InputText";
+import { authAtom } from "../../../lib/state/auth-state";
+import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 
 const header = ["event_name", "room_name", "floor", "borrowed_date", "start_borrowing_time", "end_event_time", "pic_name", "status"];
 
@@ -20,8 +20,7 @@ const UserBorrowedRoomIndex = () => {
   });
 
   const [inputValue, setInputValue] = useState("");
-
-  const { user } = useAuth();
+  const authValue = useAtomValue(authAtom);
 
   const { data, status } = useFetchBorrowedRoom(param);
   const navigate = useNavigate();
@@ -33,7 +32,7 @@ const UserBorrowedRoomIndex = () => {
       event_name: <div className="min-w-48 md:min-w-auto">{borrowedRoom.event_name}</div>,
       room_name: <div className="min-w-36 md:min-w-auto">{borrowedRoom.room.name}</div>,
       floor: <div className="min-w-20 md:min-w-auto">{borrowedRoom.room.floor.name}</div>,
-      borrowed_by: (borrowedRoom.borrowed_by as UserModel).name,
+      pic_name: <div className="min-w-32 md:min-w-auto">{borrowedRoom.pic_name}</div>,
       status: BORROWED_STATUS[borrowedRoom.borrowed_status]
     }
 
@@ -47,7 +46,7 @@ const UserBorrowedRoomIndex = () => {
     <section className="flex flex-col h-full flex-1 gap-4">
       <PageHeader
         pageName="Proposal Pinjam Ruang"
-        action={ user?.role === 1 ?
+        action={ authValue?.roleId === "1" ?
           <button type="button" onClick={() => navigate('/room-request/create')} className="btn btn-primary h-10 max-h-10 text-sm">Buat Proposal</button> : <></>
         }
       />
@@ -57,6 +56,7 @@ const UserBorrowedRoomIndex = () => {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            placeholder="Cari..."
           />
         </div>
         <button
@@ -67,7 +67,7 @@ const UserBorrowedRoomIndex = () => {
           Cari
         </button>
       </div>
-      <Table header={header} data={borrowedRooms ?? []} />
+      <Table header={header} data={borrowedRooms ?? []} status={status} />
       <Pagination
         status={status}
         data={data}

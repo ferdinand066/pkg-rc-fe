@@ -11,7 +11,7 @@ const useFetchBorrowedRoom = (params: object) => {
       ...params,
       paginate: true,
     }),
-    placeholderData: (previousData, _) => previousData || undefined,
+    // placeholderData: (previousData, _) => previousData || undefined,
   });
 
   return {

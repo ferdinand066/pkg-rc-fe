@@ -1,6 +1,8 @@
 import { useAtomValue } from "jotai";
 import range from "lodash/range";
 import { Fragment } from "react/jsx-runtime";
+import useAuth from "../../../hooks/general/use-auth-user";
+import { ADMIN_ROLE_INT } from "../../../lib/constants";
 import { classJoin } from "../../../lib/functions";
 import { appThemeAtom } from "../../../lib/state/state";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
@@ -33,21 +35,22 @@ export type RoomScheduleType = {
   floors: FloorModel[];
   borrowedRooms: BorrowedRoomModel[];
   selectedRange: ScheduleSearchType;
+  status: "success" | "error" | "loading";
 };
 
 export const TOTAL_HOUR = 24;
-export const HOUR_DIVIDER = 5;
+export const HOUR_DIVIDER = 30;
 export const SLOT_PER_HOUR = 60 / HOUR_DIVIDER;
 
-export const formatTo12Hour = (hour: number) => {
-  const suffix = hour >= 12 ? "PM" : "AM";
-  const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-  return `${formattedHour} ${suffix}`;
-};
+// export const formatTo12Hour = (hour: number) => {
+//   const suffix = hour >= 12 ? "PM" : "AM";
+//   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+//   return `${formattedHour} ${suffix}`;
+// };
 
 export const generateMinuteBasedOnIndex = (index: number) => {
-  const updatedIndex = (index % 12 === 0 ? 12 : index % 12) - 1;
-  const minutes = updatedIndex * 5;
+  const updatedIndex = (index % SLOT_PER_HOUR === 0 ? SLOT_PER_HOUR : index % SLOT_PER_HOUR) - 1;
+  const minutes = updatedIndex * HOUR_DIVIDER;
 
   return minutes.toString().padStart(2, "0");
 };
@@ -90,6 +93,7 @@ const RoomSchedule = ({
   floors,
   borrowedRooms,
   selectedRange,
+  status
 }: //   activeArea,
 //   timeClickedCallback,
 //   selectedRow,
@@ -97,12 +101,15 @@ const RoomSchedule = ({
 //   isBookedDataClickable = false,
 RoomScheduleType) => {
   const startHour = new Date(`${selectedRange.date} ${selectedRange.startTime}`).getHours();
-  let endHour = new Date(`${selectedRange.date} ${selectedRange.endTime}`).getHours();
-  if (endHour === 0) {
-    endHour = 12;
-  }
+  let endHour = (new Date(`${selectedRange.date} ${selectedRange.endTime}`).getHours() + 1);
+  // if (endHour === 0) {
+  //   endHour = 12;
+  // }
 
   const theme = useAtomValue(appThemeAtom);
+  const isDarkTheme = theme === "dark";
+  const {user} = useAuth();
+
 //   const startHour = 5;
 
   //   const {
@@ -136,16 +143,16 @@ RoomScheduleType) => {
         <table className="table table-sm table-pin-rows table-pin-cols">
           <thead className="border">
             <tr className="border">
-              <th className="border w-32 h-8 z-30"></th>
+              <th className="border w-32 h-8 z-30 min-w-32"></th>
               {range(startHour, endHour).map((index) => (
                 <td key={index} className="border border-l-4" colSpan={SLOT_PER_HOUR}>
-                  {formatTo12Hour(index)}
+                  {`${index}:00`}
                 </td>
               ))}
             </tr>
             <tr className="top-8 border">
-              <th className="border w-32 h-8 z-30"></th>
-              {range(1, SLOT_PER_HOUR * (endHour - startHour)).map(
+              <th className="border w-32 h-8 z-30 min-w-32"></th>
+              {range(1, SLOT_PER_HOUR * (endHour - startHour) + 1).map(
                 (index) => {
                   const boldLeft = ((index - 1) % SLOT_PER_HOUR) === 0;
 
@@ -158,9 +165,7 @@ RoomScheduleType) => {
           </thead>
           <tbody>
             {
-              floors.map((floor) => {
-                const isDarkTheme = theme === "dark";
-
+              status === "success" ? floors.map((floor) => {
                 return <Fragment key={floor.id}>
                   <tr className="border">
                     <th className={classJoin(!isDarkTheme ? "bg-neutral-700 text-white" : "bg-transparent text-gray-300")}>
@@ -182,7 +187,7 @@ RoomScheduleType) => {
                           </th>
                           {range(
                             1,
-                            SLOT_PER_HOUR * (endHour - startHour)
+                            SLOT_PER_HOUR * (endHour - startHour) + 1
                           ).map((index) => {
                             if (indexToSkip > 0) {
                               // Skip this iteration if indexToSkip is greater than 0
@@ -234,6 +239,7 @@ RoomScheduleType) => {
                                 key={index}
                                 onClick={() => {
                                   if (!transactionDetailRoom) return;
+                                  if (transactionDetailRoom.borrowed_by_user_id !== user?.id && user?.role !== ADMIN_ROLE_INT) return;
       
                                   const url = '/room-request/' + (transactionDetailRoom as BorrowedRoomModel).id;
                                   window.open(url, '_blank');
@@ -270,7 +276,7 @@ RoomScheduleType) => {
                     })
                   }
                 </Fragment>
-              })
+              }) : <LoadingState isDarkTheme={isDarkTheme} startHour={startHour}/>
             }
           </tbody>
         </table>
@@ -278,5 +284,14 @@ RoomScheduleType) => {
     </div>
   );
 };
+
+const LoadingState = ({isDarkTheme, startHour}:{isDarkTheme: boolean, startHour: number}) => {
+  return <tr className="border">
+  <th className={classJoin(!isDarkTheme ? "bg-neutral-700 text-white" : "bg-transparent text-gray-300 border-b")} colSpan={(24 - startHour) * SLOT_PER_HOUR + 1}>
+    <span className="w-32 flex flex-row items-end gap-0.5">Loading<span className="loading loading-dots loading-xs"></span></span>
+  </th>
+  {/* <td className={classJoin(!isDarkTheme ? "bg-neutral-700" : "dark:bg-transparent", "text-white")} colSpan={(24 - startHour) * SLOT_PER_HOUR + 1}>Loading</td> */}
+</tr>
+}
 
 export default RoomSchedule;

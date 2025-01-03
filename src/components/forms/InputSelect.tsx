@@ -26,6 +26,7 @@ const InputSelect = (props: InputSelectProps) => {
     component,
     prefix,
     model,
+    isLoading,
     ...rest
   } = props;
 
@@ -36,24 +37,31 @@ const InputSelect = (props: InputSelectProps) => {
           <span className="label-text">{label}</span>
         </div>
       )}
-      <select
-        name={name}
-        {...register}
-        {...(id && { id: id })}
-        className="select select-bordered w-full shadow"
-        {...rest}
-        onChange={(e) => {
-          if (onChange) onChange(e);
-          if (!setValue) return;
-          setValue(name!, e.target.value);
-        }}
-      >
-        {model.map((m: GeneralData, index: number) => (
-          <option key={index} value={m.id}>
-            {m.name}
-          </option>
-        ))}
-      </select>
+      <div className="relative">
+        <select
+          name={name}
+          {...register}
+          {...(id && { id: id })}
+          className="select select-bordered w-full shadow"
+          {...rest}
+          onChange={(e) => {
+            if (onChange) onChange(e);
+            if (!setValue) return;
+            setValue(name!, e.target.value, { shouldDirty: true });
+          }}
+        >
+          {model.map((m: GeneralData, index: number) => (
+            <option key={index} value={m.id}>
+              {m.name}
+            </option>
+          ))}
+        </select>
+        {
+          isLoading && <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500 bg-white">
+            <span className="loading loading-dots loading-xs"></span>
+          </span>
+        }
+      </div>
       {description ||
         (errors && getErrorValue(name ?? "", errors) && (
           <div className="label">

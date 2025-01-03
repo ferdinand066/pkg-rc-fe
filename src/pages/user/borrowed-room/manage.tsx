@@ -1,4 +1,4 @@
-import { isAfter, isSameDay, parseISO } from "date-fns";
+import { isAfter, isBefore, isSameDay, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import InputSelect from "../../../components/forms/InputSelect";
@@ -68,11 +68,8 @@ const fetchNotification = (
 
 const ManageBorrowedRoomPage = () => {
   const { id } = useParams();
-  const { data: borrowedRoom } = useGetOneBorrowedRoom(id ?? "");
-
+  const { data: borrowedRoom, status: borrowedRoomStatus } = useGetOneBorrowedRoom(id ?? "");
   const { data: rooms, status: roomStatus } = useFetchRoom({}, false);
-
-  console.log(rooms);
 
   const {
     register,
@@ -85,6 +82,7 @@ const ManageBorrowedRoomPage = () => {
     handleSubmit,
     watch,
     getValues,
+    formState,
   } = useManageBorrowedRoom(borrowedRoom);
 
   const watchRoomId = watch('room_id');
@@ -113,8 +111,8 @@ const ManageBorrowedRoomPage = () => {
 
     if (!borrowedRoom) return;
     if (!user) return;
-    if (borrowedRoom.borrowed_status === 2) return;
-    if (borrowedRoom.borrowed_by_user_id === user.id) {
+    if (borrowedRoom.borrowed_status === 2 && user.role !== ADMIN_ROLE_INT) return;
+    if (borrowedRoom.borrowed_by_user_id === user.id || user.role === ADMIN_ROLE_INT) {
       setAbleToUpdate(true);
     }
   }, [user, borrowedRoom]);
@@ -122,8 +120,27 @@ const ManageBorrowedRoomPage = () => {
   const { data: slots, status: slotStatus } = useGetRoomAvailability(watchRoomId, {
     borrowing_date: watchBorrowedDate,
     borrowed_room_id: id,
-    check_schedule: (borrowedRoom?.borrowed_status ?? 1) === 1,
+    check_schedule: ableToUpdate && formState.isDirty,
   }); 
+
+  const generateBorrowedStatusBadge = () => {
+    if (borrowedRoomStatus === "pending"){
+      return <span className="loading loading-dots loading-xs"></span>
+    }
+
+    return borrowedRoom && borrowedRoom?.borrowed_status !== null ? (
+      <div
+        className={classJoin(
+          "badge badge-outline px-4 py-3",
+          AGREEMENT_BORROW_COLOR[borrowedRoom?.borrowed_status]
+        )}
+      >
+        {BORROWED_STATUS[borrowedRoom?.borrowed_status]}
+      </div>
+    ) : (
+      <></>
+    );
+  }
 
   return (
     <section className="flex flex-col h-full flex-1 gap-4 mb-8 divide-y">
@@ -131,18 +148,7 @@ const ManageBorrowedRoomPage = () => {
         <PageHeader
           pageName={`${id ? "" : "Buat "}Proposal Pinjam Ruang`}
           action={
-            borrowedRoom && borrowedRoom?.borrowed_status !== null ? (
-              <div
-                className={classJoin(
-                  "badge badge-outline px-4 py-3",
-                  AGREEMENT_BORROW_COLOR[borrowedRoom?.borrowed_status]
-                )}
-              >
-                {BORROWED_STATUS[borrowedRoom?.borrowed_status]}
-              </div>
-            ) : (
-              <></>
-            )
+            generateBorrowedStatusBadge()
           }
         />
         <AlertContainer notification={fetchNotification(borrowedRoom)} />
@@ -162,6 +168,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
+              isLoading={borrowedRoomStatus === "pending"}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -176,6 +183,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
+              isLoading={borrowedRoomStatus === "pending"}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -190,6 +198,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
+              isLoading={borrowedRoomStatus === "pending"}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -215,6 +224,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
+              isLoading={borrowedRoomStatus === "pending"}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -228,37 +238,35 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
+              isLoading={borrowedRoomStatus === "pending"}
             />
           </div>
           <div className="col-span-6 sm:col-span-4">
-            {roomStatus === "success" ? (
-              <InputSelect
-                disabled={!ableToUpdate}
-                label="Ruangan"
-                name="room_id"
-                register={register("room_id", {
-                  required: "Ruangan harus diisi",
-                })}
-                setValue={setValue}
-                model={
-                  (rooms as RoomModel[]).map((room) => ({
-                    id: room.id,
-                    name: room.name + " (" + room.floor.name + ")",
-                  })) ?? []
+            <InputSelect
+              disabled={!ableToUpdate}
+              label="Ruangan"
+              name="room_id"
+              register={register("room_id", {
+                required: "Ruangan harus diisi",
+              })}
+              setValue={setValue}
+              model={
+                ((rooms ?? []) as RoomModel[]).map((room) => ({
+                  id: room.id,
+                  name: room.name + " (" + room.floor.name + ")",
+                })) ?? []
+              }
+              errors={errors}
+              description={slotStatus === "success" ? <div className="flex flex-col text-sm mt-2">
+                <span>Tersedia pada</span>
+                <ul>
+                {
+                  (slots ?? []).map((slot, index) => <li className="ml-2" key={index}>✓ {slot}</li>)
                 }
-                errors={errors}
-                description={slotStatus === "success" && !id ? <div className="flex flex-col text-sm mt-2">
-                  <span>Tersedia pada</span>
-                  <ul>
-                  {
-                    (slots ?? []).map((slot, index) => <li className="ml-2" key={index}>{slot}</li>)
-                  }
-                  </ul>
-                </div> : <></>}
-              />
-            ) : (
-              <></>
-            )}
+                </ul>
+              </div> : <></>}
+              isLoading={roomStatus === "pending"}
+            />
           </div>
           <div className="col-span-6 sm:col-span-2">
             <InputText
@@ -271,6 +279,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
+              isLoading={borrowedRoomStatus === "pending"}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -287,13 +296,14 @@ const ManageBorrowedRoomPage = () => {
                   const endDateTime = new Date(`2000-01-01T${endTime}`);
 
                   // Compare the end time with the start time
-                  if (!isAfter(endDateTime, startDateTime)) {
+                  if (isBefore(endDateTime, startDateTime)) {
                     return "Jam mulai harus setelah jam mulai pinjam";
                   }
                 },
               })}
               setValue={setValue}
               errors={errors}
+              isLoading={borrowedRoomStatus === "pending"}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -317,6 +327,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
+              isLoading={borrowedRoomStatus === "pending"}
             />
           </div>
           <div className="col-span-6 sm:col-span-4">
@@ -339,7 +350,7 @@ const ManageBorrowedRoomPage = () => {
             ) : (
               <></>
             )} */}
-            {watchRoomId && rooms &&
+            { roomStatus === "pending" ? <RoomItemLoading /> : watchRoomId && rooms &&
               (rooms as RoomModel[]).find((room) => room.id === watchRoomId)?.room_items?.map((item, index) => {
                 const itemValue = watch(`items.${index}.item_id`);
                 return (
@@ -447,5 +458,12 @@ const ManageBorrowedRoomPage = () => {
     </section>
   );
 };
+
+const RoomItemLoading = () => {
+  return <div className="flex flex-row gap-4 px-1 items-center">
+    <div className="bg-base-300 min-w-12 animate-pulse rounded-full h-7"></div>
+    <div className="bg-base-300 min-w-32 animate-pulse rounded-full h-6"></div>
+  </div>
+}
 
 export default ManageBorrowedRoomPage;

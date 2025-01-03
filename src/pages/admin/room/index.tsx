@@ -53,7 +53,7 @@ const RoomIndex = () => {
           </DialogButton>
         }
       />
-      <Table header={header} data={rooms ?? []} />
+      <Table header={header} data={rooms ?? []} status={status} />
       <Pagination
         status={status}
         data={data}

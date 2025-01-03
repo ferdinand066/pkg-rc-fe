@@ -11,6 +11,7 @@ type TableProps = {
   enableSort?: boolean;
   sortData?: TableOrderType;
   setSortData?: React.Dispatch<React.SetStateAction<TableOrderType>>;
+  status: "success" | "error" | "pending"
 };
 
 const Table = ({
@@ -19,9 +20,40 @@ const Table = ({
   numbering = false,
   enableSort = false,
   sortData,
+  status,
   // setSortData,
 }: TableProps) => {
   const tableHeader = header.filter((h) => h !== "action");
+
+  const generateTableValue = () => {
+    if (status === "pending") return <tr>
+      <td colSpan={header.length} className="flex items-end flex-row gap-0.5">Loading<span className="loading loading-dots loading-xs"></span></td>
+    </tr>
+
+    if (status === "error") return <tr>
+      <td colSpan={header.length}>Gagal untuk menarik data!</td>
+    </tr>
+
+    if (data.length === 0) return <tr>
+      <td colSpan={header.length}>Tidak ada data!</td>
+    </tr>
+
+    return data.map((d, index) => (
+      <tr key={index}>
+        {numbering && <th>{index + 1}</th>}
+
+        {tableHeader.map((h, i) => {
+          if (i===0 && (d as any)['redirect']){
+            return <td className="hover:text-primary font-bold" key={i}><Link to={(d as any)['redirect']}>{(d as any)[h]}</Link></td>
+          } else if ( i === 0 && (d as any)['onClick']) {
+            return <td className="hover:text-primary font-bold cursor-pointer" onClick={() => (d as any)['onClick']()} key={i}>{(d as any)[h]}</td>
+          }
+          return <td key={i}>{(d as any)[h]}</td>
+        })}
+      </tr>
+    ))
+  }
+
   return (
     <div className="overflow-x-auto rounded-lg shadow mx-6">
       <table className="table table-pin-rows table-zebra-zebra rounded">
@@ -51,26 +83,7 @@ const Table = ({
           </tr>
         </thead>
         <tbody>
-          {data.length > 0 ? (
-            data.map((d, index) => (
-              <tr key={index}>
-                {numbering && <th>{index + 1}</th>}
-
-                {tableHeader.map((h, i) => {
-                  if (i===0 && (d as any)['redirect']){
-                    return <td className="hover:text-primary font-bold" key={i}><Link to={(d as any)['redirect']}>{(d as any)[h]}</Link></td>
-                  } else if ( i === 0 && (d as any)['onClick']) {
-                    return <td className="hover:text-primary font-bold cursor-pointer" onClick={() => (d as any)['onClick']()} key={i}>{(d as any)[h]}</td>
-                  }
-                  return <td key={i}>{(d as any)[h]}</td>
-                })}
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={header.length}>Tidak ada data!</td>
-            </tr>
-          )}
+          { generateTableValue() }
         </tbody>
       </table>
     </div>

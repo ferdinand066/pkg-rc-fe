@@ -5,13 +5,20 @@ import Table from "../../../components/utils/Table";
 import { useFetchItem } from "../../../hooks/general/use-item";
 import { ItemModel } from "../../../model/entities/item";
 import ItemManageModal from "./components/ManageModal";
+import { PaginationProps } from "../../../model/components/pagination";
+import Pagination from "../../../components/utils/Pagination";
 
 const header = ["name", "room_at"];
 
 const ItemIndex = () => {
-  const { data } = useFetchItem({});
+  const [param, setParam] = useState({
+    page: 1,
+  });
+  const { data: tempData, status } = useFetchItem(param, true);
 
-  const items = data?.map((item: ItemModel) => {
+  const data = tempData as PaginationProps<ItemModel> | undefined;
+
+  const items = data?.data.map((item: ItemModel) => {
     const d = {
       ...item,
       room_at: (item.room_items ?? []).map((item) => item.room.name).join(', '),
@@ -40,7 +47,13 @@ const ItemIndex = () => {
           </DialogButton>
         }
       />
-      <Table header={header} data={items ?? []} />
+      <Table header={header} data={items ?? []} status={status}/>
+      <Pagination
+        status={status}
+        data={data}
+        page={param.page}
+        setPage={setParam}
+      />
     </section>
   );
 };

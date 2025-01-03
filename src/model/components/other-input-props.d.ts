@@ -16,4 +16,5 @@ export type OtherInputProps = {
   errors?: Partial<FieldErrorsImpl<object>>;
   component?: JSX.Element;
   rows?: number;
+  isLoading?: boolean;
 }

@@ -38,6 +38,7 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     handleSubmit,
     watch,
     reset,
+    formState,
   } = useForm<ManageBorrowedRoomProps>();
   const [formLoading, setFormLoading] = useAtom(formLoadingStateAtom);
   const queryClient = useQueryClient();
@@ -73,7 +74,6 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
 
         return;
       });
-      
     }
   }, [entity, setValue, rooms]);
 
@@ -199,6 +199,7 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     handleSubmit,
     watch,
     getValues,
+    formState,
   };
 };
 

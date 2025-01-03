@@ -6,6 +6,7 @@ import useManageRoom from "../../../../hooks/admin/form/use-manage-room";
 import { useFetchFloor } from "../../../../hooks/general/use-floor";
 import { useFetchItem } from "../../../../hooks/general/use-item";
 import { RoomModel } from "../../../../model/entities/room";
+import { ItemModel } from "../../../../model/entities/item";
 
 type RoomManageModalProps = {
   selectedRoom: RoomModel | undefined;
@@ -17,8 +18,10 @@ const RoomManageModal = forwardRef<HTMLDialogElement, RoomManageModalProps>(
       orderBy: 'created_at',
       dataOrder: 'asc',
     });
-    const { data: items, status: itemStatus } = useFetchItem({});
+    const { data: tempItems, status: itemStatus } = useFetchItem({}, false);
     const [selectedData, setSelectedData] = useState(selectedRoom);
+
+    const items = tempItems as ItemModel[];
 
     useEffect(() => {
       if (itemStatus !== "success") return;

@@ -119,5 +119,30 @@ function getInitials(fullName: string): string {
   return `${firstInitial}${lastInitial}`;
 }
 
-export { getInitials, classJoin, enableOnlyNumbers, extractTypeFromModel, formatDateRange, getErrorValue, getJSONParseableSubstring, handleToastError, handleToastErrorList, handleToastSuccess, numberToStringCurrency, stringCurrencyToNumber };
+const getStatusValue = (...statuses: string[]) => {
+  const validStatuses = ["error", "loading", "success"];
+
+  // Validate if all statuses are valid
+  if (statuses.some(status => !validStatuses.includes(status))) {
+    return "error";
+  }
+
+  // Check for specific statuses
+  if (statuses.includes("error")) {
+    return "error";
+  }
+
+  if (statuses.includes("loading")) {
+    return "loading";
+  }
+
+  // If all statuses are "success"
+  if (statuses.every(status => status === "success")) {
+    return "success";
+  }
+
+  return "error";
+}
+
+export { getInitials, classJoin, enableOnlyNumbers, extractTypeFromModel, formatDateRange, getErrorValue, getJSONParseableSubstring, handleToastError, handleToastErrorList, handleToastSuccess, numberToStringCurrency, stringCurrencyToNumber, getStatusValue, };
 

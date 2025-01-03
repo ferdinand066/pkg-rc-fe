@@ -22,6 +22,7 @@ const InputText = (props: InputTextProps) => {
     onChange,
     component,
     prefix,
+    isLoading,
     ...rest
   } = props;
 
@@ -32,21 +33,30 @@ const InputText = (props: InputTextProps) => {
           <span className="label-text">{label}</span>
         </div>
       )}
-      <input
-        name={name}
-        {...register}
-        {...(id && { id: id })}
-        className={classJoin(
-          "input input-bordered w-full shadow",
-          inputClassName ?? ""
-        )}
-        {...rest}
-        onChange={(e) => {
-          if (onChange) onChange(e);
-          if (!setValue) return;
-          setValue(name!, e.target.value);
-        }}
-      />
+      <div className="relative">
+        <input
+          name={name}
+          {...register}
+          {...(id && { id: id })}
+          className={classJoin(
+            "input input-bordered w-full shadow",
+            inputClassName ?? ""
+          )}
+          {...rest}
+          onChange={(e) => {
+            if (onChange) onChange(e);
+            if (!setValue) return;
+            setValue(name!, e.target.value, { shouldDirty: true });
+          }}
+          placeholder={ isLoading ? "" : props.placeholder}
+        />
+        {
+          isLoading && !["date", "time"].includes(props.type ?? '') && <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500">
+            <span className="loading loading-dots loading-xs"></span>
+          </span>
+        }
+      </div>
+      
       {description ||
         (errors && getErrorValue(name ?? "", errors) && (
           <div className="label">

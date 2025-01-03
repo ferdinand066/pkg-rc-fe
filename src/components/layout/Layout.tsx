@@ -29,10 +29,10 @@ const Navbar = () => {
   ]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!auth) return;
     if (navbarInitialLoad) return;
 
-    switch (user.role) {
+    switch (parseInt(auth.roleId)) {
       case ADMIN_ROLE_INT:
         setNavigation([
           { name: "Jadwal", href: "/schedule" },
@@ -62,7 +62,7 @@ const Navbar = () => {
         break;
     }
     setNavbarInitialLoad(true);
-  }, [user]);
+  }, [auth]);
 
   return (
     <div className="bg-base-100 w-full flex items-center justify-center shadow-sm z-[100]">

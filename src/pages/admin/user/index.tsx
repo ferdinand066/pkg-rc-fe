@@ -31,6 +31,7 @@ const UserIndex = () => {
       <Table 
         header={header}
         data={users ?? []}
+        status={status}
       />
       <Pagination status={status} data={data} page={param.page} setPage={setParam}/>
     </section>
