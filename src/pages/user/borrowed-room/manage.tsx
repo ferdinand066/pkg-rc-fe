@@ -11,7 +11,7 @@ import useAuth from "../../../hooks/general/use-auth-user";
 import { useGetOneBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
 import useManageBorrowedRoom from "../../../hooks/general/use-manage-borrowed-room";
 import { useFetchRoom, useGetRoomAvailability } from "../../../hooks/general/use-room";
-import { ADMIN_ROLE_INT, BORROWED_STATUS } from "../../../lib/constants";
+import { ADMIN_ROLE_INT, BORROWED_STATUS, INPUT_TIME_STEP } from "../../../lib/constants";
 import { classJoin } from "../../../lib/functions";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { RoomModel } from "../../../model/entities/room";
@@ -124,7 +124,7 @@ const ManageBorrowedRoomPage = () => {
   }); 
 
   const generateBorrowedStatusBadge = () => {
-    if (borrowedRoomStatus === "pending"){
+    if (borrowedRoomStatus === "pending" && !!id){
       return <span className="loading loading-dots loading-xs"></span>
     }
 
@@ -168,7 +168,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
-              isLoading={borrowedRoomStatus === "pending"}
+              isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -183,7 +183,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
-              isLoading={borrowedRoomStatus === "pending"}
+              isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -198,7 +198,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
-              isLoading={borrowedRoomStatus === "pending"}
+              isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -224,7 +224,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
-              isLoading={borrowedRoomStatus === "pending"}
+              isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -238,7 +238,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
-              isLoading={borrowedRoomStatus === "pending"}
+              isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
           <div className="col-span-6 sm:col-span-4">
@@ -273,13 +273,14 @@ const ManageBorrowedRoomPage = () => {
               disabled={borrowedRoom?.borrowed_status === 2}
               label="Jam Mulai Pinjam"
               type="time"
+              step={INPUT_TIME_STEP}
               name="start_borrowing_time"
               register={register("start_borrowing_time", {
                 required: "Jam mulai pinjam harus diisi",
               })}
               setValue={setValue}
               errors={errors}
-              isLoading={borrowedRoomStatus === "pending"}
+              isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -287,6 +288,7 @@ const ManageBorrowedRoomPage = () => {
               disabled={!ableToUpdate}
               label="Jam Mulai Acara"
               type="time"
+              step={INPUT_TIME_STEP}
               name="start_event_time"
               register={register("start_event_time", {
                 required: "Jam mulai acara harus diisi",
@@ -303,7 +305,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
-              isLoading={borrowedRoomStatus === "pending"}
+              isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
           <div className="col-span-6 sm:col-span-2">
@@ -311,6 +313,7 @@ const ManageBorrowedRoomPage = () => {
               disabled={!ableToUpdate}
               label="Jam Selesai Pinjam"
               type="time"
+              step={INPUT_TIME_STEP}
               name="end_event_time"
               register={register("end_event_time", {
                 required: "Jam akhir harus diisi",
@@ -327,7 +330,7 @@ const ManageBorrowedRoomPage = () => {
               })}
               setValue={setValue}
               errors={errors}
-              isLoading={borrowedRoomStatus === "pending"}
+              isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
           <div className="col-span-6 sm:col-span-4">
@@ -377,6 +380,7 @@ const ManageBorrowedRoomPage = () => {
                         register={register(`items.${index}.quantity`, {
                           required: "Harus diisi",
                         })}
+                        setValue={setValue}
                         errors={errors}
                       />
                     )}

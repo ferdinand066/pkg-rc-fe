@@ -46,7 +46,7 @@ const UserBorrowedRoomIndex = () => {
     <section className="flex flex-col h-full flex-1 gap-4">
       <PageHeader
         pageName="Proposal Pinjam Ruang"
-        action={ authValue?.roleId === "1" ?
+        action={ parseInt(authValue?.roleId ?? "1") === 1 ?
           <button type="button" onClick={() => navigate('/room-request/create')} className="btn btn-primary h-10 max-h-10 text-sm">Buat Proposal</button> : <></>
         }
       />

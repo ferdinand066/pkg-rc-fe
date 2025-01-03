@@ -48,6 +48,21 @@ const InputText = (props: InputTextProps) => {
             if (!setValue) return;
             setValue(name!, e.target.value, { shouldDirty: true });
           }}
+          onBlur={(e) => {
+            if (!setValue) return;
+            if (props.type === 'time' && props.step !== undefined){
+              const inputValue = e.target.value; // Get the input value (HH:MM)
+              const [hours, minutes] = inputValue.split(':').map(Number); // Split and parse hours and minutes
+
+              // Round the minutes to the nearest 5-minute interval
+              const roundedMinutes = Math.round(minutes / 5) * 5;
+              const adjustedTime = `${String(hours).padStart(2, '0')}:${String(roundedMinutes).padStart(2, '0')}`;
+
+              // Update the value with the adjusted time
+              setValue(name!, adjustedTime, { shouldDirty: true });
+              return;
+            }
+          }}
           placeholder={ isLoading ? "" : props.placeholder}
         />
         {

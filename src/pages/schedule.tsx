@@ -9,9 +9,16 @@ import useSchedule from "../hooks/general/use-schedule";
 import useRoomSchedule from "../hooks/general/use-room-schedule";
 import AlertContainer, { AlertData } from "../components/layout/AlertContainer";
 import { getStatusValue } from "../lib/functions";
+import { padStart } from "lodash";
+import { INPUT_TIME_STEP } from "../lib/constants";
+
+const minInterval = 6;
 
 const initializeDate = () => {
   const now = new Date();
+  if (now.getHours() > 18) {
+    now.setHours(18);
+  }
   now.setMinutes(0, 0, 0);
   return now;
 };
@@ -52,6 +59,7 @@ const ScheduleIndexPage = () => {
         />
         <InputText
           type="time"
+          step={INPUT_TIME_STEP}
           label={"Jam Awal Booking"}
           value={inputValue.startTime}
           onChange={(e) =>
@@ -60,6 +68,7 @@ const ScheduleIndexPage = () => {
         />
         <InputText
           type="time"
+          step={INPUT_TIME_STEP}
           label={"Jam Akhir Booking"}
           value={inputValue.endTime}
           onChange={(e) =>
@@ -98,8 +107,43 @@ const ScheduleIndexPage = () => {
               return;
             }
 
+            if (endHour - startHour < minInterval) {
+              let adjustedStart = startHour;
+              let adjustedEnd = endHour;
+
+              const midPoint = Math.floor((startHour + endHour) / 2);
+        
+              // Adjust start and end based on proximity
+              if (startHour <= 6) {
+                adjustedStart = 0;
+                adjustedEnd = 6;
+
+                console.log(adjustedStart, adjustedEnd);
+              } else if (startHour >= 18) {
+                adjustedStart = 18;
+                adjustedEnd = 23; // Edge case for end of the day
+              } else {
+                adjustedStart = Math.max(0, midPoint - Math.floor(minInterval / 2));
+                adjustedEnd = Math.min(23, adjustedStart + minInterval);
+
+                console.log(adjustedStart, adjustedEnd);
+              }
+
+              const newValue = {
+                ...inputValue,
+                startTime: padStart(adjustedStart.toString(), 2, "0") + ":00", 
+                endTime: padStart(adjustedEnd.toString(), 2, "0") + ":00",
+              }
+
+              console.log(newValue);
+
+              setInputValue(newValue)
+              setSearchValue(newValue);
+            } else {
+              setSearchValue(inputValue);
+            }
+
             setAlert([]);
-            setSearchValue(inputValue);
           }}
         >
           Cari
