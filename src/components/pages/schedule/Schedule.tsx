@@ -307,7 +307,7 @@ RoomScheduleType) => {
                                     !!transactionDetailRoom &&
                                     (transactionDetailRoom.borrowed_by_user_id ===
                                       user?.id ||
-                                      user?.role !== ADMIN_ROLE_INT)
+                                      user?.role === ADMIN_ROLE_INT)
                                   }
                                 />
                               );
