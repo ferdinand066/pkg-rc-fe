@@ -268,6 +268,10 @@ RoomScheduleType) => {
                                   columnColor =
                                     "bg-green-300 hover:bg-green-500 transition-all";
                                 }
+
+                                if (isDarkTheme) {
+                                  columnColor = classJoin(columnColor, "text-black font-semibold")
+                                }
                                 colSpan = Math.ceil(
                                   differenceInMinutes(
                                     transactionDetailRoom.start_borrowing_time.toString(),
@@ -402,7 +406,7 @@ const ScheduleTableDataComponent = ({
       className={classJoin(
         "border w-8 h-8 cursor-pointer -z-10",
         boldLeft ? "border-l-4" : "",
-        columnColor
+        columnColor,
       )}
       colSpan={colSpan}
     >
@@ -413,7 +417,7 @@ const ScheduleTableDataComponent = ({
             isRelative ? "relative" : ""
           )}
         >
-          <div className={`truncate max-w-[${colSpan * 2}rem]`}>
+          <div className={`truncate`} style={{maxWidth: `${2 * colSpan}rem`}}>
             {transactionDetailRoom.event_name}
           </div>
           <span className="absolute -top-14 left-1/2 -translate-x-1/2 scale-0 transition-transform duration-200 ease-out group-hover:scale-100 p-2 text-xs text-white bg-gray-800 rounded-md shadow-lg flex flex-col min-w-32">
