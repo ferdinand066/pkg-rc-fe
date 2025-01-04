@@ -8,8 +8,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { authAtom } from "./lib/state/auth-state";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { appThemeAtom } from "./lib/state/state";
-import VerifyEmailIndex from "./pages/verify-email";
-import EmailVerifierPage from "./pages/verify-email/token";
 import useAuth from "./hooks/general/use-auth-user";
 import useLogout from "./hooks/form/use-logout";
 
@@ -25,6 +23,10 @@ const ShowUserPage = React.lazy(() => import("./pages/admin/user/show"));
 const ItemIndex = React.lazy(() => import("./pages/admin/item"));
 const UserBorrowedRoomIndex = React.lazy(() => import("./pages/user/borrowed-room"));
 const ManageBorrowedRoomPage = React.lazy(() => import("./pages/user/borrowed-room/manage"));
+const VerifyEmailIndex = React.lazy(() => import("./pages/verify-email"));
+const EmailVerifierPage = React.lazy(() => import("./pages/verify-email/token"));
+const ForgotPasswordPage = React.lazy(() => import("./pages/auth/forgot-password"));
+const ResetPasswordPage = React.lazy(() => import("./pages/auth/reset-password"));
 
 const queryClient = new QueryClient();
 
@@ -157,6 +159,8 @@ const UnauthenticatedRoutes = () => {
         <Route path="/auth">
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="password/reset/:token" element={<ResetPasswordPage />} />
         </Route>
         <Route path="/verify-email">
           <Route path="" element={<VerifyEmailIndex />} />

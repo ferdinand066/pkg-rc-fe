@@ -8,7 +8,7 @@ const LoginPage = () => {
   return (
     <div className="my-auto w-full">
       <div className="w-full flex flex-col sm:justify-center items-center pt-6 sm:pt-0 my-auto">
-        <div className="w-full sm:max-w-md p-5 mx-auto">
+        <div className="w-full sm:max-w-lg p-5 mx-auto">
           <h2 className="mb-12 text-center text-5xl font-extrabold">
             Selamat datang.
           </h2>
@@ -40,10 +40,10 @@ const LoginPage = () => {
                   <span className="ml-2 label-text">Remember me</span>
                 </label>
               </div> */}
-              <a href="#" className="text-sm link link-primary link-hover">
+              <Link to="/auth/forgot-password" className="text-sm link link-primary link-hover">
                 {" "}
                 Lupa kata sandi?{" "}
-              </a>
+              </Link>
             </div>
             <div className="mt-4">
               <button type="submit" className="btn btn-primary w-full">Masuk</button>

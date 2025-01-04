@@ -33,6 +33,20 @@ export class AuthService extends BaseService {
     } catch (e: any) {}
   }
 
+  static async forgotPassword(body: object) {
+    try {
+      const data = await this._post(`${URL}/forgot-password`, body);
+      return data;
+    } catch (e: any) {}
+  }
+
+  static async resetPassword(body: object) {
+    try {
+      const data = await this._post(`${URL}/reset-password`, body);
+      return data;
+    } catch (e: any) {}
+  }
+
   static async changePassword(body: object): Promise<any> {
     try {
       const data = await this._patch(`${URL}/change-password`, body);
@@ -61,5 +75,16 @@ export class AuthService extends BaseService {
       const data = await this._get(`${EMAIL_URL}/verify/${token}`, param);
       return data;
     } catch (e) {}
+  }
+
+  static async getForgotPasswordTokenValidation(token: string, email: string) {
+    try {
+      await this._get(`${URL}/token/${token}`, {
+        email: email,
+      });
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

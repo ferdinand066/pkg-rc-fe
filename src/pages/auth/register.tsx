@@ -15,7 +15,7 @@ const RegisterPage = () => {
   return (
     <div className="my-auto w-full">
       <div className="w-full flex flex-col sm:justify-center items-center pt-6 sm:pt-0 my-auto">
-        <div className="w-full sm:max-w-md p-5 mx-auto">
+        <div className="w-full sm:max-w-lg p-5 mx-auto">
           <h2 className="mb-12 text-center text-5xl font-extrabold">
             Daftar
           </h2>
