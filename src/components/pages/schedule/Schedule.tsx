@@ -131,10 +131,15 @@ RoomScheduleType) => {
   const checkTransactionExists = (roomId: string, time: string) => {
     if ((borrowedRooms ?? []).length === 0) return false;
     return (borrowedRooms ?? []).find((borrowedRoom) => {
-      return (
-        borrowedRoom.room.id === roomId &&
-        borrowedRoom.start_borrowing_time + ":00" === time
-      );
+      if (borrowedRoom.room.id !== roomId) return false;
+
+      const startBorrowingTime = borrowedRoom.start_borrowing_time + ":00";
+      if (startBorrowingTime === time) return true;
+
+      const startTime = selectedRange.startTime + ":00";
+      if (time === startTime && startBorrowingTime < startTime + ":00") return true;
+
+      return false;
     });
   };
 
@@ -274,7 +279,7 @@ RoomScheduleType) => {
                                 }
                                 colSpan = Math.ceil(
                                   differenceInMinutes(
-                                    transactionDetailRoom.start_borrowing_time.toString(),
+                                    minutes,
                                     transactionDetailRoom.end_event_time.toString()
                                   ) / HOUR_DIVIDER
                                 );
