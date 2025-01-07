@@ -117,16 +117,12 @@ const ScheduleIndexPage = () => {
               if (startHour <= 6) {
                 adjustedStart = 0;
                 adjustedEnd = 6;
-
-                console.log(adjustedStart, adjustedEnd);
               } else if (startHour >= 18) {
                 adjustedStart = 18;
                 adjustedEnd = 23; // Edge case for end of the day
               } else {
                 adjustedStart = Math.max(0, midPoint - Math.floor(minInterval / 2));
                 adjustedEnd = Math.min(23, adjustedStart + minInterval);
-
-                console.log(adjustedStart, adjustedEnd);
               }
 
               const newValue = {
@@ -134,8 +130,6 @@ const ScheduleIndexPage = () => {
                 startTime: padStart(adjustedStart.toString(), 2, "0") + ":00", 
                 endTime: padStart(adjustedEnd.toString(), 2, "0") + ":00",
               }
-
-              console.log(newValue);
 
               setInputValue(newValue)
               setSearchValue(newValue);

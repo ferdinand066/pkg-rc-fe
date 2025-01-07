@@ -11,10 +11,13 @@ import useAuth from "../../../hooks/general/use-auth-user";
 import { useGetOneBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
 import useManageBorrowedRoom from "../../../hooks/general/use-manage-borrowed-room";
 import { useFetchRoom, useGetRoomAvailability } from "../../../hooks/general/use-room";
-import { ADMIN_ROLE_INT, BORROWED_STATUS, INPUT_TIME_STEP } from "../../../lib/constants";
+import { ADMIN_ROLE_INT, BORROWED_STATUS, BORROWED_STATUS_ACCEPTED_INT, BORROWED_STATUS_PENDING_INT, INPUT_TIME_STEP } from "../../../lib/constants";
 import { classJoin } from "../../../lib/functions";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { RoomModel } from "../../../model/entities/room";
+import { UserModel } from "../../../model/entities/user";
+
+type FormState = "LOADING" | "ERROR" | "CREATE" | "UPDATE" | "CONFIRMATION" | "CONFIRMED";
 
 const agreementMap = [
   {
@@ -66,6 +69,45 @@ const fetchNotification = (
   return [...processedAgreements, pendingAgreements];
 };
 
+const getBorrowingStatus = ( status: "pending" | "success" | "error", id?: string, user?: UserModel, borrowedRoom?: BorrowedRoomModel | null): FormState => {
+  if (!id) return "CREATE";
+  if (!user) return "LOADING";
+  if (status === "pending") return "LOADING";
+  if (status === "error") return "ERROR";
+  if (!borrowedRoom) return "CREATE";
+  if (borrowedRoom.borrowed_by_user_id === user.id){
+    if (borrowedRoom.borrowed_status === BORROWED_STATUS_PENDING_INT){
+      if (borrowedRoom.borrowed_room_agreements.length > 0) return "CONFIRMED";
+      return "UPDATE";
+    }
+    if (borrowedRoom.borrowed_status === BORROWED_STATUS_ACCEPTED_INT) return "CONFIRMED";
+    return "UPDATE";
+  }
+
+  // borrowedRoom.pending_users
+
+  const pendingUsers = borrowedRoom.pending_users ?? [];
+  if (pendingUsers.length === 0) return "UPDATE";
+
+  if (borrowedRoom.borrowed_status === BORROWED_STATUS_PENDING_INT){
+    if (pendingUsers.filter((u) => u.id === user.id).length > 0){
+      return "CONFIRMATION";
+    }
+
+    return "UPDATE";
+  }
+
+  return "CONFIRMED";
+}
+
+const checkAbleToUpdateForm = (status: FormState): boolean => {
+  return ["CREATE", "UPDATE"].includes(status);
+}
+
+const checkAbleToAcceptRequest = (status: FormState): boolean => {
+  return ["CONFIRMATION"].includes(status);
+}
+
 const ManageBorrowedRoomPage = () => {
   const { id } = useParams();
   const { data: borrowedRoom, status: borrowedRoomStatus } = useGetOneBorrowedRoom(id ?? "");
@@ -89,9 +131,12 @@ const ManageBorrowedRoomPage = () => {
   const watchBorrowedDate = watch('borrowed_date');
 
   const [initialize, setInitialized] = useState(false);
-  const [ableToUpdate, setAbleToUpdate] = useState(false);
+  // const [ableToUpdate, setAbleToUpdate] = useState(false);
 
   const { user } = useAuth();
+  const borrowingStatus = getBorrowingStatus(borrowedRoomStatus, id, user, borrowedRoom);
+  const isAbleToUpdateForm = checkAbleToUpdateForm(borrowingStatus);
+  const isAbleToAcceptRequest = checkAbleToAcceptRequest(borrowingStatus);
 
   useEffect(() => {
     if (roomStatus !== "success") return;
@@ -105,22 +150,22 @@ const ManageBorrowedRoomPage = () => {
 
   useEffect(() => {
     if (!id) {
-      setAbleToUpdate(true);
+      // setAbleToUpdate(true);
       return;
     }
 
     if (!borrowedRoom) return;
     if (!user) return;
     if (borrowedRoom.borrowed_status === 2 && user.role !== ADMIN_ROLE_INT) return;
-    if (borrowedRoom.borrowed_by_user_id === user.id || user.role === ADMIN_ROLE_INT) {
-      setAbleToUpdate(true);
-    }
+    // if (borrowedRoom.borrowed_by_user_id === user.id || user.role === ADMIN_ROLE_INT) {
+    //   setAbleToUpdate(true);
+    // }
   }, [user, borrowedRoom]);
 
   const { data: slots, status: slotStatus } = useGetRoomAvailability(watchRoomId, {
     borrowing_date: watchBorrowedDate,
     borrowed_room_id: id,
-    check_schedule: ableToUpdate && formState.isDirty,
+    check_schedule: formState.isDirty,
   }); 
 
   const generateBorrowedStatusBadge = () => {
@@ -162,7 +207,7 @@ const ManageBorrowedRoomPage = () => {
               type="text"
               name="event_name"
               placeholder="Contoh: Acara Natal"
-              disabled={!ableToUpdate}
+              disabled={!isAbleToUpdateForm}
               register={register("event_name", {
                 required: "Nama kegiatan harus diisi",
               })}
@@ -177,7 +222,7 @@ const ManageBorrowedRoomPage = () => {
               type="text"
               name="pic_name"
               placeholder="Tuliskan nama anda"
-              disabled={!ableToUpdate}
+              disabled={!isAbleToUpdateForm}
               register={register("pic_name", {
                 required: "Nama PIC harus diisi",
               })}
@@ -192,7 +237,7 @@ const ManageBorrowedRoomPage = () => {
               type="text"
               name="pic_phone_number"
               placeholder="Format: 08....."
-              disabled={!ableToUpdate}
+              disabled={!isAbleToUpdateForm}
               register={register("pic_phone_number", {
                 required: "No. Telp PIC harus diisi",
               })}
@@ -206,7 +251,7 @@ const ManageBorrowedRoomPage = () => {
               label="Tanggal Pinjam Ruangan"
               type="date"
               name="borrowed_date"
-              disabled={!ableToUpdate}
+              disabled={!isAbleToUpdateForm}
               register={register("borrowed_date", {
                 required: "Tanggal peminjaman harus diisi",
                 validate: (date) => {
@@ -229,7 +274,7 @@ const ManageBorrowedRoomPage = () => {
           </div>
           <div className="col-span-6 sm:col-span-2">
             <InputText
-              disabled={!ableToUpdate}
+              disabled={!isAbleToUpdateForm}
               label="Kapasitas"
               type="number"
               name="capacity"
@@ -243,7 +288,7 @@ const ManageBorrowedRoomPage = () => {
           </div>
           <div className="col-span-6 sm:col-span-4">
             <InputSelect
-              disabled={!ableToUpdate}
+              disabled={!isAbleToUpdateForm}
               label="Ruangan"
               name="room_id"
               register={register("room_id", {
@@ -270,7 +315,7 @@ const ManageBorrowedRoomPage = () => {
           </div>
           <div className="col-span-6 sm:col-span-2">
             <InputText
-              disabled={borrowedRoom?.borrowed_status === 2}
+              disabled={!isAbleToUpdateForm}
               label="Jam Mulai Pinjam"
               type="time"
               step={INPUT_TIME_STEP}
@@ -285,7 +330,7 @@ const ManageBorrowedRoomPage = () => {
           </div>
           <div className="col-span-6 sm:col-span-2">
             <InputText
-              disabled={!ableToUpdate}
+              disabled={!isAbleToUpdateForm}
               label="Jam Mulai Acara"
               type="time"
               step={INPUT_TIME_STEP}
@@ -310,7 +355,7 @@ const ManageBorrowedRoomPage = () => {
           </div>
           <div className="col-span-6 sm:col-span-2">
             <InputText
-              disabled={!ableToUpdate}
+              disabled={!isAbleToUpdateForm}
               label="Jam Selesai Pinjam"
               type="time"
               step={INPUT_TIME_STEP}
@@ -336,7 +381,7 @@ const ManageBorrowedRoomPage = () => {
           <div className="col-span-6 sm:col-span-4">
             {/* {roomStatus === "success" && selectedRoom ? (
               <InputCheckbox
-                disabled={!ableToUpdate}
+                disabled={!isAbleToUpdateForm}
                 label="Barang"
                 name="item_id"
                 id="item_id"
@@ -359,7 +404,7 @@ const ManageBorrowedRoomPage = () => {
                 return (
                   <div className="grid grid-cols-3 items-center" key={item.id}>
                     <InputToggle
-                      disabled={!ableToUpdate}
+                      disabled={!isAbleToUpdateForm}
                       label={item.item.name}
                       name={`items.${index}.item_id`}
                       id={`items.${index}.item_id`}
@@ -371,7 +416,7 @@ const ManageBorrowedRoomPage = () => {
                     {!!itemValue && (
                       <InputText
                         type="number"
-                        disabled={!ableToUpdate}
+                        disabled={!isAbleToUpdateForm}
                         inputClassName="input-sm"
                         placeholder="Jumlah barang"
                         min={1}
@@ -390,7 +435,7 @@ const ManageBorrowedRoomPage = () => {
           </div>
           <div className="col-span-6">
             <InputTextarea
-              disabled={!ableToUpdate}
+              disabled={!isAbleToUpdateForm}
               label="Keterangan"
               name="description"
               id="description"
@@ -401,7 +446,7 @@ const ManageBorrowedRoomPage = () => {
               errors={errors}
             />
           </div>
-          {ableToUpdate && (
+          {borrowingStatus === "UPDATE" && (
             <div className="col-span-6 modal-action flex-row-reverse justify-between">
               <div className="flex flex-row gap-4">
                 <button className="btn btn-neutral" type="button">
@@ -422,15 +467,16 @@ const ManageBorrowedRoomPage = () => {
               )}
             </div>
           )}
-          {user &&
-            user.role === ADMIN_ROLE_INT &&
-            !ableToUpdate &&
-            borrowedRoom &&
-            borrowedRoom.borrowed_status === 1 &&
-            (borrowedRoom?.borrowed_room_agreements ?? []).filter(
-              (agreement) =>
-                agreement.created_by_user_id === (user.id as string)
-            ).length === 0 && (
+          {
+          // user &&
+          //   user.role === ADMIN_ROLE_INT &&
+          //   borrowedRoom &&
+          //   borrowedRoom.borrowed_status === 1 &&
+          //   (borrowedRoom?.borrowed_room_agreements ?? []).filter(
+          //     (agreement) =>
+          //       agreement.created_by_user_id === (user.id as string)
+          //   ).length === 0 
+            isAbleToAcceptRequest && (
               <div className="col-span-6 modal-action flex-row-reverse justify-between">
                 <button
                   className="btn btn-primary"

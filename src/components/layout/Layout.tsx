@@ -108,12 +108,10 @@ const Navbar = () => {
                       ))}
                     </ul>
                   </li>
-                );
+                ); 
               })}
               {auth ? (
-                <li className="sm:hidden">
-                  <Link to={"/auth/logout"}>Logout</Link>
-                </li>
+                <></>
               ) : (
                 <>
                   <li className="sm:hidden">
