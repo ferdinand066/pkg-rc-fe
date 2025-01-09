@@ -446,7 +446,7 @@ const ManageBorrowedRoomPage = () => {
               errors={errors}
             />
           </div>
-          {borrowingStatus === "UPDATE" && (
+          {["UPDATE", "CREATE"].includes(borrowingStatus) && (
             <div className="col-span-6 modal-action flex-row-reverse justify-between">
               <div className="flex flex-row gap-4">
                 <button className="btn btn-neutral" type="button">

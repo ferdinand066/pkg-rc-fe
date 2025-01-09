@@ -9,3 +9,15 @@
     background-color: var(--fallback-b2, oklch(var(--b1) / var(--tw-bg-opacity)));
     color: inherit;
 }
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

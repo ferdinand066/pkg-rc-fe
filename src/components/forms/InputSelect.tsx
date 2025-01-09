@@ -1,8 +1,10 @@
 import { SelectHTMLAttributes } from "react";
-import { getErrorValue } from "../../lib/functions";
+import { classJoin, getErrorValue } from "../../lib/functions";
 import { GeneralData } from "../../model/components/general-data";
 import { OtherInputProps } from "../../model/components/other-input-props";
 import FormErrorMessage from "./FormErrorMessage";
+import { useAtomValue } from "jotai";
+import { appThemeAtom } from "../../lib/state/state";
 
 export type InputSelectProps = SelectHTMLAttributes<HTMLSelectElement> &
   OtherInputProps & {
@@ -10,6 +12,7 @@ export type InputSelectProps = SelectHTMLAttributes<HTMLSelectElement> &
   };
 
 const InputSelect = (props: InputSelectProps) => {
+  const theme = useAtomValue(appThemeAtom);
   const {
     labelClassName,
     inputContainerClassName,
@@ -57,7 +60,7 @@ const InputSelect = (props: InputSelectProps) => {
           ))}
         </select>
         {
-          isLoading && <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500 bg-white">
+          isLoading && <span className={classJoin("absolute right-3 top-1/2 transform -translate-y-1/2 text-xl text-gray-500", theme === "dark" ? "bg-base-100" : "bg-white")}>
             <span className="loading loading-dots loading-xs"></span>
           </span>
         }
