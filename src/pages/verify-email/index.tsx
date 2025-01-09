@@ -12,23 +12,22 @@ const VerifyEmailIndex = () => {
       <div className="px-6">
         <div className="max-w-7xl p-8 shadow-lg rounded-lg mx-auto flex flex-col gap-4">
           <div>
-            We have sent a verification link to{" "}
+            Kami telah mengirimkan link verifikasi ke{" "}
             <span className="font-extrabold text-primary">{user?.email}</span>.
-            If you cannot find the email verification mail in the Index folder,
-            please check the{" "}
-            <span className="font-extrabold text-primary">Junk / Spam</span>{" "}
-            folder
+            Bila tidak menemukan email verifikasi dalam folder Index,
+            harap cek folder{" "}
+            <span className="font-extrabold text-primary">Junk / Spam</span>
           </div>
           <div>
-            If you did not receive the{" "}
+            Jika tidak menerima{" "}
             <span className="font-extrabold text-primary">
-              email verification
+              email verifikasi
             </span>{" "}
-            mail, please click on the resend button.
+            , dapat menekan tombol kirim kembali.
           </div>
           <div className="flex flex-row justify-center">
           <button onClick={() => handleResendVerificationEmail()} className="btn btn-primary max-w-xs w-full" type="button">
-            Resend Verification Mail
+            Kirim Kembail Email Verifikasi
           </button>
           </div>
         </div>

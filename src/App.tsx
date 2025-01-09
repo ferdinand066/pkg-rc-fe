@@ -24,6 +24,7 @@ const ItemIndex = React.lazy(() => import("./pages/admin/item"));
 const UserBorrowedRoomIndex = React.lazy(() => import("./pages/user/borrowed-room"));
 const ManageBorrowedRoomPage = React.lazy(() => import("./pages/user/borrowed-room/manage"));
 const VerifyEmailIndex = React.lazy(() => import("./pages/verify-email"));
+const PendingVerificationIndex = React.lazy(() => import("./pages/pending-verification"));
 const EmailVerifierPage = React.lazy(() => import("./pages/verify-email/token"));
 const ForgotPasswordPage = React.lazy(() => import("./pages/auth/forgot-password"));
 const ResetPasswordPage = React.lazy(() => import("./pages/auth/reset-password"));
@@ -68,6 +69,7 @@ const App = () => {
 };
 
 const verifyEmailPath = '/verify-email';
+const pendingVerificationPath = '/pending-verification';
 
 const AuthenticatedRoutes = () => {
   const { user } = useAuth();
@@ -91,6 +93,14 @@ const AuthenticatedRoutes = () => {
     if (!user.email_verified_at){
       if (!location.pathname.startsWith(verifyEmailPath)) {
         navigate(verifyEmailPath);
+      }
+
+      return;
+    }
+
+    if (!user.account_accepted_at){
+      if (!location.pathname.startsWith(pendingVerificationPath)) {
+        navigate(pendingVerificationPath);
       }
 
       return;
@@ -129,6 +139,7 @@ const AuthenticatedRoutes = () => {
           <Route path=":token" element={<EmailVerifierPage />}></Route>
           {/* <Route path=":id" element={<ManageBorrowedRoomPage />}></Route> */}
         </Route>
+        <Route path="pending-verification" element={<PendingVerificationIndex />} />
         <Route path="*" element={<Navigate to={"schedule"}/>}/>
         {/* <Route path="/user">
           <Route path="room-request">

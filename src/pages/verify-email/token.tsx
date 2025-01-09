@@ -45,7 +45,7 @@ const EmailVerifierPage = () => {
     <section className="flex flex-col h-full flex-1 gap-4">
       <div className="px-6">
         <div className="max-w-7xl p-8 shadow-lg rounded-lg mx-auto flex flex-col gap-4">
-          <div>Verifying email...</div>
+          <div>Verifikasi Email...</div>
         </div>
       </div>
     </section>
