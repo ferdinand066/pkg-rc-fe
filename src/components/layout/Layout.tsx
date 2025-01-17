@@ -269,7 +269,7 @@ const Layout = ({ children }: any) => {
   useEffect(() => {
     const updateDateTime = () => {
       const now = new Date();
-      const formatter = new Intl.DateTimeFormat("en-TH", {
+      const formatter = new Intl.DateTimeFormat("en-US", {
         timeZone: "Asia/Bangkok",
         year: "numeric",
         month: "long",

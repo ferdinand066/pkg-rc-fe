@@ -29,14 +29,14 @@ const ScheduleIndexPage = () => {
 
   const [inputValue, setInputValue] = useState<ScheduleSearchType>({
     date: format(currentDate, "yyyy-MM-dd"),
-    startTime: format(currentDate, "HH") + ":00",
-    endTime: "23:59",
+    start_time: format(currentDate, "HH") + ":00",
+    end_time: "23:59",
   });
 
   const [searchValue, setSearchValue] = useState<ScheduleSearchType>({
     date: format(currentDate, "yyyy-MM-dd"),
-    startTime: format(currentDate, "HH") + ":00",
-    endTime: "23:59",
+    start_time: format(currentDate, "HH") + ":00",
+    end_time: "23:59",
   });
 
   const { data: floors, status: floorStatus } = useRoomSchedule();
@@ -46,7 +46,7 @@ const ScheduleIndexPage = () => {
   return (
     <section className="flex flex-col h-full flex-1 gap-4 mb-24">
       <PageHeader pageName="Jadwal" />
-      <div className="mx-6 flex flex-row items-end gap-4">
+      <div className="mx-6 flex flex-col md:flex-row items-end gap-4">
         <InputText
           type="date"
           min={currentDate.toISOString().split("T")[0]}
@@ -61,18 +61,18 @@ const ScheduleIndexPage = () => {
           type="time"
           step={INPUT_TIME_STEP}
           label={"Jam Awal Booking"}
-          value={inputValue.startTime}
+          value={inputValue.start_time}
           onChange={(e) =>
-            setInputValue((prev) => ({ ...prev, startTime: e.target.value }))
+            setInputValue((prev) => ({ ...prev, start_time: e.target.value }))
           }
         />
         <InputText
           type="time"
           step={INPUT_TIME_STEP}
           label={"Jam Akhir Booking"}
-          value={inputValue.endTime}
+          value={inputValue.end_time}
           onChange={(e) =>
-            setInputValue((prev) => ({ ...prev, endTime: e.target.value }))
+            setInputValue((prev) => ({ ...prev, end_time: e.target.value }))
           }
         />
         <button
@@ -80,10 +80,10 @@ const ScheduleIndexPage = () => {
           type="button"
           onClick={() => {
             const startHour = new Date(
-              `${inputValue.date} ${inputValue.startTime}`
+              `${inputValue.date} ${inputValue.start_time}`
             ).getHours();
             const endHour = new Date(
-              `${inputValue.date} ${inputValue.endTime}`
+              `${inputValue.date} ${inputValue.end_time}`
             ).getHours();
 
             // Validation

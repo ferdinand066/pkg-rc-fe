@@ -26,8 +26,8 @@ import { useEffect, useRef, useState } from "react";
 
 export type ScheduleSearchType = {
   date: string;
-  startTime: string;
-  endTime: string;
+  start_time: string;
+  end_time: string;
 };
 
 type LegentLabelType = {
@@ -106,10 +106,10 @@ const RoomSchedule = ({
 //   isBookedDataClickable = false,
 RoomScheduleType) => {
   const startHour = new Date(
-    `${selectedRange.date} ${selectedRange.startTime}`
+    `${selectedRange.date} ${selectedRange.start_time}`
   ).getHours();
   let endHour =
-    new Date(`${selectedRange.date} ${selectedRange.endTime}`).getHours() + 1;
+    new Date(`${selectedRange.date} ${selectedRange.end_time}`).getHours() + 1;
   // if (endHour === 0) {
   //   endHour = 12;
   // }
@@ -136,7 +136,7 @@ RoomScheduleType) => {
       const startBorrowingTime = borrowedRoom.start_borrowing_time + ":00";
       if (startBorrowingTime === time) return true;
 
-      const startTime = selectedRange.startTime + ":00";
+      const startTime = selectedRange.start_time + ":00";
       if (time === startTime && startBorrowingTime < startTime + ":00") return true;
 
       return false;
