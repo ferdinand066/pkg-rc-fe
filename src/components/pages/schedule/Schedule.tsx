@@ -11,6 +11,7 @@ import { appThemeAtom } from "../../../lib/state/state";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { FloorModel } from "../../../model/entities/room";
 import { useEffect, useRef, useState } from "react";
+import { format } from "date-fns";
 // import {
 //   controller,
 //   differenceInMinutes,
@@ -156,7 +157,7 @@ RoomScheduleType) => {
         <table className="table table-sm table-pin-rows table-pin-cols">
           <thead className="border">
             <tr className="border">
-              <th className="border w-32 h-8 z-30 min-w-32"></th>
+              <th className="border w-32 h-8 z-30 min-w-32">Booking pada:</th>
               {range(startHour, endHour).map((index) => (
                 <td
                   key={index}
@@ -168,7 +169,7 @@ RoomScheduleType) => {
               ))}
             </tr>
             <tr className="top-8 border">
-              <th className="border w-32 h-8 z-30 min-w-32"></th>
+              <th className="border w-32 h-8 z-30 min-w-32">{format(selectedRange.date, "dd MMM yyyy")}</th>
               {range(1, SLOT_PER_HOUR * (endHour - startHour) + 1).map(
                 (index) => {
                   const boldLeft = (index - 1) % SLOT_PER_HOUR === 0;

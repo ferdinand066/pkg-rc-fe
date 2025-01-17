@@ -69,7 +69,7 @@ const Navbar = () => {
       <div className="navbar max-w-7xl">
         <div className="flex-1">
           <div className="dropdown">
-            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+            <div tabIndex={0} role="button" className="btn btn-ghost sm:hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -93,7 +93,7 @@ const Navbar = () => {
                 if (!nav.child) {
                   return (
                     <li key={nav.href}>
-                      <Link to={nav.href}>{nav.name}</Link>
+                      <Link to={nav.href} className="py-2 px-4">{nav.name}</Link>
                     </li>
                   );
                 }

@@ -8,9 +8,11 @@ import RoomSchedule, {
 import useSchedule from "../hooks/general/use-schedule";
 import useRoomSchedule from "../hooks/general/use-room-schedule";
 import AlertContainer, { AlertData } from "../components/layout/AlertContainer";
-import { getStatusValue } from "../lib/functions";
+import { classJoin, getStatusValue } from "../lib/functions";
 import { padStart } from "lodash";
 import { INPUT_TIME_STEP } from "../lib/constants";
+import { useAtomValue } from "jotai";
+import { appThemeAtom } from "../lib/state/state";
 
 const minInterval = 6;
 
@@ -26,6 +28,8 @@ const initializeDate = () => {
 const ScheduleIndexPage = () => {
   const currentDate = initializeDate();
   const [alert, setAlert] = useState<AlertData[]>([]);
+  const theme = useAtomValue(appThemeAtom);
+  const isDarkTheme = theme === "dark";
 
   const [inputValue, setInputValue] = useState<ScheduleSearchType>({
     date: format(currentDate, "yyyy-MM-dd"),
@@ -43,9 +47,58 @@ const ScheduleIndexPage = () => {
   const { data: borrowedRooms, status: borrowedRoomStatus } =
     useSchedule(searchValue);
 
+  const updateDate = (updateFn: (date: Date) => void) => {
+    const { date } = searchValue;
+
+    const originalDate = new Date(date);
+    updateFn(originalDate);
+
+    const formattedDate = format(originalDate, "yyyy-MM-dd");
+
+    setInputValue((prev) => ({
+      ...prev,
+      date: formattedDate,
+    }));
+    setSearchValue((prev) => ({
+      ...prev,
+      date: formattedDate,
+    }));
+  };
+
   return (
     <section className="flex flex-col h-full flex-1 gap-4 mb-24">
-      <PageHeader pageName="Jadwal" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+        <PageHeader pageName="Jadwal" />
+        <div className="px-6 w-full flex justify-end">
+          <div className="join w-full sm:w-auto">
+            <button
+              onClick={() =>
+                updateDate((date) => date.setDate(date.getDate() + 1))
+              }
+              className={classJoin("btn join-item flex-1", isDarkTheme ? "bg-neutral" : "bg-white")}
+            >
+              Next Day
+            </button>
+            <button
+              onClick={() =>
+                updateDate((date) => date.setDate(date.getDate() + 7))
+              }
+              className={classJoin("btn join-item flex-1", isDarkTheme ? "bg-neutral" : "bg-white")}
+            >
+              Next Week
+            </button>
+            <button
+              onClick={() =>
+                updateDate((date) => date.setMonth(date.getMonth() + 1))
+              }
+              className={classJoin("btn join-item flex-1", isDarkTheme ? "bg-neutral" : "bg-white")}
+            >
+              Next Month
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="mx-6 flex flex-col md:flex-row items-end gap-4">
         <InputText
           type="date"
@@ -76,7 +129,7 @@ const ScheduleIndexPage = () => {
           }
         />
         <button
-          className="btn btn-primary"
+          className="btn btn-primary w-full md:w-auto"
           type="button"
           onClick={() => {
             const startHour = new Date(
@@ -112,7 +165,7 @@ const ScheduleIndexPage = () => {
               let adjustedEnd = endHour;
 
               const midPoint = Math.floor((startHour + endHour) / 2);
-        
+
               // Adjust start and end based on proximity
               if (startHour <= 6) {
                 adjustedStart = 0;
@@ -121,17 +174,20 @@ const ScheduleIndexPage = () => {
                 adjustedStart = 18;
                 adjustedEnd = 23; // Edge case for end of the day
               } else {
-                adjustedStart = Math.max(0, midPoint - Math.floor(minInterval / 2));
+                adjustedStart = Math.max(
+                  0,
+                  midPoint - Math.floor(minInterval / 2)
+                );
                 adjustedEnd = Math.min(23, adjustedStart + minInterval);
               }
 
               const newValue = {
                 ...inputValue,
-                startTime: padStart(adjustedStart.toString(), 2, "0") + ":00", 
+                startTime: padStart(adjustedStart.toString(), 2, "0") + ":00",
                 endTime: padStart(adjustedEnd.toString(), 2, "0") + ":00",
-              }
+              };
 
-              setInputValue(newValue)
+              setInputValue(newValue);
               setSearchValue(newValue);
             } else {
               setSearchValue(inputValue);
