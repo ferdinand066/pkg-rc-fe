@@ -183,8 +183,8 @@ const ScheduleIndexPage = () => {
 
               const newValue = {
                 ...inputValue,
-                startTime: padStart(adjustedStart.toString(), 2, "0") + ":00",
-                endTime: padStart(adjustedEnd.toString(), 2, "0") + ":00",
+                start_time: padStart(adjustedStart.toString(), 2, "0") + ":00",
+                end_time: padStart(adjustedEnd.toString(), 2, "0") + ":00",
               };
 
               setInputValue(newValue);
