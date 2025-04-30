@@ -45,5 +45,13 @@ export class UserService extends BaseService {
     }
   }
 
-
+  static async rejectUser(id: string): Promise<UserModel | null> {
+    if (!id) return null;
+    try {
+      const data = await this._post(`${URL}/${id}/reject`, {});
+      return data;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
 }

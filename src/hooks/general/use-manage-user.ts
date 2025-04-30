@@ -10,6 +10,7 @@ import { UserModel } from "../../model/entities/user";
 import { UserService as AdminUserService } from "../../services/admin/user-service";
 import { UserService as GeneralUserService } from "../../services/general/user-service";
 import useAuth from "./use-auth-user";
+import { useNavigate } from "react-router-dom";
 
 type UpdateUserProps = {
   name: string;
@@ -29,6 +30,7 @@ const useUpdateUser = (entity: UserModel | null = null) => {
   } = useForm<UpdateUserProps>();
   const [formLoading, setFormLoading] = useAtom(formLoadingStateAtom);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useEffect(() => {
     reset();
@@ -107,11 +109,34 @@ const useUpdateUser = (entity: UserModel | null = null) => {
     setFormLoading(false);
   }
 
+  async function handleRejectUser() {
+    if (!user) return;
+    if (!entity) return;
+    if (user.role !== ADMIN_ROLE_INT) return;
+
+    setFormLoading(true);
+    try {
+      await toast.promise(
+        AdminUserService.rejectUser(entity.id as string),
+        {
+          pending: "Waiting for reject user!",
+          error: handleToastError(),
+          success: handleToastSuccess(),
+        }
+      );
+    } catch (e) {}
+
+    queryClient.invalidateQueries({ queryKey: ["admin/user"] });
+    navigate('/admin/user');
+    setFormLoading(false);
+  }
+
   return {
     register,
     setValue,
     errors,
     handleActivateUser,
+    handleRejectUser,
     handleUpdateProfile,
     handleUpdateRole,
     handleSubmit,

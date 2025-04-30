@@ -24,6 +24,7 @@ const ShowUserPage = () => {
     errors,
     handleActivateUser,
     handleUpdateRole,
+    handleRejectUser,
     handleSubmit,
   } = useUpdateUser(selectedUser);
 
@@ -50,14 +51,15 @@ const ShowUserPage = () => {
     if (user.role !== ADMIN_ROLE_INT) return <></>;
 
     if (!selectedUser) return <></>;
-    if (!selectedUser.email_verified_at) return <></>;
+    // if (!selectedUser.email_verified_at) return <></>;
 
     if (!selectedUser.account_accepted_at && !selectedUser.suspended_at)
       return (
         <div className="flex flex-row gap-4">
-          {/* <button className="btn btn-error" type="button">
+          <button 
+            onClick={() => handleRejectUser()} className="btn btn-error" type="button">
             Tolak User
-          </button> */}
+          </button>
           <button
             onClick={() => handleActivateUser()}
             className="btn btn-primary"
@@ -156,7 +158,7 @@ const ShowUserPage = () => {
             {selectedUser?.account_accepted_at && (
               <div className="col-span-6 modal-action flex-row-reverse justify-between">
                 <div className="flex flex-row gap-4">
-                  <button className="btn btn-neutral" type="button">
+                  <button onClick={() => navigate('/admin/user')} className="btn btn-neutral" type="button">
                     Tutup
                   </button>
                   <button className="btn btn-primary" type="submit">

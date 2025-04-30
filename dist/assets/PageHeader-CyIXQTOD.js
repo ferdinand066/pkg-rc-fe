@@ -1,0 +1,1 @@
+import{j as e}from"./index-CELXcd2A.js";const s=({pageName:s,action:a})=>e.jsxs("div",{className:"flex items-center justify-between px-6 py-4 lg:py-8",children:[e.jsx("div",{className:"flex-1 min-w-0",children:e.jsx("h1",{className:"text-3xl font-medium leading-12 sm:truncate",children:s})}),a]});export{s as P};

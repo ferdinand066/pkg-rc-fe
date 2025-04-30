@@ -22,7 +22,7 @@ export class BaseService {
         });
         window.location.reload();
       } else {
-        throw new Error(e.response.data.message);
+        throw new Error(e.response.data?.message);
       }
     }
   }
@@ -35,7 +35,7 @@ export class BaseService {
 
       return data;
     } catch (e: any) {
-      throw new Error(e.response.data.message);
+      throw new Error(e.response.data?.message);
     }
   }
 
