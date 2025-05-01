@@ -4,8 +4,13 @@ import { Link } from "react-router-dom";
 import { classJoin } from "../../lib/functions";
 import { TableOrderType } from "../../model/components/table-order";
 
+export type TableHeaderProps = {
+  name: string;
+  sortable: boolean;
+}
+
 type TableProps = {
-  header: string[];
+  header: TableHeaderProps[];
   data: object[];
   numbering?: boolean;
   enableSort?: boolean;
@@ -21,9 +26,9 @@ const Table = ({
   enableSort = false,
   sortData,
   status,
-  // setSortData,
+  setSortData,
 }: TableProps) => {
-  const tableHeader = header.filter((h) => h !== "action");
+  const tableHeader = header.filter((h) => h.name !== "action");
 
   const generateTableValue = () => {
     if (status === "pending") return <tr>
@@ -44,11 +49,11 @@ const Table = ({
 
         {tableHeader.map((h, i) => {
           if (i===0 && (d as any)['redirect']){
-            return <td className="hover:text-primary font-bold" key={i}><Link to={(d as any)['redirect']}>{(d as any)[h]}</Link></td>
+            return <td className="hover:text-primary font-bold" key={i}><Link to={(d as any)['redirect']}>{(d as any)[h.name]}</Link></td>
           } else if ( i === 0 && (d as any)['onClick']) {
-            return <td className="hover:text-primary font-bold cursor-pointer" onClick={() => (d as any)['onClick']()} key={i}>{(d as any)[h]}</td>
+            return <td className="hover:text-primary font-bold cursor-pointer" onClick={() => (d as any)['onClick']()} key={i}>{(d as any)[h.name]}</td>
           }
-          return <td key={i}>{(d as any)[h]}</td>
+          return <td key={i}>{(d as any)[h.name]}</td>
         })}
       </tr>
     ))
@@ -65,14 +70,36 @@ const Table = ({
                 key={h + "_table"}
                 className={classJoin(
                   "relative",
-                  enableSort && h != "action" ? "cursor-pointer" : ""
+                  enableSort && h.name != "action" ? "cursor-pointer" : ""
                 )}
+                onClick={() => {
+                  if (!setSortData) return;
+                  if (!h.sortable) return;
+
+                  setSortData((prev) => {
+                    let dataOrder = prev.data_order;
+                    if (prev.order_by === h.name) {
+                      if (dataOrder === 'asc') {
+                        dataOrder = "desc"
+                      } else {
+                        dataOrder = "asc"
+                      }
+                    } else {
+                      dataOrder = "asc"
+                    }
+  
+                    return {
+                      order_by: h.name,
+                      data_order: dataOrder
+                    }
+                  })
+                }}
               >
-                <span>{startCase(h)}</span>
-                {h !== "action" &&
+                <span>{startCase(h.name)}</span>
+                {h.name !== "action" &&
                   enableSort &&
                   sortData &&
-                  sortData.order_by === h &&
+                  sortData.order_by === h.name &&
                   (sortData.data_order === "asc" ? (
                     <ChevronUpIcon className="absolute w-4 h-4 transform -translate-y-1/2 top-1/2 right-2" />
                   ) : (

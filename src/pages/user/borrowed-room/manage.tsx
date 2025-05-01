@@ -111,7 +111,10 @@ const checkAbleToAcceptRequest = (status: FormState): boolean => {
 const ManageBorrowedRoomPage = () => {
   const { id } = useParams();
   const { data: borrowedRoom, status: borrowedRoomStatus } = useGetOneBorrowedRoom(id ?? "");
-  const { data: rooms, status: roomStatus } = useFetchRoom({}, false);
+  const { data: rooms, status: roomStatus } = useFetchRoom({}, {
+    order_by: "name",
+    data_order: "asc",
+  }, false);
 
   const {
     register,

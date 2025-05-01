@@ -1,19 +1,36 @@
 import { useState } from "react";
 import PageHeader from "../../../components/layout/PageHeader";
 import Pagination from "../../../components/utils/Pagination";
-import Table from "../../../components/utils/Table";
+import Table, { TableHeaderProps } from "../../../components/utils/Table";
 import { useFetchRoom } from "../../../hooks/general/use-room";
 import { PaginationProps } from "../../../model/components/pagination";
 import { RoomModel } from "../../../model/entities/room";
 
-const header = ["name", "floor_name", "items"];
+
+const header: TableHeaderProps[] = [
+  {
+    name: "name",
+    sortable: true,
+  },
+  {
+    name: "floor_name",
+    sortable: true,
+  },
+  {
+    name: "items",
+    sortable: false,
+  },
+];
 
 const ReportIndex = () => {
   const [param, setParam] = useState({
     page: 1,
   });
 
-  const { data: tempData, status } = useFetchRoom(param, true);
+  const { data: tempData, status } = useFetchRoom(param, {
+    order_by: "name",
+    data_order: "asc",
+  }, true);
   const data = tempData as PaginationProps<RoomModel> | undefined;
 
   const rooms = data?.data.map((room: RoomModel) => {

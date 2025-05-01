@@ -1,10 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { UserService } from "../../services/admin/user-service";
 
-const useFetchUser = (params: object) => {
+const useFetchUser = (params: object, sort: object) => {
   const { data, status } = useQuery({
-    queryKey: ["admin/user", params],
-    queryFn: () => UserService.getUsers(params),
+    queryKey: ["admin/user", params, sort],
+    queryFn: () => UserService.getUsers({
+      ...params,
+      ...sort,
+    }),
   });
 
   return {

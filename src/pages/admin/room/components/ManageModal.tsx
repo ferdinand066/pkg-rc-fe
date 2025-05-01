@@ -15,10 +15,13 @@ type RoomManageModalProps = {
 const RoomManageModal = forwardRef<HTMLDialogElement, RoomManageModalProps>(
   ({ selectedRoom }, ref) => {
     const { data: floors, status: floorStatus } = useFetchFloor({
-      orderBy: 'created_at',
-      dataOrder: 'asc',
+      order_by: 'created_at',
+      data_order: 'asc',
     });
-    const { data: tempItems, status: itemStatus } = useFetchItem({}, false);
+    const { data: tempItems, status: itemStatus } = useFetchItem({}, {
+      order_by: "name",
+      data_order: "asc",
+    }, false);
     const [selectedData, setSelectedData] = useState(selectedRoom);
 
     const items = tempItems as ItemModel[];

@@ -44,7 +44,10 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { data: rooms } = useFetchRoom({}, false);
+  const { data: rooms } = useFetchRoom({}, {
+    order_by: "name",
+    data_order: "asc",
+  }, false);
   // const { role } = useUser();
 
   useEffect(() => {

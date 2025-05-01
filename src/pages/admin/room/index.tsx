@@ -2,20 +2,38 @@ import { useRef, useState } from "react";
 import PageHeader from "../../../components/layout/PageHeader";
 import DialogButton from "../../../components/utils/DialogButton";
 import Pagination from "../../../components/utils/Pagination";
-import Table from "../../../components/utils/Table";
+import Table, { TableHeaderProps } from "../../../components/utils/Table";
 import { useFetchRoom } from "../../../hooks/general/use-room";
 import { RoomModel } from "../../../model/entities/room";
 import RoomManageModal from "./components/ManageModal";
 import { PaginationProps } from "../../../model/components/pagination";
+import { TableOrderType } from "../../../model/components/table-order";
 
-const header = ["name", "floor_name", "items"];
+const header: TableHeaderProps[] = [
+  {
+    name: "name",
+    sortable: true,
+  },
+  {
+    name: "floor_name",
+    sortable: true,
+  },
+  {
+    name: "items",
+    sortable: false,
+  },
+];
 
 const RoomIndex = () => {
   const [param, setParam] = useState({
     page: 1,
   });
+  const [sort, setSort] = useState<TableOrderType>({
+    order_by: "name",
+    data_order: "asc",
+  });
 
-  const { data: tempData, status } = useFetchRoom(param, true);
+  const { data: tempData, status } = useFetchRoom(param, sort, true);
   const data = tempData as PaginationProps<RoomModel> | undefined;
 
   const rooms = data?.data.map((room: RoomModel) => {
@@ -53,7 +71,7 @@ const RoomIndex = () => {
           </DialogButton>
         }
       />
-      <Table header={header} data={rooms ?? []} status={status} />
+      <Table header={header} data={rooms ?? []} status={status} sortData={sort} setSortData={setSort} enableSort />
       <Pagination
         status={status}
         data={data}

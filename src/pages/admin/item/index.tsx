@@ -1,36 +1,51 @@
 import { useRef, useState } from "react";
 import PageHeader from "../../../components/layout/PageHeader";
 import DialogButton from "../../../components/utils/DialogButton";
-import Table from "../../../components/utils/Table";
+import Table, { TableHeaderProps } from "../../../components/utils/Table";
 import { useFetchItem } from "../../../hooks/general/use-item";
 import { ItemModel } from "../../../model/entities/item";
 import ItemManageModal from "./components/ManageModal";
 import { PaginationProps } from "../../../model/components/pagination";
 import Pagination from "../../../components/utils/Pagination";
+import { TableOrderType } from "../../../model/components/table-order";
 
-const header = ["name", "room_at"];
+const header: TableHeaderProps[] = [
+  {
+    name: "name",
+    sortable: true,
+  },
+  {
+    name: "room_at",
+    sortable: false,
+  },
+];
 
 const ItemIndex = () => {
   const [param, setParam] = useState({
     page: 1,
   });
-  const { data: tempData, status } = useFetchItem(param, true);
+  const [sort, setSort] = useState<TableOrderType>({
+    order_by: "name",
+    data_order: "asc",
+  });
+
+  const { data: tempData, status } = useFetchItem(param, sort, true);
 
   const data = tempData as PaginationProps<ItemModel> | undefined;
 
   const items = data?.data.map((item: ItemModel) => {
     const d = {
       ...item,
-      room_at: (item.room_items ?? []).map((item) => item.room.name).join(', '),
-    }
+      room_at: (item.room_items ?? []).map((item) => item.room.name).join(", "),
+    };
 
     return {
       ...d,
-      room_at: d.room_at ? d.room_at : '-',
+      room_at: d.room_at ? d.room_at : "-",
       onClick: () => {
-        setSelectedItem(d)
+        setSelectedItem(d);
         ref.current?.showModal();
-      }
+      },
     };
   });
 
@@ -42,12 +57,23 @@ const ItemIndex = () => {
       <PageHeader
         pageName="Barang"
         action={
-          <DialogButton buttonText="Tambah Barang" onClick={() => setSelectedItem(undefined)} ref={ref}>
+          <DialogButton
+            buttonText="Tambah Barang"
+            onClick={() => setSelectedItem(undefined)}
+            ref={ref}
+          >
             <ItemManageModal selectedItem={selectedItem} ref={ref} />
           </DialogButton>
         }
       />
-      <Table header={header} data={items ?? []} status={status}/>
+      <Table
+        header={header}
+        data={items ?? []}
+        status={status}
+        sortData={sort}
+        setSortData={setSort}
+        enableSort
+      />
       <Pagination
         status={status}
         data={data}

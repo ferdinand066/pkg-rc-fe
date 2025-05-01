@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { ItemService } from "../../services/general/item-service";
 
-const useFetchItem = (params: object, paginate: boolean = false) => {
+const useFetchItem = (params: object, sort: object, paginate: boolean = false) => {
   const { data, status } = useQuery({
     queryKey: ["general/item", {
       ...params,
       paginate: paginate,
-    }],
+    }, sort],
     queryFn: () => ItemService.getItems({
       ...params,
+      ...sort,
       paginate: paginate,
     }),
   });
