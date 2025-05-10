@@ -63,7 +63,7 @@ const RoomIndex = () => {
         pageName="Ruangan"
         action={
           <DialogButton
-            buttonText="Tambah Ruangan"
+            buttonValue="Tambah Ruangan"
             onClick={() => setSelectedRoom(undefined)}
             ref={ref}
           >

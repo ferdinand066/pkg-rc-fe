@@ -67,7 +67,7 @@ const Table = ({
             {numbering && <th></th>}
             {tableHeader.map((h) => (
               <td
-                key={h + "_table"}
+                key={h.name + "_table"}
                 className={classJoin(
                   "relative",
                   enableSort && h.name != "action" ? "cursor-pointer" : ""

@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { useAtomValue } from "jotai";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InputText from "../../../components/forms/InputText";
 import PageHeader from "../../../components/layout/PageHeader";
@@ -12,6 +12,10 @@ import { BORROWED_STATUS } from "../../../lib/constants";
 import { authAtom } from "../../../lib/state/auth-state";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { TableOrderType } from "../../../model/components/table-order";
+import { FilterIcon } from "@heroicons/react/outline";
+import DialogButton from "../../../components/utils/DialogButton";
+import FilterBorrowedRoomModal from "./components/FilterBorrowedRoomModal";
+import { useFilterBorrowedRoomStore } from "./components/use-filter-borrowed-room-store";
 
 const header: TableHeaderProps[] = [
   {
@@ -56,11 +60,16 @@ const UserBorrowedRoomIndex = () => {
     order_by: "borrowed_date",
     data_order: "asc",
   });
+  const {getFilter} = useFilterBorrowedRoomStore();
+
 
   const [inputValue, setInputValue] = useState("");
   const authValue = useAtomValue(authAtom);
 
-  const { data, status } = useFetchBorrowedRoom(param, sort);
+  const { data, status } = useFetchBorrowedRoom({
+    ...param,
+    ...getFilter()
+  }, sort);
   const navigate = useNavigate();
 
   const borrowedRooms =
@@ -99,6 +108,8 @@ const UserBorrowedRoomIndex = () => {
       };
     }) ?? [];
 
+  const ref = useRef<HTMLDialogElement>(null);
+
   return (
     <section className="flex flex-col h-full flex-1 gap-4">
       <PageHeader
@@ -117,7 +128,7 @@ const UserBorrowedRoomIndex = () => {
           )
         }
       />
-      <div className="mx-6 flex flex-row items-end gap-4 justify-end">
+      <div className="mx-6 flex flex-row items-end gap-2 justify-end">
         <div className="w-full lg:max-w-80">
           <InputText
             type="text"
@@ -126,10 +137,17 @@ const UserBorrowedRoomIndex = () => {
             placeholder="Cari..."
           />
         </div>
+        <DialogButton
+          buttonValue={<FilterIcon className="w-5 h-5" />}
+          onClick={() => {}}
+          ref={ref}
+        >
+          <FilterBorrowedRoomModal ref={ref} />
+        </DialogButton>
         <button
-          className="btn btn-primary"
+          className="btn btn-primary w-20"
           type="button"
-          onClick={() => setParam(() => ({ page: 1, search: inputValue }))}
+          onClick={() => setParam((prev) => ({ ...prev, page: 1, search: inputValue }))}
         >
           Cari
         </button>

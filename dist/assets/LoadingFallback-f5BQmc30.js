@@ -1,1 +1,0 @@
-import{j as e,F as s}from"./index-BT4yNJiJ.js";const a=()=>e.jsx("div",{className:"fixed inset-0 z-50 flex items-center justify-center w-screen h-screen bg-gray-200/50",children:e.jsx(s,{className:"w-10 h-10 text-gray-500 animate-spin"})});export{a as default};

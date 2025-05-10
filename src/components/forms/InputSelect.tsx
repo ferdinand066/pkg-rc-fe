@@ -30,6 +30,7 @@ const InputSelect = (props: InputSelectProps) => {
     prefix,
     model,
     isLoading,
+    value,
     ...rest
   } = props;
 
@@ -46,13 +47,18 @@ const InputSelect = (props: InputSelectProps) => {
           {...register}
           {...(id && { id: id })}
           className="select select-bordered w-full shadow"
+          value={value}
           {...rest}
           onChange={(e) => {
             if (onChange) onChange(e);
+            
             if (!setValue) return;
             setValue(name!, e.target.value, { shouldDirty: true });
           }}
         >
+          <option value="" disabled>
+            -- Please select --
+          </option>
           {model.map((m: GeneralData, index: number) => (
             <option key={index} value={m.id}>
               {m.name}

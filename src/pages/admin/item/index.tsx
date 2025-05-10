@@ -58,7 +58,7 @@ const ItemIndex = () => {
         pageName="Barang"
         action={
           <DialogButton
-            buttonText="Tambah Barang"
+            buttonValue="Tambah Barang"
             onClick={() => setSelectedItem(undefined)}
             ref={ref}
           >
