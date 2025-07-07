@@ -69,14 +69,14 @@ const fetchNotification = (
   return [...processedAgreements, pendingAgreements];
 };
 
-const getBorrowingStatus = ( status: "pending" | "success" | "error", id?: string, user?: UserModel, borrowedRoom?: BorrowedRoomModel | null): FormState => {
+const getBorrowingStatus = (status: "pending" | "success" | "error", id?: string, user?: UserModel, borrowedRoom?: BorrowedRoomModel | null): FormState => {
   if (!id) return "CREATE";
   if (!user) return "LOADING";
   if (status === "pending") return "LOADING";
   if (status === "error") return "ERROR";
   if (!borrowedRoom) return "CREATE";
-  if (borrowedRoom.borrowed_by_user_id === user.id){
-    if (borrowedRoom.borrowed_status === BORROWED_STATUS_PENDING_INT){
+  if (borrowedRoom.borrowed_by_user_id === user.id) {
+    if (borrowedRoom.borrowed_status === BORROWED_STATUS_PENDING_INT) {
       if (borrowedRoom.borrowed_room_agreements.length > 0) return "CONFIRMED";
       return "UPDATE";
     }
@@ -89,8 +89,8 @@ const getBorrowingStatus = ( status: "pending" | "success" | "error", id?: strin
   const pendingUsers = borrowedRoom.pending_users ?? [];
   if (pendingUsers.length === 0) return "UPDATE";
 
-  if (borrowedRoom.borrowed_status === BORROWED_STATUS_PENDING_INT){
-    if (pendingUsers.filter((u) => u.id === user.id).length > 0){
+  if (borrowedRoom.borrowed_status === BORROWED_STATUS_PENDING_INT) {
+    if (pendingUsers.filter((u) => u.id === user.id).length > 0) {
       return "CONFIRMATION";
     }
 
@@ -134,6 +134,7 @@ const ManageBorrowedRoomPage = () => {
   const watchBorrowedDate = watch('borrowed_date');
 
   const [initialize, setInitialized] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   // const [ableToUpdate, setAbleToUpdate] = useState(false);
 
   const { user } = useAuth();
@@ -169,10 +170,10 @@ const ManageBorrowedRoomPage = () => {
     borrowing_date: watchBorrowedDate,
     borrowed_room_id: id,
     check_schedule: formState.isDirty,
-  }); 
+  });
 
   const generateBorrowedStatusBadge = () => {
-    if (borrowedRoomStatus === "pending" && !!id){
+    if (borrowedRoomStatus === "pending" && !!id) {
       return <span className="loading loading-dots loading-xs"></span>
     }
 
@@ -308,9 +309,9 @@ const ManageBorrowedRoomPage = () => {
               description={slotStatus === "success" ? <div className="flex flex-col text-sm mt-2">
                 <span>Tersedia pada</span>
                 <ul>
-                {
-                  (slots ?? []).map((slot, index) => <li className="ml-2" key={index}>✓ {slot}</li>)
-                }
+                  {
+                    (slots ?? []).map((slot, index) => <li className="ml-2" key={index}>✓ {slot}</li>)
+                  }
                 </ul>
               </div> : <></>}
               isLoading={roomStatus === "pending"}
@@ -401,7 +402,7 @@ const ManageBorrowedRoomPage = () => {
             ) : (
               <></>
             )} */}
-            { roomStatus === "pending" ? <RoomItemLoading /> : watchRoomId && rooms &&
+            {roomStatus === "pending" ? <RoomItemLoading /> : watchRoomId && rooms &&
               (rooms as RoomModel[]).find((room) => room.id === watchRoomId)?.room_items?.map((item, index) => {
                 const itemValue = watch(`items.${index}.item_id`);
                 return (
@@ -449,21 +450,27 @@ const ManageBorrowedRoomPage = () => {
               errors={errors}
             />
           </div>
-          {["UPDATE", "CREATE"].includes(borrowingStatus) && (
+          {["UPDATE", "CREATE", "CONFIRMED"].includes(borrowingStatus) && (
             <div className="col-span-6 modal-action flex-row-reverse justify-between">
-              <div className="flex flex-row gap-4">
-                <button className="btn btn-neutral" type="button">
-                  Tutup
-                </button>
-                <button className="btn btn-primary" type="submit">
-                  {borrowedRoom ? "Ubah" : "Buat"}
-                </button>
-              </div>
+              {
+                <div className="flex flex-row gap-4">
+                  <button className="btn btn-neutral" type="button">
+                    Tutup
+                  </button>
+                  {
+                    ["UPDATE", "CREATE"].includes(borrowingStatus) && (
+                      <button className="btn btn-primary" type="submit">
+                        {borrowedRoom ? "Ubah" : "Buat"}
+                      </button>
+                    )
+                  }
+                </div>
+              }
               {borrowedRoom && (
                 <button
                   className="btn !ml-0 btn-error"
                   type="button"
-                  onClick={() => handleDeleteBorrowedRoom()}
+                  onClick={() => setShowDeleteModal(true)}
                 >
                   Hapus
                 </button>
@@ -471,14 +478,14 @@ const ManageBorrowedRoomPage = () => {
             </div>
           )}
           {
-          // user &&
-          //   user.role === ADMIN_ROLE_INT &&
-          //   borrowedRoom &&
-          //   borrowedRoom.borrowed_status === 1 &&
-          //   (borrowedRoom?.borrowed_room_agreements ?? []).filter(
-          //     (agreement) =>
-          //       agreement.created_by_user_id === (user.id as string)
-          //   ).length === 0 
+            // user &&
+            //   user.role === ADMIN_ROLE_INT &&
+            //   borrowedRoom &&
+            //   borrowedRoom.borrowed_status === 1 &&
+            //   (borrowedRoom?.borrowed_room_agreements ?? []).filter(
+            //     (agreement) =>
+            //       agreement.created_by_user_id === (user.id as string)
+            //   ).length === 0 
             isAbleToAcceptRequest && (
               <div className="col-span-6 modal-action flex-row-reverse justify-between">
                 <button
@@ -508,6 +515,37 @@ const ManageBorrowedRoomPage = () => {
           <form action="" className="grid grid-cols-6 mx-6 gap-x-4"></form>
         </div>
       )} */}
+
+      {/* Delete Confirmation Modal */}
+      <dialog id="delete_modal" className={`modal ${showDeleteModal ? 'modal-open' : ''}`}>
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Konfirmasi Hapus</h3>
+          <p className="py-4">
+            Apakah Anda yakin ingin menghapus proposal pinjam ruang ini?
+            Tindakan ini tidak dapat dibatalkan.
+          </p>
+          <div className="modal-action">
+            <button
+              className="btn btn-neutral"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Batal
+            </button>
+            <button
+              className="btn btn-error"
+              onClick={() => {
+                handleDeleteBorrowedRoom();
+                setShowDeleteModal(false);
+              }}
+            >
+              Hapus
+            </button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={() => setShowDeleteModal(false)}>close</button>
+        </form>
+      </dialog>
     </section>
   );
 };
