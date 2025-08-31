@@ -23,6 +23,7 @@ const ShowUserPage = React.lazy(() => import("./pages/admin/user/show"));
 const ItemIndex = React.lazy(() => import("./pages/admin/item"));
 const UserBorrowedRoomIndex = React.lazy(() => import("./pages/user/borrowed-room"));
 const ManageBorrowedRoomPage = React.lazy(() => import("./pages/user/borrowed-room/manage"));
+const ManageRecurringRoomPage = React.lazy(() => import("./pages/user/borrowed-room/recurring"));
 const VerifyEmailIndex = React.lazy(() => import("./pages/verify-email"));
 const PendingVerificationIndex = React.lazy(() => import("./pages/pending-verification"));
 const EmailVerifierPage = React.lazy(() => import("./pages/verify-email/token"));
@@ -62,7 +63,7 @@ const App = () => {
     <Suspense fallback={<LoadingFallback />}>
       <QueryClientProvider client={queryClient}>
         {auth ? <AuthenticatedRoutes /> : <UnauthenticatedRoutes />}
-        <ToastContainer theme={theme}/>
+        <ToastContainer theme={theme} />
       </QueryClientProvider>
     </Suspense>
   );
@@ -84,13 +85,13 @@ const AuthenticatedRoutes = () => {
 
     if (!user) return;
 
-    if (!!user.suspended_at){
+    if (user.suspended_at) {
       toast.error('Your account has been suspended!');
       handleLogoutEvent();
       return;
     }
 
-    if (!user.email_verified_at){
+    if (!user.email_verified_at) {
       if (!location.pathname.startsWith(verifyEmailPath)) {
         navigate(verifyEmailPath);
       }
@@ -98,7 +99,7 @@ const AuthenticatedRoutes = () => {
       return;
     }
 
-    if (!user.account_accepted_at){
+    if (!user.account_accepted_at) {
       if (!location.pathname.startsWith(pendingVerificationPath)) {
         navigate(pendingVerificationPath);
       }
@@ -106,7 +107,7 @@ const AuthenticatedRoutes = () => {
       return;
     }
 
-    if (user.email_verified_at){
+    if (user.email_verified_at) {
       if (location.pathname.startsWith(verifyEmailPath)) {
         navigate('/schedule');
       }
@@ -122,6 +123,7 @@ const AuthenticatedRoutes = () => {
         <Route path="room-request">
           <Route path="" element={<UserBorrowedRoomIndex />}></Route>
           <Route path="create" element={<ManageBorrowedRoomPage />}></Route>
+          <Route path="recurring" element={<ManageRecurringRoomPage />}></Route>
           <Route path=":id" element={<ManageBorrowedRoomPage />}></Route>
         </Route>
         <Route path="admin">
@@ -140,7 +142,7 @@ const AuthenticatedRoutes = () => {
           {/* <Route path=":id" element={<ManageBorrowedRoomPage />}></Route> */}
         </Route>
         <Route path="pending-verification" element={<PendingVerificationIndex />} />
-        <Route path="*" element={<Navigate to={"schedule"}/>}/>
+        <Route path="*" element={<Navigate to={"schedule"} />} />
         {/* <Route path="/user">
           <Route path="room-request">
             <Route path="" element={<UserBorrowedRoomIndex />}></Route>

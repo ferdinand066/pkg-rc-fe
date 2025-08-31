@@ -15,12 +15,12 @@ const DialogButton = forwardRef<HTMLDialogElement, DialogButtonProps>(({ buttonV
         type="button"
         onClick={(e) => {
           if (!buttonValue) return;
-          if (onClick){
+          if (onClick) {
             onClick(e);
           }
           return (ref as React.RefObject<HTMLDialogElement>).current?.showModal();
         }}
-        className={classJoin(buttonValue ? "btn btn-primary h-10 max-h-10 text-sm" : "hidden")}
+        className={classJoin(buttonValue ? "btn bg-base-100 hover:bg-gray-200 border-none h-10 max-h-10 text-sm" : "hidden")}
       >
         {buttonValue}
       </button>

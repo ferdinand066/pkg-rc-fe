@@ -1,7 +1,5 @@
 import axios from "axios";
 
-
-
 export class BaseService {
   static async _get(
     url: string,
@@ -18,7 +16,12 @@ export class BaseService {
     } catch (e: any) {
       if (axios.isAxiosError(e) && e.response && e.response.status === 401) {
         document.cookie.split(";").forEach((c) => {
-          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(
+              /=.*/,
+              "=;expires=" + new Date().toUTCString() + ";path=/"
+            );
         });
         window.location.reload();
       } else {

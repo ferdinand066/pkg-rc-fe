@@ -1,4 +1,3 @@
-
 import { PaginationProps } from "../../model/components/pagination";
 import { BorrowedRoomModel } from "../../model/entities/borrowed-room";
 import { BaseService } from "../base-service";
@@ -6,7 +5,9 @@ import { BaseService } from "../base-service";
 const URL = `${__API_URL__}/general/borrowed-room`;
 
 export class BorrowedRoomService extends BaseService {
-  static async getBorrowedRooms(params: object): Promise<PaginationProps<BorrowedRoomModel>> {
+  static async getBorrowedRooms(
+    params: object
+  ): Promise<PaginationProps<BorrowedRoomModel>> {
     try {
       const { data } = await this._get(`${URL}`, params);
       return data.borrowedRooms;
@@ -15,7 +16,9 @@ export class BorrowedRoomService extends BaseService {
     }
   }
 
-  static async getOneBorrowedRoom(id: string): Promise<BorrowedRoomModel | null> {
+  static async getOneBorrowedRoom(
+    id: string
+  ): Promise<BorrowedRoomModel | null> {
     if (!id) return null;
     try {
       const { data } = await this._get(`${URL}/${id}`);
@@ -25,7 +28,18 @@ export class BorrowedRoomService extends BaseService {
     }
   }
 
-  static async createBorrowedRoom(params: object): Promise<BorrowedRoomModel | null> {
+  static async createRecurringBorrowedRoom(params: object): Promise<void> {
+    try {
+      const data = await this._post(`${URL}/recurring`, params);
+      return data;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  static async createBorrowedRoom(
+    params: object
+  ): Promise<BorrowedRoomModel | null> {
     try {
       const data = await this._post(`${URL}`, params);
       return data;
@@ -47,13 +61,11 @@ export class BorrowedRoomService extends BaseService {
     }
   }
 
-  static async deleteBorrowedRoom(
-    id: string,
-  ): Promise<void> {
+  static async deleteBorrowedRoom(id: string): Promise<void> {
     if (!id) return;
     try {
       const data = await this._delete(`${URL}/${id}`, {});
-      return data
+      return data;
     } catch (e: any) {
       throw new Error(e.message);
     }

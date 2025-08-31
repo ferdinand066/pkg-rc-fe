@@ -60,7 +60,7 @@ const UserBorrowedRoomIndex = () => {
     order_by: "borrowed_date",
     data_order: "asc",
   });
-  const {getFilter} = useFilterBorrowedRoomStore();
+  const { getFilter } = useFilterBorrowedRoomStore();
 
 
   const [inputValue, setInputValue] = useState("");
@@ -116,13 +116,22 @@ const UserBorrowedRoomIndex = () => {
         pageName="Proposal Pinjam Ruang"
         action={
           parseInt(authValue?.roleId ?? "1") === 1 ? (
-            <button
-              type="button"
-              onClick={() => navigate("/room-request/create")}
-              className="btn btn-primary h-10 max-h-10 text-sm"
-            >
-              Buat Proposal
-            </button>
+            <div className="flex flex-row gap-4">
+              <button
+                type="button"
+                onClick={() => navigate("/room-request/create")}
+                className="btn btn-primary h-10 max-h-10 text-sm"
+              >
+                Buat Proposal
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/room-request/recurring")}
+                className="btn btn-primary h-10 max-h-10 text-sm"
+              >
+                Buat Proposal Berulang
+              </button>
+            </div>
           ) : (
             <></>
           )
@@ -139,13 +148,13 @@ const UserBorrowedRoomIndex = () => {
         </div>
         <DialogButton
           buttonValue={<FilterIcon className="w-5 h-5" />}
-          onClick={() => {}}
+          onClick={() => { }}
           ref={ref}
         >
           <FilterBorrowedRoomModal ref={ref} />
         </DialogButton>
         <button
-          className="btn btn-primary w-20"
+          className="btn w-20 bg-base-100 hover:bg-gray-200 border-none"
           type="button"
           onClick={() => setParam((prev) => ({ ...prev, page: 1, search: inputValue }))}
         >

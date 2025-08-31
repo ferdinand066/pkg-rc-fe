@@ -23,7 +23,7 @@ type FilterBorrowedRoomModalProps = {};
 const FilterBorrowedRoomModal = forwardRef<
   HTMLDialogElement,
   FilterBorrowedRoomModalProps
->(({}, ref) => {
+>(({ }, ref) => {
   const {
     register,
     setValue,
@@ -59,7 +59,7 @@ const FilterBorrowedRoomModal = forwardRef<
               register={register("start_date")}
               setValue={setValue}
               errors={errors}
-              // isLoading={borrowedRoomStatus === "pending" && !!id}
+            // isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
           <div className="col-span-6 sm:col-span-3">
@@ -88,7 +88,7 @@ const FilterBorrowedRoomModal = forwardRef<
               })}
               setValue={setValue}
               errors={errors}
-              // isLoading={borrowedRoomStatus === "pending" && !!id}
+            // isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
         </div>
@@ -115,7 +115,7 @@ const FilterBorrowedRoomModal = forwardRef<
             register={register("floor_id")}
             setValue={setValue}
             model={floors ?? []}
-            // errors={errors}
+          // errors={errors}
           />
         )}
 
@@ -138,7 +138,7 @@ const FilterBorrowedRoomModal = forwardRef<
         <div className="modal-action flex-row-reverse justify-between">
           <div className="flex flex-row gap-4">
             <button
-              className="btn"
+              className="btn bg-base-100 hover:bg-gray-200 border-none"
               type="button"
               onClick={() => {
                 reset();
