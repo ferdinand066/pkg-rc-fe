@@ -36,7 +36,7 @@ const ItemIndex = () => {
   const items = data?.data.map((item: ItemModel) => {
     const d = {
       ...item,
-      room_at: (item.room_items ?? []).map((item) => item.room.name).join(", "),
+      room_at: (item.room_items ?? []).map((item) => item.room?.name).filter(Boolean).join(", "),
     };
 
     return {
