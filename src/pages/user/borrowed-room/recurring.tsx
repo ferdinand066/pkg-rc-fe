@@ -1,4 +1,4 @@
-import { isAfter, isBefore, isSameDay, parseISO } from "date-fns";
+import { addYears, isAfter, isBefore, isSameDay, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import InputSelect from "../../../components/forms/InputSelect";
 import InputText from "../../../components/forms/InputText";
@@ -165,6 +165,12 @@ const ManageRecurringRoomPage = () => {
                   const startBorrowedDate = getValues("start_borrowed_date");
                   if (isBefore(selectedDate, startBorrowedDate)) {
                     return "Tanggal peminjaman akhir harus setelah tanggal mulai peminjaman";
+                  }
+
+                  const startDate = parseISO(startBorrowedDate);
+                  const maxEndDate = addYears(startDate, 1);
+                  if (isAfter(selectedDate, maxEndDate)) {
+                    return "Tanggal peminjaman akhir maksimal 1 tahun setelah tanggal mulai peminjaman";
                   }
 
                   return true;

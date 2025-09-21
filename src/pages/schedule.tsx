@@ -1,17 +1,16 @@
 import { format } from "date-fns";
+import { useAtomValue } from "jotai";
+import { padStart } from "lodash";
 import { useState } from "react";
 import InputText from "../components/forms/InputText";
+import AlertContainer, { AlertData } from "../components/layout/AlertContainer";
 import PageHeader from "../components/layout/PageHeader";
 import RoomSchedule, {
   ScheduleSearchType,
 } from "../components/pages/schedule/Schedule";
-import useSchedule from "../hooks/general/use-schedule";
 import useRoomSchedule from "../hooks/general/use-room-schedule";
-import AlertContainer, { AlertData } from "../components/layout/AlertContainer";
+import useSchedule from "../hooks/general/use-schedule";
 import { classJoin, getStatusValue } from "../lib/functions";
-import { padStart } from "lodash";
-import { INPUT_TIME_STEP } from "../lib/constants";
-import { useAtomValue } from "jotai";
 import { appThemeAtom } from "../lib/state/state";
 
 const minInterval = 6;
@@ -33,13 +32,15 @@ const ScheduleIndexPage = () => {
 
   const [inputValue, setInputValue] = useState<ScheduleSearchType>({
     date: format(currentDate, "yyyy-MM-dd"),
-    start_time: format(currentDate, "HH") + ":00",
+    // start_time: format(currentDate, "HH") + ":00",
+    start_time: "00:00",
     end_time: "23:59",
   });
 
   const [searchValue, setSearchValue] = useState<ScheduleSearchType>({
     date: format(currentDate, "yyyy-MM-dd"),
-    start_time: format(currentDate, "HH") + ":00",
+    // start_time: format(currentDate, "HH") + ":00",
+    start_time: "00:00",
     end_time: "23:59",
   });
 
@@ -110,7 +111,7 @@ const ScheduleIndexPage = () => {
             setInputValue((prev) => ({ ...prev, date: value }));
           }}
         />
-        <InputText
+        {/* <InputText
           type="time"
           step={INPUT_TIME_STEP}
           label={"Jam Awal Booking"}
@@ -127,7 +128,7 @@ const ScheduleIndexPage = () => {
           onChange={(e) =>
             setInputValue((prev) => ({ ...prev, end_time: e.target.value }))
           }
-        />
+        /> */}
         <button
           className="btn btn-primary w-full md:w-auto"
           type="button"
