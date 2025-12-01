@@ -1,14 +1,14 @@
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetOneUser } from "../../../hooks/admin/use-user";
-import { useEffect, useState } from "react";
-import useAuth from "../../../hooks/general/use-auth-user";
-import PageHeader from "../../../components/layout/PageHeader";
-import InputText from "../../../components/forms/InputText";
 import { toast } from "react-toastify";
 import InputSelect from "../../../components/forms/InputSelect";
-import { ADMIN_ROLE_INT, USER_ROLE_MAPPING } from "../../../lib/constants";
+import InputText from "../../../components/forms/InputText";
 import InputTextarea from "../../../components/forms/InputTextarea";
+import PageHeader from "../../../components/layout/PageHeader";
+import { useGetOneUser } from "../../../hooks/admin/use-user";
+import useAuth from "../../../hooks/general/use-auth-user";
 import useUpdateUser from "../../../hooks/general/use-manage-user";
+import { ADMIN_ROLE_INT, USER_ROLE_MAPPING } from "../../../lib/constants";
 
 const ShowUserPage = () => {
   const { id } = useParams();
@@ -28,7 +28,7 @@ const ShowUserPage = () => {
     handleSubmit,
   } = useUpdateUser(selectedUser);
 
-  const [ableToUpdate, setAbleToUpdate] = useState(false);
+  // const [ableToUpdate, setAbleToUpdate] = useState(false);
 
   const { user } = useAuth();
 
@@ -39,12 +39,12 @@ const ShowUserPage = () => {
       return navigate("/admin/user");
     }
 
-    if (!selectedUser) return;
+    // if (!selectedUser) return;
 
-    if ((user.id as string) === selectedUser!.id) {
-      setAbleToUpdate(true);
-    }
-  }, [user, selectedUser, selectedUserStatus]);
+    // if ((user.id as string) === selectedUser!.id) {
+    //   setAbleToUpdate(true);
+    // }
+  }, [user, selectedUserStatus]);
 
   const handleActionComponent = () => {
     if (!user) return <></>;
@@ -100,7 +100,7 @@ const ShowUserPage = () => {
                 type="text"
                 name="name"
                 placeholder="Contoh: John Doe"
-                disabled={!ableToUpdate}
+                disabled={!(user?.role === ADMIN_ROLE_INT)}
                 register={register("name", {
                   required: "Nama harus diisi",
                 })}
@@ -144,7 +144,7 @@ const ShowUserPage = () => {
             </div>
             <div className="col-span-6">
               <InputTextarea
-                disabled={!ableToUpdate}
+                disabled={!(user?.role === ADMIN_ROLE_INT)}
                 label="Alamat"
                 name="address"
                 id="address"
