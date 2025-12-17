@@ -132,7 +132,8 @@ RoomScheduleType) => {
   const checkTransactionExists = (roomId: string, time: string) => {
     if ((borrowedRooms ?? []).length === 0) return false;
     return (borrowedRooms ?? []).find((borrowedRoom) => {
-      if (borrowedRoom.room.id !== roomId) return false;
+      console.log({borrowedRoom});
+      if (borrowedRoom.room?.id !== roomId) return false;
 
       const startBorrowingTime = borrowedRoom.start_borrowing_time + ":00";
       if (startBorrowingTime === time) return true;

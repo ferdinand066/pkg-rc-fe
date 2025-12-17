@@ -89,11 +89,11 @@ const UserBorrowedRoomIndex = () => {
           </div>
         ),
         room_name: (
-          <div className="min-w-36 md:min-w-auto">{borrowedRoom.room.name}</div>
+          <div className="min-w-36 md:min-w-auto">{borrowedRoom.room?.name}</div>
         ),
         floor: (
           <div className="min-w-20 md:min-w-auto">
-            {borrowedRoom.room.floor.name}
+            {borrowedRoom.room?.floor.name}
           </div>
         ),
         pic_name: (
