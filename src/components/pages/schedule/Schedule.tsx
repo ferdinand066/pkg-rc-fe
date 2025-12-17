@@ -109,7 +109,7 @@ RoomScheduleType) => {
   const startHour = new Date(
     `${selectedRange.date} ${selectedRange.start_time}`
   ).getHours();
-  let endHour =
+  const endHour =
     new Date(`${selectedRange.date} ${selectedRange.end_time}`).getHours() + 1;
   // if (endHour === 0) {
   //   endHour = 12;
@@ -132,7 +132,6 @@ RoomScheduleType) => {
   const checkTransactionExists = (roomId: string, time: string) => {
     if ((borrowedRooms ?? []).length === 0) return false;
     return (borrowedRooms ?? []).find((borrowedRoom) => {
-      console.log({borrowedRoom});
       if (borrowedRoom.room?.id !== roomId) return false;
 
       const startBorrowingTime = borrowedRoom.start_borrowing_time + ":00";
@@ -218,7 +217,7 @@ RoomScheduleType) => {
                       .sort((a, b) => (a.name < b.name ? -1 : 1))
                       .map((room, index) => {
                         let indexToSkip = 0;
-                        let defaultBackground =
+                        const defaultBackground =
                           index % 2
                             ? !isDarkTheme
                               ? "bg-white"
@@ -251,7 +250,7 @@ RoomScheduleType) => {
                                 index
                               );
 
-                              var columnColor = classJoin(
+                              let columnColor = classJoin(
                                 isDarkTheme
                                   ? "hover:bg-neutral-600"
                                   : "hover:bg-gray-200",
@@ -262,9 +261,9 @@ RoomScheduleType) => {
                                   room.id as string,
                                   minutes
                                 );
-                              var colSpan = 1;
+                              let colSpan = 1;
 
-                              if (!!transactionDetailRoom) {
+                              if (transactionDetailRoom) {
                                 if (
                                   transactionDetailRoom.borrowed_status ===
                                   BORROWED_STATUS_PENDING_INT
@@ -356,7 +355,7 @@ const ScheduleTableDataComponent = ({
   useEffect(() => {
     // Scroll event listener to track table scroll
     const handleScroll = () => {
-      const table = tdRef.current?.closest("tr")!.querySelector("th")!;
+      const table = tdRef.current?.closest("tr")?.querySelector("th") ?? null;
 
       if (table && tdRef.current) {
         const tableRect = table.getBoundingClientRect();
