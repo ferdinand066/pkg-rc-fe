@@ -1,14 +1,11 @@
 
 import { GeneralData } from "../components/general-data"
-import { UserCurrentBranchModel } from "./branch"
-import { EmployeeModel } from "./employee"
-import { UserRoleModel } from "./roles"
 import { RoomModel } from "./room";
 import { UserModel } from "./user";
 
 export type BorrowedRoomModel = GeneralData & {
   room_id: string,
-  room: RoomModel,
+  room?: RoomModel,
   pic_name: string,
   pic_phone_number: string,
   capacity: number,
