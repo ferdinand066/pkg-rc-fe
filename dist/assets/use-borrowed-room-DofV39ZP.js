@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:dist/assets/use-borrowed-room-Crp_CgRo.js
-import{u as r}from"./useQuery-C6faGm9h.js";import{B as e}from"./borrowed-room-service-DlN0d7Sv.js";const o=(o,a)=>{const{data:t,status:s}=r({queryKey:["general/borrowed-room",{...o,paginate:!0},a],queryFn:()=>e.getBorrowedRooms({...o,...a,paginate:!0})});return{data:t,status:s}},a=o=>{const{data:a,status:t}=r({queryKey:["general/borrowed-room",o],queryFn:()=>e.getOneBorrowedRoom(o),enabled:!!o});return{data:a,status:t}};export{a,o as u};
-========
-import{u as r}from"./useQuery-G1tKG1h3.js";import{B as e}from"./borrowed-room-service-CK3vCDuR.js";const o=(o,a)=>{const{data:t,status:s}=r({queryKey:["general/borrowed-room",{...o,paginate:!0},a],queryFn:()=>e.getBorrowedRooms({...o,...a,paginate:!0})});return{data:t,status:s}},a=o=>{const{data:a,status:t}=r({queryKey:["general/borrowed-room",o],queryFn:()=>e.getOneBorrowedRoom(o),enabled:!!o});return{data:a,status:t}};export{a,o as u};
->>>>>>>> f4741df1231e68a398158c23894c018c1e04415b:dist/assets/use-borrowed-room-DofV39ZP.js

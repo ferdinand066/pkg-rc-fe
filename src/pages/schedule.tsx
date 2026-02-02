@@ -7,7 +7,7 @@ import AlertContainer, { AlertData } from "../components/layout/alert-container"
 import PageHeader from "../components/layout/page-header";
 import RoomSchedule, {
   ScheduleSearchType,
-} from "../components/pages/schedule/Schedule";
+} from "../components/pages/schedule/_schedule";
 import useRoomSchedule from "../hooks/general/use-room-schedule";
 import useSchedule from "../hooks/general/use-schedule";
 import { classJoin, getStatusValue } from "../lib/functions";
