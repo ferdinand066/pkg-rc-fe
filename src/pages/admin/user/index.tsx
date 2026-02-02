@@ -1,11 +1,11 @@
 import { format } from "date-fns";
 import { useState } from "react";
-import PageHeader from "../../../components/layout/PageHeader";
-import Pagination from "../../../components/utils/Pagination";
-import Table, { TableHeaderProps } from "../../../components/utils/Table";
+import PageHeader from "../../../components/layout/page-header";
+import Pagination from "../../../components/utils/pagination";
+import Table, { TableHeaderProps } from "../../../components/utils/table";
 import { useFetchUser } from "../../../hooks/admin/use-user";
 import { UserModel } from "../../../model/entities/user";
-import InputText from "../../../components/forms/InputText";
+import InputText from "../../../components/forms/input-text";
 import { TableOrderType } from "../../../model/components/table-order";
 
 const header: TableHeaderProps[] = [

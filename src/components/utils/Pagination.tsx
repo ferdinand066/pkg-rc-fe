@@ -1,7 +1,7 @@
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
 import { classJoin } from "../../lib/functions";
 import { PaginationProps } from "../../model/components/pagination";
-import LoadingSkeleton from "./LoadingSkeleton";
+import LoadingSkeleton from "./loading-skeleton";
 import { useAtomValue } from "jotai";
 import { appThemeAtom } from "../../lib/state/state";
 
@@ -102,7 +102,7 @@ export default function Pagination<T>({
               data!.total > 0 ? (
                 data?.links
                   .map((link, index) => {
-                    let child: string | JSX.Element = link.label;
+                    const child: string | JSX.Element = link.label;
                     // if (!link.url) return <Fragment key={index}/>
                     if (child.includes("&laquo")) {
                       return (

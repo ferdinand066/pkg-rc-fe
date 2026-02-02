@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import useRegisterForm from "../../hooks/auth/use-register-form";
-import InputText from "../../components/forms/InputText";
-import InputTextarea from "../../components/forms/InputTextarea";
+import InputText from "../../components/forms/input-text";
+import InputTextarea from "../../components/forms/input-textarea";
 
 const RegisterPage = () => {
   const {

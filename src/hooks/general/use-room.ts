@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { RoomService } from "../../services/general/room-service";
 import { isValid } from "date-fns";
+import { RoomModel } from "../../model/entities/room";
+import { PaginationProps } from "../../model/components/pagination";
 
 type AvailibilityParam = {
   borrowing_date: string | undefined;
@@ -8,13 +10,13 @@ type AvailibilityParam = {
   check_schedule?: boolean;
 }
 
-const useFetchRoom = (params: object, sort: object, paginate: boolean, enabled: boolean = true) => {
+const useFetchRoom = <T extends PaginationProps<RoomModel> | RoomModel[]>(params: object, sort: object, paginate: boolean, enabled: boolean = true) => {
   const { data, status } = useQuery({
     queryKey: ["general/room", {
       ...params,
       paginate: paginate
     }, sort],
-    queryFn: () => RoomService.getRooms({
+    queryFn: () => RoomService.getRooms<T>({
       ...params,
       ...sort,
       paginate: paginate,

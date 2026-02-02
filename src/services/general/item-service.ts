@@ -1,27 +1,26 @@
 
 import { PaginationProps } from "../../model/components/pagination";
 import { ItemModel } from "../../model/entities/item";
+import { BaseResponse } from "../../model/service";
 import { BaseService } from "../base-service";
 
 const URL = `${__API_URL__}/general/item`;
 
 export class ItemService extends BaseService {
-  static async getItems(params: object): Promise<PaginationProps<ItemModel> | ItemModel[]> {
-    try {
-      const { data } = await this._get(`${URL}`, params);
-      return data.items;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+  static async getItems<T extends PaginationProps<ItemModel> | ItemModel[]>(params: object) {
+    const res = await this._get<BaseResponse<{
+      items: T
+    }>>(`${URL}`, params);
+
+    return res?.data?.items;
   }
 
-  static async getOneItem(id: string): Promise<ItemModel | null> {
+  static async getOneItem(id: string) {
     if (!id) return null;
-    try {
-      const { data } = await this._get(`${URL}/${id}`);
-      return data.item;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+
+    const res = await this._get<BaseResponse<{
+      item: ItemModel
+    }>>(`${URL}/${id}`);
+    return res?.data?.item;
   }
 }

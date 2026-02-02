@@ -5,6 +5,7 @@ import { formLoadingStateAtom } from "../../lib/state/state";
 import { useFetchFloor } from "./use-floor";
 import { useFetchRoom } from "./use-room";
 import { filterBorrwedRoomInitialState, useFilterBorrowedRoomStore } from "../../pages/user/borrowed-room/components/use-filter-borrowed-room-store";
+import { RoomModel } from "../../model/entities/room";
 
 export type ManageFilterBorrowedRoomProps = {
   start_date?: string | null;
@@ -37,7 +38,7 @@ const useFilterBorrowedRoom = () => {
     data_order: "asc",
   });
 
-  const { data: rooms, status: roomStatus } = useFetchRoom(
+  const { data: rooms, status: roomStatus } = useFetchRoom<RoomModel[]>(
     {},
     {
       order_by: "name",

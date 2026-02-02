@@ -1,20 +1,22 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { ErrorResponse } from "../model/service";
 
 export class BaseService {
-  static async _get(
+  static async _get<T = unknown>(
     url: string,
     params: object | null = null,
     options: object | null = null
   ) {
     try {
-      const { data } = await axios.get(url, {
+      const resp = await axios.get<T>(url, {
         ...options,
         params: params,
       });
 
-      return data;
-    } catch (e: any) {
-      if (axios.isAxiosError(e) && e.response && e.response.status === 401) {
+      return resp?.data;
+    } catch (e: unknown) {
+      const errorValue = e as AxiosError<ErrorResponse>;
+      if (errorValue.response && errorValue.response.status === 401) {
         document.cookie.split(";").forEach((c) => {
           document.cookie = c
             .replace(/^ +/, "")
@@ -25,36 +27,37 @@ export class BaseService {
         });
         window.location.reload();
       } else {
-        throw new Error(e.response.data?.message);
+        throw new Error(errorValue.response?.data?.message ?? errorValue.message);
       }
     }
   }
 
-  static async _post(url: string, body: object, options: object | null = null) {
+  static async _post<T = unknown>(url: string, body: object, options: object | null = null) {
     try {
-      const { data } = await axios.post(url, body, {
+      const resp = await axios.post<T>(url, body, {
         ...options,
       });
 
-      return data;
-    } catch (e: any) {
-      throw new Error(e.response.data?.message);
+      return resp?.data;
+    } catch (e: unknown) {
+      const errorValue = e as AxiosError<ErrorResponse>;
+      throw new Error(errorValue.response?.data?.message ?? errorValue.message);
     }
   }
 
-  static async _patch(
+  static async _patch<T = unknown>(
     url: string,
     body: object,
     options: object | null = null
   ) {
-    return await this._post(url, { ...body, _method: "PATCH" }, options);
+    return await this._post<T>(url, { ...body, _method: "PATCH" }, options);
   }
 
-  static async _delete(
+  static async _delete<T = unknown>(
     url: string,
     body: object,
     options: object | null = null
   ) {
-    return await this._post(url, { ...body, _method: "DELETE" }, options);
+    return await this._post<T>(url, { ...body, _method: "DELETE" }, options);
   }
 }

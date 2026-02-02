@@ -38,11 +38,11 @@ const useUpdateUser = (entity: UserModel | null = null) => {
       Object.keys(entity).forEach((fieldName) => {
         setValue(
           fieldName as keyof UpdateUserProps,
-          (entity as any)[fieldName]!
+          (entity as Record<string, unknown>)[fieldName as keyof UserModel] as string
         );
       });
     }
-  }, [entity, setValue]);
+  }, [entity, setValue, reset]);
 
   async function handleUpdateProfile(data: UpdateUserProps) {
     if (!user) return;
@@ -51,16 +51,14 @@ const useUpdateUser = (entity: UserModel | null = null) => {
     if (formLoading) return;
 
     setFormLoading(true);
-    try {
-      await toast.promise(
-        GeneralUserService.updateUserProfile(data),
-        {
-          pending: "Waiting for update profile!",
-          error: handleToastError(),
-          success: handleToastSuccess(),
-        }
-      );
-    } catch (e) {}
+    await toast.promise(
+      GeneralUserService.updateUserProfile(data),
+      {
+        pending: "Waiting for update profile!",
+        error: handleToastError(),
+        success: handleToastSuccess(),
+      }
+    );
 
     queryClient.invalidateQueries({ queryKey: ["profile"] });
     setFormLoading(false);
@@ -73,16 +71,14 @@ const useUpdateUser = (entity: UserModel | null = null) => {
     if (formLoading) return;
 
     setFormLoading(true);
-    try {
-      await toast.promise(
-        AdminUserService.updateUserRole(entity.id as string, data),
-        {
-          pending: "Waiting for update user role!",
-          error: handleToastError(),
-          success: handleToastSuccess(),
-        }
-      );
-    } catch (e) {}
+    await toast.promise(
+      AdminUserService.updateUserRole(entity.id as string, data),
+      {
+        pending: "Waiting for update user role!",
+        error: handleToastError(),
+        success: handleToastSuccess(),
+      }
+    );
 
     queryClient.invalidateQueries({ queryKey: ["admin/user", entity?.id] });
     setFormLoading(false);
@@ -94,16 +90,14 @@ const useUpdateUser = (entity: UserModel | null = null) => {
     if (user.role !== ADMIN_ROLE_INT) return;
 
     setFormLoading(true);
-    try {
-      await toast.promise(
-        AdminUserService.activateUser(entity.id as string),
-        {
-          pending: "Waiting for activate user!",
-          error: handleToastError(),
-          success: handleToastSuccess(),
-        }
-      );
-    } catch (e) {}
+    await toast.promise(
+      AdminUserService.activateUser(entity.id as string),
+      {
+        pending: "Waiting for activate user!",
+        error: handleToastError(),
+        success: handleToastSuccess(),
+      }
+    );
 
     queryClient.invalidateQueries({ queryKey: ["admin/user", entity?.id] });
     setFormLoading(false);
@@ -115,16 +109,14 @@ const useUpdateUser = (entity: UserModel | null = null) => {
     if (user.role !== ADMIN_ROLE_INT) return;
 
     setFormLoading(true);
-    try {
-      await toast.promise(
-        AdminUserService.rejectUser(entity.id as string),
-        {
-          pending: "Waiting for reject user!",
-          error: handleToastError(),
-          success: handleToastSuccess(),
-        }
-      );
-    } catch (e) {}
+    await toast.promise(
+      AdminUserService.rejectUser(entity.id as string),
+      {
+        pending: "Waiting for reject user!",
+        error: handleToastError(),
+        success: handleToastSuccess(),
+      }
+    );
 
     queryClient.invalidateQueries({ queryKey: ["admin/user"] });
     navigate('/admin/user');

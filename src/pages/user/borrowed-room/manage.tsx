@@ -1,12 +1,12 @@
 import { isAfter, isBefore, isSameDay, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import InputSelect from "../../../components/forms/InputSelect";
-import InputText from "../../../components/forms/InputText";
-import InputTextarea from "../../../components/forms/InputTextarea";
-import InputToggle from "../../../components/forms/InputToggle";
-import AlertContainer from "../../../components/layout/AlertContainer";
-import PageHeader from "../../../components/layout/PageHeader";
+import InputSelect from "../../../components/forms/input-select";
+import InputText from "../../../components/forms/input-text";
+import InputTextarea from "../../../components/forms/input-textarea";
+import InputToggle from "../../../components/forms/input-toggle";
+import AlertContainer from "../../../components/layout/alert-container";
+import PageHeader from "../../../components/layout/page-header";
 import useAuth from "../../../hooks/general/use-auth-user";
 import { useGetOneBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
 import useManageBorrowedRoom from "../../../hooks/general/use-manage-borrowed-room";
@@ -111,7 +111,7 @@ const checkAbleToAcceptRequest = (status: FormState): boolean => {
 const ManageBorrowedRoomPage = () => {
   const { id } = useParams();
   const { data: borrowedRoom, status: borrowedRoomStatus } = useGetOneBorrowedRoom(id ?? "");
-  const { data: rooms, status: roomStatus } = useFetchRoom({}, {
+  const { data: rooms, status: roomStatus } = useFetchRoom<RoomModel[]>({}, {
     order_by: "name",
     data_order: "asc",
   }, false);
@@ -150,7 +150,7 @@ const ManageBorrowedRoomPage = () => {
 
     const roomData = rooms as RoomModel[];
     setValue("room_id", roomData[0].id as string);
-  }, [initialize, roomStatus]);
+  }, [initialize, roomStatus, borrowedRoom, rooms, setValue]);
 
   useEffect(() => {
     if (!id) {
@@ -164,7 +164,7 @@ const ManageBorrowedRoomPage = () => {
     // if (borrowedRoom.borrowed_by_user_id === user.id || user.role === ADMIN_ROLE_INT) {
     //   setAbleToUpdate(true);
     // }
-  }, [user, borrowedRoom]);
+  }, [user, borrowedRoom, id]);
 
   const { data: slots, status: slotStatus } = useGetRoomAvailability(watchRoomId, {
     borrowing_date: watchBorrowedDate,

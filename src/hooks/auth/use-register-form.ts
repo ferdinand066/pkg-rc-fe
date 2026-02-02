@@ -38,7 +38,9 @@ export default function useRegisterForm() {
       });
 
       navigate("/auth/login");
-    } catch (e) {}
+    } catch {
+      // Ignore error
+    }
 
     setFormLoading(false);
   }

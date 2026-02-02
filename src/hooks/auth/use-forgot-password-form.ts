@@ -26,8 +26,8 @@ export default function useForgotPasswordForm(){
         error: handleToastError(),
         success: handleToastSuccess(),
       });
-    } catch (e) { 
-
+    } catch {
+      // Ignore error
     }
 
     setFormLoading(false);

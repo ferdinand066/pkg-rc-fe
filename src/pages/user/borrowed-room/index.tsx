@@ -3,18 +3,18 @@ import { id } from "date-fns/locale";
 import { useAtomValue } from "jotai";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import InputText from "../../../components/forms/InputText";
-import PageHeader from "../../../components/layout/PageHeader";
-import Pagination from "../../../components/utils/Pagination";
-import Table, { TableHeaderProps } from "../../../components/utils/Table";
+import InputText from "../../../components/forms/input-text";
+import PageHeader from "../../../components/layout/page-header";
+import Pagination from "../../../components/utils/pagination";
+import Table, { TableHeaderProps } from "../../../components/utils/table";
 import { useFetchBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
 import { BORROWED_STATUS } from "../../../lib/constants";
 import { authAtom } from "../../../lib/state/auth-state";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { TableOrderType } from "../../../model/components/table-order";
 import { FilterIcon } from "@heroicons/react/outline";
-import DialogButton from "../../../components/utils/DialogButton";
-import FilterBorrowedRoomModal from "./components/FilterBorrowedRoomModal";
+import DialogButton from "../../../components/utils/dialog-button";
+import FilterBorrowedRoomModal from "./components/filter-borrowed-room-modal";
 import { useFilterBorrowedRoomStore } from "./components/use-filter-borrowed-room-store";
 
 const header: TableHeaderProps[] = [

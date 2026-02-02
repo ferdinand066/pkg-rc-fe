@@ -10,7 +10,7 @@ const EmailVerifierPage = () => {
   const { mutation } = useAuth();
   const navigate = useNavigate();
   const { token } = useParams();
-  const [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     async function verifyEmail(){
@@ -29,7 +29,7 @@ const EmailVerifierPage = () => {
           success: handleToastSuccess(),
         });
   
-        const user = data.data.user as UserModel;
+        const user = data?.data.user as UserModel;
         await mutation(user);
 
         navigate('/schedule');

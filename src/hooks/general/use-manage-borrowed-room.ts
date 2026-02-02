@@ -44,7 +44,7 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { data: rooms } = useFetchRoom({}, {
+  const { data: rooms } = useFetchRoom<RoomModel[]>({}, {
     order_by: "name",
     data_order: "asc",
   }, false);
@@ -56,7 +56,7 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
       Object.keys(entity).filter((fieldName) => !['room_items', 'item_id'].includes(fieldName)).forEach((fieldName) => {
         setValue(
           fieldName as keyof ManageBorrowedRoomProps,
-          (entity as any)[fieldName]!
+          (entity as Record<string, unknown>)[fieldName as keyof BorrowedRoomModel] as string
         );
       });
 
@@ -65,7 +65,7 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
       entity.borrowed_room_items?.map((item) => {
         const watchRoomId = watch('room_id');
 
-        const selectedRoom = (rooms as RoomModel[]).find((room) => room.id === watchRoomId);
+        const selectedRoom = (rooms).find((room) => room.id === watchRoomId);
         const items = selectedRoom?.room_items?.map((room) => room.item_id);
 
         const idx = (items ?? []).indexOf(item.item_id);
@@ -91,21 +91,19 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     }
 
     setFormLoading(true);
-    try {
-      if (entity) {
-        await toast.promise(BorrowedRoomService.updateBorrowedRoom(entity.id as string, data), {
-          pending: "Waiting for update borrowed room!",
-          error: handleToastError(),
-          success: handleToastSuccess(),
-        });
-      } else {
-        await toast.promise(BorrowedRoomService.createBorrowedRoom(data), {
-          pending: "Waiting for create borrowed room!",
-          error: handleToastError(),
-          success: handleToastSuccess(),
-        });
-      }
-    } catch (e) {}
+    if (entity) {
+      await toast.promise(BorrowedRoomService.updateBorrowedRoom(entity.id as string, data), {
+        pending: "Waiting for update borrowed room!",
+        error: handleToastError(),
+        success: handleToastSuccess(),
+      });
+    } else {
+      await toast.promise(BorrowedRoomService.createBorrowedRoom(data), {
+        pending: "Waiting for create borrowed room!",
+        error: handleToastError(),
+        success: handleToastSuccess(),
+      });
+    }
 
     queryClient.invalidateQueries({ queryKey: ["general/borrowed-room"] });
 
@@ -122,13 +120,11 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     if (formLoading) return;
 
     setFormLoading(true);
-    try {
-      await toast.promise(BorrowedRoomService.deleteBorrowedRoom(entity.id as string), {
-        pending: "Waiting for delete borrowed room!",
-        error: handleToastError(),
-        success: handleToastSuccess(),
-      });
-    } catch (e) {}
+    await toast.promise(BorrowedRoomService.deleteBorrowedRoom(entity.id as string), {
+      pending: "Waiting for delete borrowed room!",
+      error: handleToastError(),
+      success: handleToastSuccess(),
+    });
 
     setFormLoading(false);
     reset();
@@ -148,15 +144,13 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     const value = getValues('start_borrowing_time');
 
     setFormLoading(true);
-    try {
-      await toast.promise(AdminBorrowedRoomService.acceptBorrowedRoom(entity.id as string, {
-        start_borrowing_time: value,
-      }), {
-        pending: "Waiting for accept borrowed room!",
-        error: handleToastError(),
-        success: handleToastSuccess(),
-      });
-    } catch (e) {}
+    await toast.promise(AdminBorrowedRoomService.acceptBorrowedRoom(entity.id as string, {
+      start_borrowing_time: value,
+    }), {
+      pending: "Waiting for accept borrowed room!",
+      error: handleToastError(),
+      success: handleToastSuccess(),
+    });
 
     setFormLoading(false);
 
@@ -174,13 +168,11 @@ const useManageBorrowedRoom = (entity: BorrowedRoomModel | null = null) => {
     if (formLoading) return;
 
     setFormLoading(true);
-    try {
-      await toast.promise(AdminBorrowedRoomService.declineBorrowedRoom(entity.id as string), {
-        pending: "Waiting for decline borrowed room!",
-        error: handleToastError(),
-        success: handleToastSuccess(),
-      });
-    } catch (e) {}
+    await toast.promise(AdminBorrowedRoomService.declineBorrowedRoom(entity.id as string), {
+      pending: "Waiting for decline borrowed room!",
+      error: handleToastError(),
+      success: handleToastSuccess(),
+    });
 
     setFormLoading(false);
 

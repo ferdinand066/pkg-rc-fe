@@ -1,31 +1,16 @@
-
+import { BaseResponse } from "../../model/service";
 import { BaseService } from "../base-service";
 
 const URL = `${__API_URL__}/admin/borrowed-room`;
 
 export class BorrowedRoomService extends BaseService {
-  static async acceptBorrowedRoom(
-    id: string,
-    body: object,
-  ): Promise<void> {
+  static async acceptBorrowedRoom(id: string, body: object) {
     if (!id) return;
-    try {
-      const data = await this._post(`${URL}/${id}/accept`, body);
-      return data
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+    return await this._post<BaseResponse<never>>(`${URL}/${id}/accept`, body);
   }
 
-  static async declineBorrowedRoom(
-    id: string,
-  ): Promise<void> {
+  static async declineBorrowedRoom(id: string) {
     if (!id) return;
-    try {
-      const data = await this._post(`${URL}/${id}/decline`, {});
-      return data
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+    return await this._post<BaseResponse<never>>(`${URL}/${id}/decline`, {});
   }
 }

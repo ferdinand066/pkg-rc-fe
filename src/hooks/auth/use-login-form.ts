@@ -44,17 +44,19 @@ export default function useLoginForm() {
 
       const tokenData: TokenData = {
         token: res.token,
-        expiresAt: res.expires_in,
-        roleId: res.user.role,
+        expiresAt: "" + res.expires_in,
+        roleId: "" + res.user.role,
       };
 
-      setEncryptedCookie("token", tokenData, res.expiresAt);
+      setEncryptedCookie("token", tokenData, "" + tokenData.expiresAt);
       setAuth(tokenData);
 
       axios.defaults.headers.common["Authorization"] = `Bearer ${res.token}`;
 
       navigate("/schedule");
-    } catch (e) {}
+    } catch {
+      // Ignore error
+    }
 
     setFormLoading(false);
   }

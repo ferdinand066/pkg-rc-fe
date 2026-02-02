@@ -1,4 +1,4 @@
-import PageHeader from "../../components/layout/PageHeader";
+import PageHeader from "../../components/layout/page-header";
 import useResendVerificationEmail from "../../hooks/auth/use-verification-email";
 import useAuth from "../../hooks/general/use-auth-user";
 

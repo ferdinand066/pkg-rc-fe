@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import InputText from "../../components/forms/InputText";
+import InputText from "../../components/forms/input-text";
 import useResetPasswordForm from "../../hooks/auth/use-reset-password-form";
 import { AuthService } from "../../services/general/auth-service";
 import { toast } from "react-toastify";
@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const { token } = useParams();
-  const [searchParam, _] = useSearchParams();
+  const [searchParam] = useSearchParams();
   const email = searchParam.get("email") ?? "";
 
   const { register, setValue, errors, handleResetPasswordEvent, handleSubmit } =

@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import InputSelect from "../../../components/forms/InputSelect";
-import InputText from "../../../components/forms/InputText";
-import InputTextarea from "../../../components/forms/InputTextarea";
-import PageHeader from "../../../components/layout/PageHeader";
+import InputSelect from "../../../components/forms/input-select";
+import InputText from "../../../components/forms/input-text";
+import InputTextarea from "../../../components/forms/input-textarea";
+import PageHeader from "../../../components/layout/page-header";
 import { useGetOneUser } from "../../../hooks/admin/use-user";
 import useAuth from "../../../hooks/general/use-auth-user";
 import useUpdateUser from "../../../hooks/general/use-manage-user";

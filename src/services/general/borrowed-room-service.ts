@@ -1,5 +1,6 @@
 import { PaginationProps } from "../../model/components/pagination";
 import { BorrowedRoomModel } from "../../model/entities/borrowed-room";
+import { BaseResponse } from "../../model/service";
 import { BaseService } from "../base-service";
 
 const URL = `${__API_URL__}/general/borrowed-room`;
@@ -7,67 +8,43 @@ const URL = `${__API_URL__}/general/borrowed-room`;
 export class BorrowedRoomService extends BaseService {
   static async getBorrowedRooms(
     params: object
-  ): Promise<PaginationProps<BorrowedRoomModel>> {
-    try {
-      const { data } = await this._get(`${URL}`, params);
-      return data.borrowedRooms;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+  ) {
+    const res = await this._get<BaseResponse<{
+      borrowedRooms: PaginationProps<BorrowedRoomModel>
+    }>>(`${URL}`, params);
+    return res?.data.borrowedRooms;
   }
 
   static async getOneBorrowedRoom(
     id: string
-  ): Promise<BorrowedRoomModel | null> {
+  ) {
     if (!id) return null;
-    try {
-      const { data } = await this._get(`${URL}/${id}`);
-      return data.borrowedRoom;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+    const res = await this._get<BaseResponse<{
+      borrowedRoom: BorrowedRoomModel
+    }>>(`${URL}/${id}`);
+    return res?.data?.borrowedRoom;
   }
 
-  static async createRecurringBorrowedRoom(params: object): Promise<void> {
-    try {
-      const data = await this._post(`${URL}/recurring`, params);
-      return data;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+  static async createRecurringBorrowedRoom(params: object) {
+    return await this._post<BaseResponse<never>>(`${URL}/recurring`, params);
   }
 
   static async createBorrowedRoom(
     params: object
-  ): Promise<BorrowedRoomModel | null> {
-    try {
-      const data = await this._post(`${URL}`, params);
-      return data;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+  ) {
+    return await this._post<BaseResponse<never>>(`${URL}`, params);
   }
 
   static async updateBorrowedRoom(
     id: string,
     params: object
-  ): Promise<BorrowedRoomModel | null> {
+  ) {
     if (!id) return null;
-    try {
-      const data = await this._patch(`${URL}/${id}`, params);
-      return data;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+    return await this._patch<BaseResponse<never>>(`${URL}/${id}`, params);
   }
 
-  static async deleteBorrowedRoom(id: string): Promise<void> {
+  static async deleteBorrowedRoom(id: string) {
     if (!id) return;
-    try {
-      const data = await this._delete(`${URL}/${id}`, {});
-      return data;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+    return await this._delete<BaseResponse<never>>(`${URL}/${id}`, {});
   }
 }

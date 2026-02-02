@@ -19,7 +19,6 @@ type ResetPasswordProps = {
 }
 
 export default function useResetPasswordForm(email: string, token: string){
-//   const router = useRouter();
   const { register, setValue, formState: { errors }, handleSubmit, getValues } = useForm<ResetPasswordProps>({
     defaultValues: {
       email: email, 
@@ -38,15 +37,11 @@ export default function useResetPasswordForm(email: string, token: string){
         error: handleToastError(),
         success: handleToastSuccess(),
       });
-      
+    } catch { 
+      // Ignore error
+    } finally {
       setFormLoading(false);
-    } catch (e) { 
-      setFormLoading(false);
-      return;
     }
-
-    // router.push('/auth');
-
   }
 
   return {

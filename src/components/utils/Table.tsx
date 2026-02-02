@@ -7,7 +7,7 @@ import { TableOrderType } from "../../model/components/table-order";
 export type TableHeaderProps = {
   name: string;
   sortable: boolean;
-}
+};
 
 type TableProps = {
   header: TableHeaderProps[];
@@ -16,7 +16,7 @@ type TableProps = {
   enableSort?: boolean;
   sortData?: TableOrderType;
   setSortData?: React.Dispatch<React.SetStateAction<TableOrderType>>;
-  status: "success" | "error" | "pending"
+  status: "success" | "error" | "pending";
 };
 
 const Table = ({
@@ -31,33 +31,59 @@ const Table = ({
   const tableHeader = header.filter((h) => h.name !== "action");
 
   const generateTableValue = () => {
-    if (status === "pending") return <tr>
-      <td colSpan={header.length} className="flex items-end flex-row gap-0.5">Loading<span className="loading loading-dots loading-xs"></span></td>
-    </tr>
+    if (status === "pending")
+      return (
+        <tr>
+          <td
+            colSpan={header.length}
+            className="flex items-end flex-row gap-0.5"
+          >
+            Loading<span className="loading loading-dots loading-xs"></span>
+          </td>
+        </tr>
+      );
 
-    if (status === "error") return <tr>
-      <td colSpan={header.length}>Gagal untuk menarik data!</td>
-    </tr>
+    if (status === "error")
+      return (
+        <tr>
+          <td colSpan={header.length}>Gagal untuk menarik data!</td>
+        </tr>
+      );
 
-    if (data.length === 0) return <tr>
-      <td colSpan={header.length}>Tidak ada data!</td>
-    </tr>
+    if (data.length === 0)
+      return (
+        <tr>
+          <td colSpan={header.length}>Tidak ada data!</td>
+        </tr>
+      );
 
     return data.map((d, index) => (
       <tr key={index}>
         {numbering && <th>{index + 1}</th>}
 
         {tableHeader.map((h, i) => {
-          if (i===0 && (d as any)['redirect']){
-            return <td className="hover:text-primary font-bold" key={i}><Link to={(d as any)['redirect']}>{(d as any)[h.name]}</Link></td>
-          } else if ( i === 0 && (d as any)['onClick']) {
-            return <td className="hover:text-primary font-bold cursor-pointer" onClick={() => (d as any)['onClick']()} key={i}>{(d as any)[h.name]}</td>
+          if (i === 0 && (d as any)["redirect"]) {
+            return (
+              <td className="hover:text-primary font-bold" key={i}>
+                <Link to={(d as any)["redirect"]}>{(d as any)[h.name]}</Link>
+              </td>
+            );
+          } else if (i === 0 && (d as any)["onClick"]) {
+            return (
+              <td
+                className="hover:text-primary font-bold cursor-pointer"
+                onClick={() => (d as any)["onClick"]()}
+                key={i}
+              >
+                {(d as any)[h.name]}
+              </td>
+            );
           }
-          return <td key={i}>{(d as any)[h.name]}</td>
+          return <td key={i}>{(d as any)[h.name]}</td>;
         })}
       </tr>
-    ))
-  }
+    ));
+  };
 
   return (
     <div className="overflow-x-auto rounded-lg shadow mx-6">
@@ -79,20 +105,20 @@ const Table = ({
                   setSortData((prev) => {
                     let dataOrder = prev.data_order;
                     if (prev.order_by === h.name) {
-                      if (dataOrder === 'asc') {
-                        dataOrder = "desc"
+                      if (dataOrder === "asc") {
+                        dataOrder = "desc";
                       } else {
-                        dataOrder = "asc"
+                        dataOrder = "asc";
                       }
                     } else {
-                      dataOrder = "asc"
+                      dataOrder = "asc";
                     }
-  
+
                     return {
                       order_by: h.name,
-                      data_order: dataOrder
-                    }
-                  })
+                      data_order: dataOrder,
+                    };
+                  });
                 }}
               >
                 <span>{startCase(h.name)}</span>
@@ -109,9 +135,7 @@ const Table = ({
             ))}
           </tr>
         </thead>
-        <tbody>
-          { generateTableValue() }
-        </tbody>
+        <tbody>{generateTableValue()}</tbody>
       </table>
     </div>
   );

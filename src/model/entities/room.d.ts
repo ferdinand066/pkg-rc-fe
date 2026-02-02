@@ -1,8 +1,5 @@
 
-import { GeneralData } from "../components/general-data"
-import { UserCurrentBranchModel } from "./branch"
-import { EmployeeModel } from "./employee"
-import { UserRoleModel } from "./roles"
+import { GeneralData } from "../components/general-data";
 
 export type FloorModel = GeneralData & {
   rooms: RoomModel[];

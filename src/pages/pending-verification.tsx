@@ -1,5 +1,5 @@
 
-import PageHeader from "../components/layout/PageHeader";
+import PageHeader from "../components/layout/page-header";
 import useAuth from "../hooks/general/use-auth-user";
 
 const PendingVerificationIndex = () => {

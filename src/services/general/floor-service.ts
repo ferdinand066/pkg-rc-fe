@@ -1,26 +1,24 @@
 
 import { FloorModel } from "../../model/entities/room";
+import { BaseResponse } from "../../model/service";
 import { BaseService } from "../base-service";
 
 const URL = `${__API_URL__}/general/floor`;
 
 export class FloorService extends BaseService {
-  static async getFloors(params: object): Promise<FloorModel[]> {
-    try {
-      const { data } = await this._get(`${URL}`, params);
-      return data.floors;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+  static async getFloors(params: object) {
+    const res = await this._get<BaseResponse<{
+      floors: FloorModel[]
+    }>>(`${URL}`, params);
+    return res?.data.floors;
   }
 
-  static async getOneFloor(id: string): Promise<FloorModel | null> {
+  static async getOneFloor(id: string) {
     if (!id) return null;
-    try {
-      const { data } = await this._get(`${URL}/${id}`);
-      return data.floor;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+    
+    const res = await this._get<BaseResponse<{
+      floor: FloorModel
+    }>>(`${URL}/${id}`);
+    return res?.data?.floor;
   }
 }

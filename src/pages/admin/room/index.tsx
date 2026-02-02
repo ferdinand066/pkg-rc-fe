@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
-import PageHeader from "../../../components/layout/PageHeader";
-import DialogButton from "../../../components/utils/DialogButton";
-import Pagination from "../../../components/utils/Pagination";
-import Table, { TableHeaderProps } from "../../../components/utils/Table";
+import PageHeader from "../../../components/layout/page-header";
+import DialogButton from "../../../components/utils/dialog-button";
+import Pagination from "../../../components/utils/pagination";
+import Table, { TableHeaderProps } from "../../../components/utils/table";
 import { useFetchRoom } from "../../../hooks/general/use-room";
 import { RoomModel } from "../../../model/entities/room";
-import RoomManageModal from "./components/ManageModal";
+import RoomManageModal from "./components/manage-modal";
 import { PaginationProps } from "../../../model/components/pagination";
 import { TableOrderType } from "../../../model/components/table-order";
 
@@ -33,8 +33,7 @@ const RoomIndex = () => {
     data_order: "asc",
   });
 
-  const { data: tempData, status } = useFetchRoom(param, sort, true);
-  const data = tempData as PaginationProps<RoomModel> | undefined;
+  const { data, status } = useFetchRoom<PaginationProps<RoomModel>>(param, sort, true);
 
   const rooms = data?.data.map((room: RoomModel) => {
     const d = {

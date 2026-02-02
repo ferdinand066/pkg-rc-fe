@@ -45,7 +45,9 @@ export default function useLogout() {
       setTheme(currentTheme);
       queryClient.clear();
       navigate("/login");
-    } catch (e) {}
+    } catch {
+      // Ignore error
+    }
 
     setFormLoading(false);
   }

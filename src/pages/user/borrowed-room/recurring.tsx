@@ -1,10 +1,10 @@
 import { addYears, isAfter, isBefore, isSameDay, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
-import InputSelect from "../../../components/forms/InputSelect";
-import InputText from "../../../components/forms/InputText";
-import InputTextarea from "../../../components/forms/InputTextarea";
-import InputToggle from "../../../components/forms/InputToggle";
-import PageHeader from "../../../components/layout/PageHeader";
+import InputSelect from "../../../components/forms/input-select";
+import InputText from "../../../components/forms/input-text";
+import InputTextarea from "../../../components/forms/input-textarea";
+import InputToggle from "../../../components/forms/input-toggle";
+import PageHeader from "../../../components/layout/page-header";
 import useManageRecurringBorrowRoom from "../../../hooks/general/use-manage-recurring-borrow-room";
 import { useFetchRoom } from "../../../hooks/general/use-room";
 import { INPUT_TIME_STEP } from "../../../lib/constants";
@@ -26,7 +26,7 @@ const RECURRING_OPTIONS = [
 ];
 
 const ManageRecurringRoomPage = () => {
-  const { data: rooms, status: roomStatus } = useFetchRoom({}, {
+  const { data: rooms, status: roomStatus } = useFetchRoom<RoomModel[]>({}, {
     order_by: "name",
     data_order: "asc",
   }, false);
@@ -52,7 +52,7 @@ const ManageRecurringRoomPage = () => {
 
     const roomData = rooms as RoomModel[];
     setValue("room_id", roomData[0].id as string);
-  }, [initialize, roomStatus]);
+  }, [initialize, roomStatus, rooms, setValue]);
 
   return (
     <section className="flex flex-col h-full flex-1 gap-4 mb-8 divide-y">

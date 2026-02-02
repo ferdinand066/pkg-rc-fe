@@ -2,9 +2,9 @@ import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { padStart } from "lodash";
 import { useState } from "react";
-import InputText from "../components/forms/InputText";
-import AlertContainer, { AlertData } from "../components/layout/AlertContainer";
-import PageHeader from "../components/layout/PageHeader";
+import InputText from "../components/forms/input-text";
+import AlertContainer, { AlertData } from "../components/layout/alert-container";
+import PageHeader from "../components/layout/page-header";
 import RoomSchedule, {
   ScheduleSearchType,
 } from "../components/pages/schedule/Schedule";

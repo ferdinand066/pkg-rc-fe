@@ -1,7 +1,7 @@
 import { useState } from "react";
-import PageHeader from "../../../components/layout/PageHeader";
-import Pagination from "../../../components/utils/Pagination";
-import Table, { TableHeaderProps } from "../../../components/utils/Table";
+import PageHeader from "../../../components/layout/page-header";
+import Pagination from "../../../components/utils/pagination";
+import Table, { TableHeaderProps } from "../../../components/utils/table";
 import { useFetchRoom } from "../../../hooks/general/use-room";
 import { PaginationProps } from "../../../model/components/pagination";
 import { RoomModel } from "../../../model/entities/room";
@@ -27,11 +27,10 @@ const ReportIndex = () => {
     page: 1,
   });
 
-  const { data: tempData, status } = useFetchRoom(param, {
+  const { data, status } = useFetchRoom<PaginationProps<RoomModel>>(param, {
     order_by: "name",
     data_order: "asc",
   }, true);
-  const data = tempData as PaginationProps<RoomModel> | undefined;
 
   const rooms = data?.data.map((room: RoomModel) => {
     const d = {

@@ -10,9 +10,9 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-
 import { appThemeAtom } from "./lib/state/state";
 import useAuth from "./hooks/general/use-auth-user";
 import useLogout from "./hooks/form/use-logout";
+import PageLayout from "./components/layout/layout";
 
-const LoadingFallback = React.lazy(() => import("./components/layout/LoadingFallback"));
-const Layout = React.lazy(() => import("./components/layout/Layout"));
+const LoadingFallback = React.lazy(() => import("./components/layout/loading-fallback"));
 const ReportIndex = React.lazy(() => import("./pages/admin/report"));
 const RoomIndex = React.lazy(() => import("./pages/admin/room"));
 const LoginPage = React.lazy(() => import("./pages/auth/login"));
@@ -20,7 +20,8 @@ const RegisterPage = React.lazy(() => import("./pages/auth/register"));
 const ScheduleIndexPage = React.lazy(() => import("./pages/schedule"));
 const UserIndex = React.lazy(() => import("./pages/admin/user"));
 const ShowUserPage = React.lazy(() => import("./pages/admin/user/show"));
-const ItemIndex = React.lazy(() => import("./pages/admin/item"));
+const ItemIndex = React.lazy(() => import("./pages/inventory/item/index"));
+const ItemDetailPage = React.lazy(() => import("./pages/inventory/item/detail"));
 const UserBorrowedRoomIndex = React.lazy(() => import("./pages/user/borrowed-room"));
 const ManageBorrowedRoomPage = React.lazy(() => import("./pages/user/borrowed-room/manage"));
 const ManageRecurringRoomPage = React.lazy(() => import("./pages/user/borrowed-room/recurring"));
@@ -29,6 +30,7 @@ const PendingVerificationIndex = React.lazy(() => import("./pages/pending-verifi
 const EmailVerifierPage = React.lazy(() => import("./pages/verify-email/token"));
 const ForgotPasswordPage = React.lazy(() => import("./pages/auth/forgot-password"));
 const ResetPasswordPage = React.lazy(() => import("./pages/auth/reset-password"));
+const ItemHistoryIndex = React.lazy(() => import("./pages/inventory/transaction"));
 
 const queryClient = new QueryClient();
 
@@ -114,10 +116,10 @@ const AuthenticatedRoutes = () => {
 
       return;
     }
-  }, [location.pathname, user])
+  }, [location.pathname, user, navigate, handleLogoutEvent]);
 
   return (
-    <Layout>
+    <PageLayout>
       <Routes>
         <Route path="schedule" element={<ScheduleIndexPage />} />
         <Route path="room-request">
@@ -129,12 +131,19 @@ const AuthenticatedRoutes = () => {
         <Route path="admin">
           <Route path="report" element={<ReportIndex />} />
           <Route path="room" element={<RoomIndex />} />
-          <Route path="item" element={<ItemIndex />} />
           {/* <Route path="room-request" element={<BorrowedRoomIndex />} /> */}
           <Route path="user">
             <Route path="" element={<UserIndex />}></Route>
             <Route path=":id" element={<ShowUserPage />}></Route>
           </Route>
+        </Route>
+        <Route path="inventory">
+          <Route path="item">
+            <Route path="" element={<ItemIndex />} />
+            <Route path="create" element={<ItemDetailPage />} />
+            <Route path=":id" element={<ItemDetailPage />} />
+          </Route>
+          <Route path="transaction" element={<ItemHistoryIndex />} />
         </Route>
         <Route path="verify-email">
           <Route path="" element={<VerifyEmailIndex />}></Route>
@@ -151,7 +160,7 @@ const AuthenticatedRoutes = () => {
           </Route>
         </Route> */}
       </Routes>
-    </Layout>
+    </PageLayout>
   );
 };
 
@@ -163,10 +172,10 @@ const UnauthenticatedRoutes = () => {
     if (!location.pathname.startsWith('/auth')) {
       navigate('/auth/login');
     }
-  }, [location.pathname])
+  }, [location.pathname, navigate]);
 
   return (
-    <Layout>
+    <PageLayout>
       <Routes>
         {/* <Route path="/employee/register" element={<EmployeeRegisterPage />} /> */}
         <Route path="/auth">
@@ -181,7 +190,7 @@ const UnauthenticatedRoutes = () => {
         </Route>
         {/*<Route path="*" element={<Navigate replace to="/employee/register" />} /> */}
       </Routes>
-    </Layout>
+    </PageLayout>
   );
 };
 

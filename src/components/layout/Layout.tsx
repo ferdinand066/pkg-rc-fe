@@ -1,6 +1,6 @@
 import { PhoneIcon } from "@heroicons/react/outline";
 import { useAtom, useAtomValue } from "jotai";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useLogout from "../../hooks/form/use-logout";
 import useAuth from "../../hooks/general/use-auth-user";
@@ -43,8 +43,15 @@ const Navbar = () => {
             child: [
               // { name: "Report", href: "/report" },
               { name: "Ruangan", href: "/room" },
-              { name: "Barang", href: "/item" },
               { name: "User", href: "/user" },
+            ],
+          },
+          {
+            name: "Inventaris",
+            href: "/inventory",
+            child: [
+              { name: "Barang", href: "/item" },
+              { name: "Transaksi", href: "/transaction" },
             ],
           },
         ]);
@@ -62,7 +69,7 @@ const Navbar = () => {
         break;
     }
     setNavbarInitialLoad(true);
-  }, [auth]);
+  }, [auth, navbarInitialLoad, setNavbarInitialLoad]);
 
   return (
     <div className="bg-base-100 w-full flex items-center justify-center shadow-sm z-[100]">
@@ -93,7 +100,9 @@ const Navbar = () => {
                 if (!nav.child) {
                   return (
                     <li key={nav.href}>
-                      <Link to={nav.href} className="py-2 px-4">{nav.name}</Link>
+                      <Link to={nav.href} className="py-2 px-4">
+                        {nav.name}
+                      </Link>
                     </li>
                   );
                 }
@@ -110,9 +119,7 @@ const Navbar = () => {
                   </li>
                 );
               })}
-              {auth ? (
-                <></>
-              ) : (
+              {!auth && (
                 <>
                   <li className="sm:hidden">
                     <Link to={"/auth/login"}>Login</Link>
@@ -127,7 +134,7 @@ const Navbar = () => {
           <Link to={"/schedule"} className="btn btn-ghost text-xl">
             PKG RC
           </Link>
-          <ul className="menu menu-horizontal px-1 hidden lg:flex">
+          <ul className="menu menu-horizontal px-1 hidden sm:flex">
             {navigation.map((nav) => {
               if (!nav.child) {
                 return (
@@ -212,7 +219,7 @@ const ThemeToggle = () => {
         className="theme-controller hidden"
         checked={theme === "dark"}
         value={theme}
-        onChange={(e) => setTheme((_) => (e.target.checked ? "dark" : "light"))}
+        onChange={(e) => setTheme(() => (e.target.checked ? "dark" : "light"))}
       />
       <svg
         className="swap-off fill-current w-6 h-6"
@@ -232,7 +239,7 @@ const ThemeToggle = () => {
   );
 };
 
-const PageContainer = ({ children }: any) => {
+const PageContainer = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex flex-col justify-center flex-1 max-w-7xl mx-auto w-full">
       {children}
@@ -261,7 +268,7 @@ const Footer = () => {
   );
 };
 
-const Layout = ({ children }: any) => {
+const PageLayout = ({ children }: { children: ReactNode }) => {
   const theme = useAtomValue(appThemeAtom);
 
   const [currentDateTime, setCurrentDateTime] = useState("");
@@ -323,4 +330,4 @@ const Layout = ({ children }: any) => {
 //   </div> : <></>
 // }
 
-export default Layout;
+export default PageLayout;

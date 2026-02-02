@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import InputText from "../../components/forms/InputText";
+import InputText from "../../components/forms/input-text";
 import useLoginForm from "../../hooks/auth/use-login-form";
 
 const LoginPage = () => {

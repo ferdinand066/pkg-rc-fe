@@ -1,36 +1,36 @@
-
 import { PaginationProps } from "../../model/components/pagination";
 import { RoomModel } from "../../model/entities/room";
+import { BaseResponse } from "../../model/service";
 import { BaseService } from "../base-service";
 
 const URL = `${__API_URL__}/general/room`;
 
 export class RoomService extends BaseService {
-  static async getRooms(params: object): Promise<PaginationProps<RoomModel> | RoomModel[]> {
-    try {
-      const { data } = await this._get(`${URL}`, params);
-      return data.rooms;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+  static async getRooms<T extends PaginationProps<RoomModel> | RoomModel[]>(params: object) {
+    const res = await this._get<
+      BaseResponse<{
+        rooms: T;
+      }>
+    >(`${URL}`, params);
+    return res?.data?.rooms;
   }
 
-  static async getOneRoom(id: string): Promise<RoomModel | null> {
+  static async getOneRoom(id: string) {
     if (!id) return null;
-    try {
-      const { data } = await this._get(`${URL}/${id}`);
-      return data.room;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+    const res = await this._get<
+      BaseResponse<{
+        room: RoomModel;
+      }>
+    >(`${URL}/${id}`);
+    return res?.data?.room;
   }
 
-  static async getRoomAvailability(id: string, param: object): Promise<string[]> {
-    try {
-      const { data } = await this._get(`${URL}/availability/${id}`, param);
-      return data.slots;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
+  static async getRoomAvailability(id: string, param: object) {
+    const res = await this._get<
+      BaseResponse<{
+        slots: string[];
+      }>
+    >(`${URL}/availability/${id}`, param);
+    return res?.data?.slots ?? [];
   }
 }
