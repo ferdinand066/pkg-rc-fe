@@ -54,9 +54,20 @@ const InputText = (props: InputTextProps) => {
               const inputValue = e.target.value; // Get the input value (HH:MM)
               const [hours, minutes] = inputValue.split(':').map(Number); // Split and parse hours and minutes
 
-              // Round the minutes to the nearest 5-minute interval
-              const roundedMinutes = Math.round(minutes / 5) * 5;
-              const adjustedTime = `${String(hours).padStart(2, '0')}:${String(roundedMinutes).padStart(2, '0')}`;
+              // Convert step from seconds to minutes
+              const stepInMinutes = Number(props.step) / 60;
+              
+              // Round the minutes to the nearest step interval
+              let roundedMinutes = Math.round(minutes / stepInMinutes) * stepInMinutes;
+              let adjustedHours = hours;
+              
+              // Handle overflow when minutes >= 60
+              if (roundedMinutes >= 60) {
+                adjustedHours = (hours + 1) % 24; // Increment hour and wrap around at 24
+                roundedMinutes = 0;
+              }
+              
+              const adjustedTime = `${String(adjustedHours).padStart(2, '0')}:${String(roundedMinutes).padStart(2, '0')}`;
 
               // Update the value with the adjusted time
               setValue(name!, adjustedTime, { shouldDirty: true });

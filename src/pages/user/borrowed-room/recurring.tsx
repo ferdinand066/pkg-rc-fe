@@ -12,16 +12,16 @@ import { RoomModel } from "../../../model/entities/room";
 
 const RECURRING_OPTIONS = [
   {
-    id: "daily",
-    name: "Harian",
+    id: "monthly",
+    name: "Bulanan",
   },
   {
     id: "weekly",
     name: "Mingguan",
   },
   {
-    id: "monthly",
-    name: "Bulanan",
+    id: "daily",
+    name: "Harian",
   },
 ];
 
