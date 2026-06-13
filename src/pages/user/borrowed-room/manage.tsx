@@ -220,7 +220,7 @@ const ManageBorrowedRoomPage = () => {
               isLoading={borrowedRoomStatus === "pending" && !!id}
             />
           </div>
-          <div className="col-span-6 sm:col-span-2">
+          <div className="col-span-6 sm:col-span-2 flex flex-col gap-1">
             <InputText
               label="Nama PIC"
               type="text"
@@ -234,6 +234,11 @@ const ManageBorrowedRoomPage = () => {
               errors={errors}
               isLoading={borrowedRoomStatus === "pending" && !!id}
             />
+            {
+              borrowedRoom?.borrowed_by?.email && (
+                <span className="text-gray-700 text-sm">oleh {borrowedRoom?.borrowed_by?.email}</span>
+              )
+            }
           </div>
           <div className="col-span-6 sm:col-span-2">
             <InputText
