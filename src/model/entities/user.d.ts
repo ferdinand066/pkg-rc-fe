@@ -1,9 +1,9 @@
-
+import type { UserRole } from "../../lib/status";
 import { GeneralData } from "../components/general-data"
 import { EmployeeModel } from "./employee"
 
 export type UserModel = GeneralData & {
-  role: number,
+  role: UserRole,
   email: string,
   address: string,
   suspended_at?: Date,

@@ -1,4 +1,4 @@
-
+import type { AgreementStatus, BorrowedStatus } from "../../lib/status";
 import { GeneralData } from "../components/general-data"
 import { RoomModel } from "./room";
 import { UserModel } from "./user";
@@ -17,7 +17,7 @@ export type BorrowedRoomModel = GeneralData & {
   borrowed_by: UserModel,
   pending_users?: UserModel[],
   borrowed_by_user_id: string,
-  borrowed_status: number,
+  borrowed_status: BorrowedStatus,
   borrowed_room_items: BorrowedRoomItemModel[],
   borrowed_room_agreements: BorrowedRoomAgreement[],
   description: string,
@@ -36,7 +36,7 @@ export type BorrowedRoomItemModel = {
 export type BorrowedRoomAgreement = {
   id: string,
   borrowed_room_id: string,
-  agreement_status: number,
+  agreement_status: AgreementStatus,
   created_by: UserModel,
   created_by_user_id: string,
 }

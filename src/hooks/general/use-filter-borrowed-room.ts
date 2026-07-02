@@ -5,12 +5,13 @@ import { formLoadingStateAtom } from "../../lib/state/state";
 import { useFetchFloor } from "./use-floor";
 import { useFetchRoom } from "./use-room";
 import { filterBorrwedRoomInitialState, useFilterBorrowedRoomStore } from "../../pages/user/borrowed-room/components/use-filter-borrowed-room-store";
+import type { BorrowedStatus } from "../../lib/status";
 import { RoomModel } from "../../model/entities/room";
 
 export type ManageFilterBorrowedRoomProps = {
   start_date?: string | null;
   end_date?: string | null;
-  status?: number[] | null;
+  status?: BorrowedStatus[] | null;
   floor_id?: string | null;
   room_id?: string[] | null;
 };

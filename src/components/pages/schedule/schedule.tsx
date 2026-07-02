@@ -4,6 +4,7 @@ import { Fragment } from "react/jsx-runtime";
 import useAuth from "../../../hooks/general/use-auth-user";
 import {
   ADMIN_ROLE_INT,
+  BORROWED_STATUS_ACCEPTED_INT,
   BORROWED_STATUS_PENDING_INT,
 } from "../../../lib/constants";
 import { classJoin } from "../../../lib/functions";
@@ -12,6 +13,7 @@ import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { FloorModel } from "../../../model/entities/room";
 import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
+import { ADMIN_VIEWER_ROLE_INT } from "../../../lib/status";
 // import {
 //   controller,
 //   differenceInMinutes,
@@ -270,7 +272,10 @@ RoomScheduleType) => {
                                 ) {
                                   columnColor =
                                     "bg-yellow-300 hover:bg-yellow-500 transition-all";
-                                } else {
+                                } else if (
+                                  transactionDetailRoom.borrowed_status ===
+                                  BORROWED_STATUS_ACCEPTED_INT
+                                ) {
                                   columnColor =
                                     "bg-green-300 hover:bg-green-500 transition-all";
                                 }
@@ -313,7 +318,7 @@ RoomScheduleType) => {
                                     !!transactionDetailRoom &&
                                     (transactionDetailRoom.borrowed_by_user_id ===
                                       user?.id ||
-                                      user?.role === ADMIN_ROLE_INT)
+                                      [ADMIN_ROLE_INT, ADMIN_VIEWER_ROLE_INT].includes(user?.role ?? 0))
                                   }
                                 />
                               );

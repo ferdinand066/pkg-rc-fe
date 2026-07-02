@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { ManageFilterBorrowedRoomProps } from "../../../../hooks/general/use-filter-borrowed-room";
+import type { BorrowedStatus } from "../../../../lib/status";
 
 export const filterBorrwedRoomInitialState: ManageFilterBorrowedRoomProps = {
   start_date: null,
@@ -13,7 +14,7 @@ export const filterBorrwedRoomInitialState: ManageFilterBorrowedRoomProps = {
 interface BorrowedRoomState {
   start_date?: string | null;
   end_date?: string | null;
-  status?: number[] | null;
+  status?: BorrowedStatus[] | null;
   floor_id?: string | null;
   room_id?: string[] | null;
 

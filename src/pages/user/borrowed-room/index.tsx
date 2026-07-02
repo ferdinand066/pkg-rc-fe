@@ -8,7 +8,7 @@ import PageHeader from "../../../components/layout/page-header";
 import Pagination from "../../../components/utils/pagination";
 import Table, { TableHeaderProps } from "../../../components/utils/table";
 import { useFetchBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
-import { BORROWED_STATUS } from "../../../lib/constants";
+import { getBorrowedStatusLabel, USER_ROLE_INT } from "../../../lib/constants";
 import { authAtom } from "../../../lib/state/auth-state";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { TableOrderType } from "../../../model/components/table-order";
@@ -99,7 +99,7 @@ const UserBorrowedRoomIndex = () => {
         pic_name: (
           <div className="min-w-32 md:min-w-auto">{borrowedRoom.pic_name}</div>
         ),
-        status: BORROWED_STATUS[borrowedRoom.borrowed_status],
+        status: getBorrowedStatusLabel(borrowedRoom.borrowed_status),
       };
 
       return {
@@ -115,7 +115,7 @@ const UserBorrowedRoomIndex = () => {
       <PageHeader
         pageName="Proposal Pinjam Ruang"
         action={
-          parseInt(authValue?.roleId ?? "1") === 1 ? (
+          parseInt(authValue?.roleId ?? String(USER_ROLE_INT)) === USER_ROLE_INT ? (
             <div className="flex flex-row gap-4">
               <button
                 type="button"

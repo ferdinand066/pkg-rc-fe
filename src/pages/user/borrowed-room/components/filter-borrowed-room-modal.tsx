@@ -3,20 +3,10 @@ import { forwardRef } from "react";
 import InputCheckbox from "../../../../components/forms/input-checkbox";
 import InputSelect from "../../../../components/forms/input-select";
 import InputText from "../../../../components/forms/input-text";
+import { BORROWED_STATUS_FILTER_OPTIONS } from "../../../../lib/constants";
 import useFilterBorrowedRoom from "../../../../hooks/general/use-filter-borrowed-room";
 import { GeneralData } from "../../../../model/components/general-data";
 import { RoomModel } from "../../../../model/entities/room";
-
-const borrowedRoomStatuses: GeneralData[] = [
-  {
-    id: 1,
-    name: "Pending",
-  },
-  {
-    id: 2,
-    name: "Accepted",
-  },
-];
 
 const FilterBorrowedRoomModal = forwardRef<
   HTMLDialogElement,
@@ -94,7 +84,7 @@ const FilterBorrowedRoomModal = forwardRef<
           label="Status"
           name="status"
           id="status"
-          checkboxOptions={borrowedRoomStatuses.map(
+          checkboxOptions={BORROWED_STATUS_FILTER_OPTIONS.map(
             (i: GeneralData, idx: number) => ({
               id: "" + i.id,
               label: i.name,

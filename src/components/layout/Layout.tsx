@@ -8,6 +8,7 @@ import { ADMIN_ROLE_INT, USER_ROLE_INT } from "../../lib/constants";
 import { authAtom } from "../../lib/state/auth-state";
 import { appThemeAtom, navbarInitialLoadAtom } from "../../lib/state/state";
 import { getInitials } from "../../lib/functions";
+import { ADMIN_VIEWER_ROLE_INT } from "../../lib/status";
 
 type NavigationModel = {
   name: string;
@@ -57,6 +58,7 @@ const Navbar = () => {
         ]);
         break;
       case USER_ROLE_INT:
+      case ADMIN_VIEWER_ROLE_INT:
         setNavigation([
           { name: "Jadwal", href: "/schedule" },
           {

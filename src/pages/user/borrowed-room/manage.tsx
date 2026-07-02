@@ -1,6 +1,6 @@
 import { isAfter, isBefore, isSameDay, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import InputSelect from "../../../components/forms/input-select";
 import InputText from "../../../components/forms/input-text";
 import InputTextarea from "../../../components/forms/input-textarea";
@@ -11,30 +11,14 @@ import useAuth from "../../../hooks/general/use-auth-user";
 import { useGetOneBorrowedRoom } from "../../../hooks/general/use-borrowed-room";
 import useManageBorrowedRoom from "../../../hooks/general/use-manage-borrowed-room";
 import { useFetchRoom, useGetRoomAvailability } from "../../../hooks/general/use-room";
-import { ADMIN_ROLE_INT, BORROWED_STATUS, BORROWED_STATUS_ACCEPTED_INT, BORROWED_STATUS_PENDING_INT, INPUT_TIME_STEP } from "../../../lib/constants";
+import { ADMIN_ROLE_INT, AGREEMENT_STATUS_DISPLAY, BORROWED_STATUS_ACCEPTED_INT, BORROWED_STATUS_BADGE_CLASSES, BORROWED_STATUS_PENDING_INT, getBorrowedStatusLabel, INPUT_TIME_STEP } from "../../../lib/constants";
 import { classJoin } from "../../../lib/functions";
 import { BorrowedRoomModel } from "../../../model/entities/borrowed-room";
 import { RoomModel } from "../../../model/entities/room";
 import { UserModel } from "../../../model/entities/user";
+import { ADMIN_VIEWER_ROLE_INT } from "../../../lib/status";
 
 type FormState = "LOADING" | "ERROR" | "CREATE" | "UPDATE" | "CONFIRMATION" | "CONFIRMED";
-
-const agreementMap = [
-  {
-    text: "menolak",
-    style: "text-error",
-  },
-  {
-    text: "menyetujui",
-    style: "text-success",
-  },
-];
-
-const AGREEMENT_BORROW_COLOR = [
-  "badge-error",
-  "badge-warning",
-  "badge-success",
-];
 
 const fetchNotification = (
   borrowedRoom: BorrowedRoomModel | null | undefined
@@ -46,8 +30,8 @@ const fetchNotification = (
     message: (
       <span>
         {agreement.created_by.name} telah{" "}
-        <span className={agreementMap[agreement.agreement_status].style}>
-          {agreementMap[agreement.agreement_status].text}
+        <span className={AGREEMENT_STATUS_DISPLAY[agreement.agreement_status].style}>
+          {AGREEMENT_STATUS_DISPLAY[agreement.agreement_status].text}
         </span>{" "}
         permintaan ini.
       </span>
@@ -100,15 +84,18 @@ const getBorrowingStatus = (status: "pending" | "success" | "error", id?: string
   return "CONFIRMED";
 }
 
-const checkAbleToUpdateForm = (status: FormState): boolean => {
+const checkAbleToUpdateForm = (user: UserModel | undefined, status: FormState): boolean => {
+  if (user?.role === ADMIN_VIEWER_ROLE_INT) return false;
   return ["CREATE", "UPDATE"].includes(status);
 }
 
-const checkAbleToAcceptRequest = (status: FormState): boolean => {
+const checkAbleToAcceptRequest = (user: UserModel | undefined, status: FormState): boolean => {
+  if (user?.role === ADMIN_VIEWER_ROLE_INT) return false;
   return ["CONFIRMATION"].includes(status);
 }
 
 const ManageBorrowedRoomPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { data: borrowedRoom, status: borrowedRoomStatus } = useGetOneBorrowedRoom(id ?? "");
   const { data: rooms, status: roomStatus } = useFetchRoom<RoomModel[]>({}, {
@@ -139,8 +126,8 @@ const ManageBorrowedRoomPage = () => {
 
   const { user } = useAuth();
   const borrowingStatus = getBorrowingStatus(borrowedRoomStatus, id, user, borrowedRoom);
-  const isAbleToUpdateForm = checkAbleToUpdateForm(borrowingStatus);
-  const isAbleToAcceptRequest = checkAbleToAcceptRequest(borrowingStatus);
+  const isAbleToUpdateForm = checkAbleToUpdateForm(user, borrowingStatus);
+  const isAbleToAcceptRequest = checkAbleToAcceptRequest(user, borrowingStatus);
 
   useEffect(() => {
     if (roomStatus !== "success") return;
@@ -160,7 +147,7 @@ const ManageBorrowedRoomPage = () => {
 
     if (!borrowedRoom) return;
     if (!user) return;
-    if (borrowedRoom.borrowed_status === 2 && user.role !== ADMIN_ROLE_INT) return;
+    if (borrowedRoom.borrowed_status === BORROWED_STATUS_ACCEPTED_INT && user.role !== ADMIN_ROLE_INT) return;
     // if (borrowedRoom.borrowed_by_user_id === user.id || user.role === ADMIN_ROLE_INT) {
     //   setAbleToUpdate(true);
     // }
@@ -181,10 +168,10 @@ const ManageBorrowedRoomPage = () => {
       <div
         className={classJoin(
           "badge badge-outline px-4 py-3",
-          AGREEMENT_BORROW_COLOR[borrowedRoom?.borrowed_status]
+          BORROWED_STATUS_BADGE_CLASSES[borrowedRoom.borrowed_status]
         )}
       >
-        {BORROWED_STATUS[borrowedRoom?.borrowed_status]}
+        {getBorrowedStatusLabel(borrowedRoom.borrowed_status)}
       </div>
     ) : (
       <></>
@@ -459,11 +446,11 @@ const ManageBorrowedRoomPage = () => {
             <div className="col-span-6 modal-action flex-row-reverse justify-between">
               {
                 <div className="flex flex-row gap-4">
-                  <button className="btn btn-neutral" type="button">
+                  <button className="btn btn-neutral" type="button" onClick={() => navigate("/room-request")}>
                     Tutup
                   </button>
                   {
-                    ["UPDATE", "CREATE"].includes(borrowingStatus) && (
+                    user?.role !== ADMIN_VIEWER_ROLE_INT && ["UPDATE", "CREATE"].includes(borrowingStatus) && (
                       <button className="btn btn-primary" type="submit">
                         {borrowedRoom ? "Ubah" : "Buat"}
                       </button>
@@ -471,7 +458,7 @@ const ManageBorrowedRoomPage = () => {
                   }
                 </div>
               }
-              {borrowedRoom && (
+              {borrowedRoom && user?.role !== ADMIN_VIEWER_ROLE_INT && (
                 <button
                   className="btn !ml-0 btn-error"
                   type="button"
